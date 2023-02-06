@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "478970973571",
+    "project_id": "papago-377006",
+    "storage_bucket": "papago-377006.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478970973571:android:686e6068cd057b0d303ab6",
+        "android_client_info": {
+          "package_name": "com.papago"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478970973571-vvh5sj02o63ghb950be0bffdmfdd8ege.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxTEEsDvGB5XJh1zHfaPYTKLWwTILAuNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478970973571-7spksdqh7sbcsgt92etm1r95o13dgu9o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478970973571-3gb934en051ov1p408qmarmh4g1l6toc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.papago"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
