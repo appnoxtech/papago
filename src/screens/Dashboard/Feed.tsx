@@ -9,7 +9,7 @@ import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import useGetActivityList from '../../hooks/getActivityList.hook';
 
 const Feed = () => {
-  //useGetActivityList();
+  useGetActivityList();
   return (
     <SafeAreaView style={styles.container}>
       <Headers title="Feed" />
@@ -27,7 +27,10 @@ const Feed = () => {
 export default Feed;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
   scollContainer: {
     height: '98%',
   },

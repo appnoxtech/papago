@@ -1,4 +1,11 @@
-import {Alert, Dimensions, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 import MapView, {Marker, AnimatedRegion, Polyline} from 'react-native-maps';
 import React, {useEffect, useRef, useState} from 'react';
@@ -178,60 +185,118 @@ const MapViewComponent = () => {
   console.log('isStart', isStart);
   console.log('isEnd', isEnd);
 
-  return (
-    <>
-      {crrLocation ? (
-        initialCords ? (
-          <MapView showsBuildings={false} style={styles.map} provider="google">
-            {/*  Show Marker for the initial starting point */}
-            {initialCords ? (
-              <Marker image={startPointImage} coordinate={initialCords} />
-            ) : null}
+  if (Platform.OS === 'android') {
+    return (
+      <>
+        {crrLocation ? (
+          initialCords ? (
+            <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
+              {/*  Show Marker for the initial starting point */}
+              {initialCords ? (
+                <Marker image={startPointImage} coordinate={initialCords} />
+              ) : null}
 
-            {/* Show Marker for the final end point  */}
-            {destination ? (
-              <Marker.Animated
-                ref={markerRef}
-                image={finishPointImage}
-                coordinate={destination}
-              />
-            ) : null}
-            {wayPoints.length > 0 ? (
-              <Polyline
-                strokeWidth={3}
-                strokeColor={colorPrimary}
-                coordinates={wayPoints}
-              />
-            ) : null}
+              {/* Show Marker for the final end point  */}
+              {destination ? (
+                <Marker.Animated
+                  ref={markerRef}
+                  image={finishPointImage}
+                  coordinate={destination}
+                />
+              ) : null}
+              {wayPoints.length > 0 ? (
+                <Polyline
+                  strokeWidth={3}
+                  strokeColor={colorPrimary}
+                  coordinates={wayPoints}
+                />
+              ) : null}
 
-            {/* Path will only show if recording is started and we have initial and dest. cords */}
-            {isStart && initialCords && finalCords ? (
-              <MapViewDirections
-                origin={initialCords}
-                destination={finalCords}
-                apikey={GOOGLE_MAP_APIKEY}
-                strokeWidth={3}
-                strokeColor={colorPrimary}
-                waypoints={wayPoints}
-              />
-            ) : null}
-          </MapView>
+              {/* Path will only show if recording is started and we have initial and dest. cords */}
+              {isStart && initialCords && finalCords ? (
+                <MapViewDirections
+                  origin={initialCords}
+                  destination={finalCords}
+                  apikey={GOOGLE_MAP_APIKEY}
+                  strokeWidth={3}
+                  strokeColor={colorPrimary}
+                  waypoints={wayPoints}
+                />
+              ) : null}
+            </MapView>
+          ) : (
+            <MapView
+              showsBuildings={false}
+              style={styles.map}
+              provider="google"
+            > 
+              <Marker coordinate={crrLocation} />
+            </MapView>
+          )
         ) : (
-          <MapView
-            showsBuildings={false}
-            style={styles.map}
-            initialRegion={crrLocation}
-            provider="google"
-            showsUserLocation={true}
-          />
-        )
-      ) : (
-        <View>
-          <Text>Loading ...</Text>
-        </View>
-      )}
-    </>
-  );
+          <View>
+            <Text>Loading ...</Text>
+          </View>
+        )}
+      </>
+    );
+  } else {
+    return (
+      <>
+        {crrLocation ? (
+          initialCords ? (
+            <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
+              {/*  Show Marker for the initial starting point */}
+              {initialCords ? (
+                <Marker image={startPointImage} coordinate={initialCords} />
+              ) : null}
+
+              {/* Show Marker for the final end point  */}
+              {destination ? (
+                <Marker.Animated
+                  ref={markerRef}
+                  image={finishPointImage}
+                  coordinate={destination}
+                />
+              ) : null}
+              {wayPoints.length > 0 ? (
+                <Polyline
+                  strokeWidth={3}
+                  strokeColor={colorPrimary}
+                  coordinates={wayPoints}
+                />
+              ) : null}
+
+              {/* Path will only show if recording is started and we have initial and dest. cords */}
+              {isStart && initialCords && finalCords ? (
+                <MapViewDirections
+                  origin={initialCords}
+                  destination={finalCords}
+                  apikey={GOOGLE_MAP_APIKEY}
+                  strokeWidth={3}
+                  strokeColor={colorPrimary}
+                  waypoints={wayPoints}
+                />
+              ) : null}
+            </MapView>
+          ) : (
+            <MapView
+              showsBuildings={false}
+              style={StyleSheet.absoluteFill}
+              initialRegion={crrLocation}
+              showsUserLocation={true}
+            >
+              <Marker coordinate={crrLocation} />
+            </MapView>
+          )
+        ) : (
+          <View>
+            <Text>Loading ...</Text>
+          </View>
+        )}
+      </>
+    );
+  }
 };
 
 export default MapViewComponent;

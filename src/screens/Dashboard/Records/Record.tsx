@@ -26,9 +26,10 @@ export default Record;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   mainContainer: {
-    flex: 1,
+    height: '100%',
     position: 'relative',
   },
   overlay: {
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   actionContainer: {
     position: 'absolute',
     width: '100%',
-    bottom: 0,
+    bottom: 10,
     right: 0,
     zIndex: 200,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',

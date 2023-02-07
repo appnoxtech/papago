@@ -1,5 +1,5 @@
 /*eslint no-bitwise: "error"*/
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import {
   responsiveFontSize,
@@ -154,9 +154,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   body: {
-    marginTop: responsiveScreenHeight(2),
+    marginVertical: responsiveScreenHeight(1),
     paddingHorizontal: responsiveScreenWidth(2),
-    height: responsiveScreenHeight(15),
+    height: responsiveScreenHeight(19),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderRadius: 100,
-    shadowColor: colorPrimary,
+    shadowColor: 'white',
     shadowOpacity: 0.8,
     shadowRadius: 2,
     shadowOffset: {
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     },
   },
   btnResume: {
-    fontSize: responsiveFontSize(1.8),
+    fontSize: Platform.OS === 'android' ? responsiveFontSize(1.8) : responsiveFontSize(1.6),
     textAlign: 'center',
     color: 'black',
   },

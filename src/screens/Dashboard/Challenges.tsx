@@ -16,7 +16,7 @@ import ProgressCard from '../../components/Dashboard/chalenges/ProgressCard';
 
 const Challenges = () => {
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={styles.mainContainer}>
       <Headers title="Challenges" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.card}>
@@ -75,6 +75,7 @@ const Challenges = () => {
 export default Challenges;
 
 const styles = StyleSheet.create({
+  mainContainer: {flex: 1, backgroundColor: 'white'},
   container: {
     paddingHorizontal: responsiveScreenWidth(3),
     paddingVertical: responsiveScreenHeight(3),

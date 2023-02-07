@@ -7,7 +7,7 @@ import {
   Keyboard,
   ScrollView,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
 import {
   responsiveFontSize,
@@ -85,15 +85,15 @@ const SignUp = () => {
       <SafeAreaView style={style.flex1}>
         <ScrollView>
           <View>
-            <BackBtn />
-          </View>
-          <View>
             <View style={style.imgContainer}>
               <Image
                 source={require('../../../assets/images/SignUpPage.png')}
                 style={style.image}
                 resizeMode="cover"
               />
+              <View style={style.backBtnContainer}>
+                <BackBtn />
+              </View>
             </View>
             <View style={style.container}>
               <Text style={style.primaryText}>Let's get started !</Text>
@@ -152,13 +152,14 @@ export default SignUp;
 
 const style = StyleSheet.create({
   imgContainer: {
+    position: 'relative',
     width: responsiveScreenWidth(100),
-    height: Platform.OS === 'android' ? responsiveScreenHeight(23) : responsiveScreenHeight(20),
+    height: responsiveScreenHeight(25),
     marginBottom: responsiveScreenHeight(0.3),
   },
   flex1: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   image: {height: '100%', width: '100%'},
   btn: {
@@ -188,5 +189,10 @@ const style = StyleSheet.create({
     width: '50%',
     paddingHorizontal: responsiveScreenWidth(1),
     paddingVertical: responsiveScreenHeight(1),
+  },
+  backBtnContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
 });
