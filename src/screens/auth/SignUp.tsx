@@ -7,6 +7,7 @@ import {
   Keyboard,
   ScrollView,
   Alert,
+  Platform
 } from 'react-native';
 import {
   responsiveFontSize,
@@ -80,8 +81,8 @@ const SignUp = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={Styles.bgWhite}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={style.flex1}>
+      <SafeAreaView style={style.flex1}>
         <ScrollView>
           <View>
             <BackBtn />
@@ -152,8 +153,12 @@ export default SignUp;
 const style = StyleSheet.create({
   imgContainer: {
     width: responsiveScreenWidth(100),
-    height: responsiveScreenHeight(23),
+    height: Platform.OS === 'android' ? responsiveScreenHeight(23) : responsiveScreenHeight(20),
     marginBottom: responsiveScreenHeight(0.3),
+  },
+  flex1: {
+    flex: 1,
+    backgroundColor: 'white'
   },
   image: {height: '100%', width: '100%'},
   btn: {
@@ -169,7 +174,6 @@ const style = StyleSheet.create({
     fontSize: responsiveFontSize(4),
   },
   mt_2: {
-    marginTop: responsiveScreenHeight(1),
     flexDirection: 'row',
     alignItems: 'center',
   },

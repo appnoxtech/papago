@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">papago</string>
+    <string name="facebook_app_id">1841318379580781</string>
+    <string name="fb_login_protocol_scheme">fb1841318379580781</string>
+    <string name="facebook_client_token">4612f4d9b0e666074b4be1038caeb25c</string>
 </resources>

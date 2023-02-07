@@ -23,6 +23,20 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1841318379580781</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.papago</string>
+			</array>
+		</dict>
+		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
@@ -33,6 +47,12 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FacebookAppID</key>
+	<string>1841318379580781</string>
+	<key>FacebookClientToken</key>
+	<string>4612f4d9b0e666074b4be1038caeb25c</string>
+	<key>FacebookDisplayName</key>
+	<string>Papa Go</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -52,21 +72,6 @@
 	<string>This app need location access to work properly.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app need location access to work properly.</string>
-	<key>CFBundleURLTypes</key>
-		<array>
-		<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<string>fb1841318379580781</string>
-		</array>
-		</dict>
-		</array>
-		<key>FacebookAppID</key>
-		<string>1841318379580781</string>
-		<key>FacebookClientToken</key>
-		<string>4612f4d9b0e666074b4be1038caeb25c</string>
-		<key>FacebookDisplayName</key>
-		<string>Papa Go</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

@@ -152,6 +152,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
@@ -167,6 +168,5 @@ dependencies {
         implementation jscFlavor
     }
 }
-apply plugin: 'com.google.gms.google-services'
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
