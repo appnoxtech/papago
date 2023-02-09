@@ -45,6 +45,7 @@ const RecordActionComponent = () => {
 
   const handlePauseResume = () => {
     setIsPaused(!isPaused);
+    dispatch(updateRecordStatus({key: 'isPaused', value: !isPaused}));
   };
 
   const handleReset = () => {

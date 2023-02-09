@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 import MapView, {Marker, AnimatedRegion, Polyline} from 'react-native-maps';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import {useDispatch, useSelector} from 'react-redux';
 import {GOOGLE_MAP_APIKEY} from '@env';
@@ -23,7 +23,7 @@ import {
 
 const options = {
   interval: 10,
-  enableHighAccuracy: true,
+  enableHighAccuracy: false,
   distanceFilter: 1,
 };
 interface cords {
@@ -49,6 +49,7 @@ const boundingBox = {
 const MapViewComponent = () => {
   const [crrLocation, setLocation]: any = useState();
   const markerRef = useRef<any>(null);
+  let mapRef : any;
   const dispatch = useDispatch();
   const {selectedActivity} = useSelector((state: any) => state.activity);
   const recordStatus = useSelector((state: any) => state.recordStatus);
@@ -57,7 +58,8 @@ const MapViewComponent = () => {
   const [finalCords, setFinalCords] = useState<cords | null>(null);
   const [destination, setDestination] = useState<cords | null>(null);
   const [wayPoints, setWayPoints] = useState<Array<cords>>([]);
-  let watchId: number;
+  let Points: Array<cords> = [];
+  const [watchId, setWatchId] = useState<number>(0);
 
   useEffect(() => {
     let centroid: any;
@@ -82,8 +84,8 @@ const MapViewComponent = () => {
   }, []);
 
   const setNewWayPointsCord = (points: cords) => {
-    console.log('Points', points);
-    setWayPoints([...wayPoints, points]);
+    Points.push(points);
+    setWayPoints([...Points]);
   };
 
   // once user clicks on the start recording btn
@@ -95,23 +97,31 @@ const MapViewComponent = () => {
         setInitialCords({latitude, longitude});
         setNewWayPointsCord({latitude, longitude});
         watchLocation();
-        dispatch(updateRecordStatus({key: 'isStart', value: false}));
       });
     }
   }, [isStart]);
 
+  useEffect(() => {
+    // stop watching the location when user clicks on the stop watch
+    if(isStart && isPaused){
+      console.log('stopped watching user location')
+      Geolocation.clearWatch(watchId);
+    }else if(isStart && !isPaused){
+      console.log('started watching user location');
+      Points = [...wayPoints];
+      watchLocation();
+    }
+  }, [isPaused])
+
   //watch and set the users device location
   const watchLocation = () => {
-    watchId = Geolocation.watchPosition(
+    const Id = Geolocation.watchPosition(
       ({coords}) => {
         const {latitude, longitude} = coords;
         const cords = {latitude, longitude};
         setDestination({...cords});
         console.log('Updated Location :=>', cords);
         setNewWayPointsCord(cords);
-        if (markerRef) {
-          console.log(markerRef);
-        }
       },
       error => {
         Alert.alert('Location Error', error.message);
@@ -123,23 +133,18 @@ const MapViewComponent = () => {
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 1,
-      },
+      },  
     );
-    console.log('Watch Id', watchId);
+    setWatchId(Id);
   };
 
   //once user finish the recording we will set the final cords state
   useEffect(() => {
     if (isEnd) {
-      Geolocation.getCurrentPosition(info => {
-        const {coords} = info;
-        const {latitude, longitude} = coords;
-        console.log('Starting Cords :=>', {latitude, longitude});
-        setFinalCords({latitude, longitude});
-      });
-      Geolocation.clearWatch(watchId);
       setTimeout(() => {
         console.log('Map is reset');
+        console.log('called clear watch with watch id', watchId)
+        Geolocation.clearWatch(watchId);
         setInitialCords(null);
         setDestination(null);
         setFinalCords(null);
@@ -149,48 +154,18 @@ const MapViewComponent = () => {
     }
   }, [isEnd]);
 
-  //create the wayspoint list when the destination cords changes
-
-  const startActivityService = async () => {
-    try {
-      if (initialCords) {
-        const data = {
-          activityTypeId: selectedActivity._id,
-          from: {
-            lat: initialCords.latitude,
-            lng: initialCords.longitude,
-          },
-        };
-        console.log('Add activity data', data);
-        await AddActivityService(data);
-      }
-    } catch (error: any) {
-      console.log('error', error);
-      Alert.alert(
-        'Error while adding Activity',
-        error.response.data.errors[0].message,
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (initialCords) {
-      console.log('called startActivityService with cord :->', initialCords);
-      // startActivityService();
-    }
-  }, [initialCords]);
-
   console.log('Destinations', destination);
   console.log('wayPoints', wayPoints);
   console.log('isStart', isStart);
   console.log('isEnd', isEnd);
+  console.log('mapRef', mapRef)
 
   if (Platform.OS === 'android') {
     return (
       <>
         {crrLocation ? (
           initialCords ? (
-            <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
+            <MapView ref={(ref) => {mapRef = ref}} showsBuildings={false} style={StyleSheet.absoluteFill}>
               {/*  Show Marker for the initial starting point */}
               {initialCords ? (
                 <Marker image={startPointImage} coordinate={initialCords} />
@@ -198,8 +173,7 @@ const MapViewComponent = () => {
 
               {/* Show Marker for the final end point  */}
               {destination ? (
-                <Marker.Animated
-                  ref={markerRef}
+                <Marker
                   image={finishPointImage}
                   coordinate={destination}
                 />
@@ -213,7 +187,7 @@ const MapViewComponent = () => {
               ) : null}
 
               {/* Path will only show if recording is started and we have initial and dest. cords */}
-              {isStart && initialCords && finalCords ? (
+              {/* {isStart && initialCords && finalCords ? (
                 <MapViewDirections
                   origin={initialCords}
                   destination={finalCords}
@@ -222,13 +196,19 @@ const MapViewComponent = () => {
                   strokeColor={colorPrimary}
                   waypoints={wayPoints}
                 />
-              ) : null}
+              ) : null} */}
             </MapView>
           ) : (
             <MapView
+              ref={(ref) => {
+                if(ref){
+                  Object.keys(ref).map(keyName => console.log(keyName))
+                }
+              }}
               showsBuildings={false}
               style={styles.map}
               provider="google"
+              region={crrLocation}
             > 
               <Marker coordinate={crrLocation} />
             </MapView>
@@ -253,8 +233,7 @@ const MapViewComponent = () => {
 
               {/* Show Marker for the final end point  */}
               {destination ? (
-                <Marker.Animated
-                  ref={markerRef}
+                <Marker
                   image={finishPointImage}
                   coordinate={destination}
                 />
@@ -267,17 +246,6 @@ const MapViewComponent = () => {
                 />
               ) : null}
 
-              {/* Path will only show if recording is started and we have initial and dest. cords */}
-              {isStart && initialCords && finalCords ? (
-                <MapViewDirections
-                  origin={initialCords}
-                  destination={finalCords}
-                  apikey={GOOGLE_MAP_APIKEY}
-                  strokeWidth={3}
-                  strokeColor={colorPrimary}
-                  waypoints={wayPoints}
-                />
-              ) : null}
             </MapView>
           ) : (
             <MapView

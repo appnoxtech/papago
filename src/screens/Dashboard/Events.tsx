@@ -14,10 +14,10 @@ import {Button} from 'react-native-paper';
 import ChallengesCard from '../../components/Dashboard/chalenges/ChallengesCard';
 import ProgressCard from '../../components/Dashboard/chalenges/ProgressCard';
 
-const Challenges = () => {
+const Events = () => {
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <Headers title="Challenges" />
+      <Headers title="Events" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.card}>
           <View style={styles.cardLeftContainer}>
@@ -72,7 +72,7 @@ const Challenges = () => {
   );
 };
 
-export default Challenges;
+export default Events;
 
 const styles = StyleSheet.create({
   mainContainer: {flex: 1, backgroundColor: 'white'},

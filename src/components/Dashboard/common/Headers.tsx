@@ -64,7 +64,7 @@ const Headers = ({title}: props) => {
           size={26}
           style={styles.icon}
         />
-      ) : title === 'Profile' || title === 'Record' ? (
+      ) : title === 'Menu' || title === 'Record' ? (
         <Feather
           onPress={handleSettingIconClick}
           name="settings"
