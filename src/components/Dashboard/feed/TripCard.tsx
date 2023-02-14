@@ -12,7 +12,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const TripCard = () => {
   return (
-    <View style={styles.cotainer}>
+    <View style={styles.container}>
       <View style={styles.headContainer}>
         <Text style={styles.primaryText}>Climb Mount Everest</Text>
       </View>
@@ -36,7 +36,7 @@ const TripCard = () => {
 export default TripCard;
 
 const styles = StyleSheet.create({
-  cotainer: {
+  container: {
     position: 'relative',
     width: responsiveScreenWidth(75),
     height: responsiveScreenHeight(18),

@@ -45,7 +45,7 @@ const Dashboard: React.FC<any> = () => {
             fontSize: responsiveFontSize(1.5),
             fontWeight: 'bold',
             letterSpacing: 0.8
-          }
+          },
         })}
         
       >

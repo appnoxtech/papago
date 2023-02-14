@@ -580,9 +580,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = papago/papago.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RL9K5ZW8NX;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = papago/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PapaGo;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -609,8 +611,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = papago/papago.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RL9K5ZW8NX;
 				INFOPLIST_FILE = papago/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PapaGo;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

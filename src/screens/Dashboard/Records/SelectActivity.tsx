@@ -18,8 +18,6 @@ import {useSelector} from 'react-redux';
 const SelectActivityType = () => {
   const {activityList} = useSelector((state: any) => state.activity);
 
-  console.log('activityList', activityList[0].data);
-
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithBackBtn title="Select Activity Type" />

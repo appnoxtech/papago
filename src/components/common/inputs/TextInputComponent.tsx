@@ -39,7 +39,7 @@ export default TextInputComponent;
 const styles = StyleSheet.create({
     inputs: {
         backgroundColor: 'white',
-        color: '#8391A1'
+        color: '#8391A1',
     },
     textGrey: {
         marginTop: responsiveScreenHeight(.2),

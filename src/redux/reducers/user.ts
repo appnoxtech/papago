@@ -1,5 +1,6 @@
 const initialState = {
   isLogin: true,
+  activityList: [],
 };
 
 interface UpdateAction {
@@ -7,13 +8,27 @@ interface UpdateAction {
   payload: boolean;
 }
 
-const UserReducer = (state = initialState, action: UpdateAction) => {
+interface updateActivityList {
+  type: 'UPDATE_USER_ACTIVITY_LIST',
+  payload: any
+}
+
+type action = updateActivityList | UpdateAction;
+
+const UserReducer = (state = initialState, action: action) => {
   switch (action.type) {
     case 'UPDATE_USER_DATA': {
       return {
         ...state,
         isLogin: action.payload,
       };
+    }
+
+    case 'UPDATE_USER_ACTIVITY_LIST': {
+      return {
+        ...state,
+        activityList: [...state.activityList, ...action.payload]
+      }
     }
 
     default:
@@ -29,3 +44,10 @@ export const updateUserData = (isLogin: boolean) => {
     payload: isLogin,
   };
 };
+
+export const updateUserActivityList = (data: any) => {
+  return {
+    type: 'UPDATE_USER_ACTIVITY_LIST',
+    payload: data
+  }
+}

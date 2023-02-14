@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { getDistance } from 'geolib';
 import MapViewDirections from 'react-native-maps-directions';
 import MapView, {Marker, AnimatedRegion, Polyline} from 'react-native-maps';
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
@@ -20,12 +21,8 @@ import {
   resetRecordStatus,
   updateRecordStatus,
 } from '../../../redux/reducers/record.reducer';
+import { resetRecordActivityValue, setImmediatePoints, updateDistanceMeter, updateRecordActivityValue, updateSpeedMeter } from '../../../redux/reducers/recordActivityReducer';
 
-const options = {
-  interval: 10,
-  enableHighAccuracy: false,
-  distanceFilter: 1,
-};
 interface cords {
   latitude: number;
   longitude: number;
@@ -41,13 +38,9 @@ const boundingBox = {
   },
 };
 
-// let centroid = {
-//   latitude: '24.2472',
-//   longitude: '89.920914',
-// };
 
 const MapViewComponent = () => {
-  const [crrLocation, setLocation]: any = useState();
+  const [crrLocation, setLocation]: any = useState(null);
   const markerRef = useRef<any>(null);
   let mapRef : any;
   const dispatch = useDispatch();
@@ -60,6 +53,7 @@ const MapViewComponent = () => {
   const [wayPoints, setWayPoints] = useState<Array<cords>>([]);
   let Points: Array<cords> = [];
   const [watchId, setWatchId] = useState<number>(0);
+  const {timer} = useSelector((state: any) => state.recordActivity);
 
   useEffect(() => {
     let centroid: any;
@@ -80,7 +74,9 @@ const MapViewComponent = () => {
         latitudeDelta: 0.0041,
         longitudeDelta: 0.0021,
       });
-    });
+    },
+    (error) => console.log(error)
+    );
   }, []);
 
   const setNewWayPointsCord = (points: cords) => {
@@ -97,7 +93,9 @@ const MapViewComponent = () => {
         setInitialCords({latitude, longitude});
         setNewWayPointsCord({latitude, longitude});
         watchLocation();
-      });
+      },
+      (error) => console.log('Error', error),
+      );
     }
   }, [isStart]);
 
@@ -106,12 +104,32 @@ const MapViewComponent = () => {
     if(isStart && isPaused){
       console.log('stopped watching user location')
       Geolocation.clearWatch(watchId);
+      dispatch(setImmediatePoints(wayPoints));
     }else if(isStart && !isPaused){
       console.log('started watching user location');
       Points = [...wayPoints];
       watchLocation();
     }
   }, [isPaused])
+
+  // calculate distace by using initial cords and new cords by watch location
+  const calculateDistance = () => {
+    console.log('Points', Points)
+    const distance = getDistance(Points[0], Points[Points.length - 1]) / 1000;
+    console.log('Distance', distance)
+    dispatch(updateDistanceMeter(distance));
+    // calculateSpeed(distance);
+    return distance;
+  }
+
+  // const calculateSpeed = (distance: number) => {
+  //   if(timer){
+  //     const speed = distance / (timer / 3600000);
+  //     if(speed){
+  //       dispatch(updateSpeedMeter(speed));
+  //     }
+  //   }
+  // }
 
   //watch and set the users device location
   const watchLocation = () => {
@@ -122,6 +140,8 @@ const MapViewComponent = () => {
         setDestination({...cords});
         console.log('Updated Location :=>', cords);
         setNewWayPointsCord(cords);
+        calculateDistance();
+        // console.log('speed', coords.speed)
       },
       error => {
         Alert.alert('Location Error', error.message);
@@ -142,23 +162,16 @@ const MapViewComponent = () => {
   useEffect(() => {
     if (isEnd) {
       setTimeout(() => {
-        console.log('Map is reset');
-        console.log('called clear watch with watch id', watchId)
         Geolocation.clearWatch(watchId);
         setInitialCords(null);
         setDestination(null);
         setFinalCords(null);
         dispatch(resetRecordStatus());
+        dispatch(resetRecordActivityValue());
         setWayPoints([]);
       }, 3000);
     }
   }, [isEnd]);
-
-  console.log('Destinations', destination);
-  console.log('wayPoints', wayPoints);
-  console.log('isStart', isStart);
-  console.log('isEnd', isEnd);
-  console.log('mapRef', mapRef)
 
   if (Platform.OS === 'android') {
     return (
@@ -214,9 +227,15 @@ const MapViewComponent = () => {
             </MapView>
           )
         ) : (
-          <View>
-            <Text>Loading ...</Text>
-          </View>
+          <MapView
+            style={StyleSheet.absoluteFill}
+            initialRegion={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
         )}
       </>
     );
@@ -254,7 +273,7 @@ const MapViewComponent = () => {
               initialRegion={crrLocation}
               showsUserLocation={true}
             >
-              <Marker coordinate={crrLocation} />
+              {/* <Marker coordinate={crrLocation} /> */}
             </MapView>
           )
         ) : (

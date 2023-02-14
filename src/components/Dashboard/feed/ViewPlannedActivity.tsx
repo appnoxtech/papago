@@ -6,21 +6,23 @@ import {
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import TripCard from './TripCard';
+import { useSelector } from 'react-redux';
+import RecordActivityCard from './RecordActivityCard';
 
-const ViewPlannedActivity = () => {
-  const [plannedList, setPlannedList] = useState([{}]);
-
+const ViewPlannedActivity: React.FC<any> = ({userDetails}) => {
+  const {activityList} = useSelector((state: any) => state.user);
+  console.log('activity List', activityList);
+  
   return (
     <View style={styles.container}>
-      {plannedList.length > 0 ? (
+      {activityList.length > 0 ? (
         <View style={styles.listContainer}>
-          <Text style={styles.textPrimary}>Planned Trips</Text>
           <ScrollView
-            horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.challengesListContainer}>
-            <TripCard />
-            <TripCard />
+            {
+              activityList.map((acitivity: any, id: number) => <RecordActivityCard id={id} userDetails={userDetails} acitivity={acitivity} />)
+            }
           </ScrollView>
         </View>
       ) : (
@@ -48,7 +50,7 @@ export default ViewPlannedActivity;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: responsiveScreenHeight(3),
+   
   },
   challengesListContainer: {
     paddingHorizontal: responsiveScreenWidth(0.5),
