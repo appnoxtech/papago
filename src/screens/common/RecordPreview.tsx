@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
@@ -13,9 +13,13 @@ import {inputsHandlerParams} from '../../interfaces/components/inputs';
 import {colorPrimary} from '../../../assets/styles/GlobalTheme';
 import {Button} from 'react-native-paper';
 import BtnPrimary from '../../components/common/buttons/BtnPrimary';
-import { updateRecordActivityValue } from '../../redux/reducers/recordActivityReducer';
+import { resetRecordActivityValue, updateRecordActivityValue } from '../../redux/reducers/recordActivityReducer';
 import { useNavigation } from '@react-navigation/native';
 import { updateUserActivityList } from '../../redux/reducers/user';
+import { UpdateActivityService } from '../../services/Dashboard/record.service';
+import { recordActivityData } from '../../interfaces/Dashboard/record.interface';
+import { resetMapData } from '../../redux/reducers/map.reducer';
+import { resetRecordStatus } from '../../redux/reducers/record.reducer';
 const date = new Date();
 
 const RecordPreview = () => {
@@ -64,20 +68,30 @@ const RecordPreview = () => {
   };
 
   const handleSaveActivity = () => {
-      const date = new Date();
       const data = {
+        activityId: activity.activityId,
          activityName: input.title,
-         finishedAt: date.getTime(),
          distance: distance,
          duration: timer,
          activityTypeId: selectedActivity._id,
          immediatePoints: [...activity.immediatePoints],
     }
-    dispatch(updateUserActivityList([data]));
+    updateActivityServiceHandler(data);
     navigation.reset({
         index: 0,
         routes: [{name: 'Dashboard' as never}]
       });
+  };
+
+  const updateActivityServiceHandler = async (data: recordActivityData) => {
+     try {
+      await UpdateActivityService(data);
+      dispatch(resetMapData());
+      dispatch(resetRecordStatus());
+      dispatch(resetRecordActivityValue());
+     } catch (error: any) {
+        Alert.alert('Error', error.response.data.errors[0].message);
+     }
   }
 
   return (

@@ -43,7 +43,6 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     if (isActive && isPaused === false) {
       interval = setInterval(() => {
         dispatch(updateRecordActivityTimer());
-        // setTimer((time: number) => time + 1000);
       }, 1000);
     } else {
       //@ts-ignore
@@ -58,14 +57,11 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   const startBtnPress = () => {
     dispatch(updateRecordActivityValue({key: 'isActive', value: true}));
     dispatch(updateRecordActivityValue({key: 'isPaused', value: false}));
-    // setIsActive(true);
-    // setIsPaused(false);
     dispatch(updateRecordStatus({key: 'isStart', value: true}));
   };
 
   const handlePauseResume = () => {
     dispatch(updateRecordActivityValue({key: 'isPaused', value: !isPaused}));
-    // setIsPaused(!isPaused);
     dispatch(updateRecordStatus({key: 'isPaused', value: !isPaused}));
   };
 

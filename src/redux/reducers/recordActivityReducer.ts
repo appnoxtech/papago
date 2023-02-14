@@ -5,6 +5,7 @@ const initialState = {
     distance: 0,
     speed: 0,
     activity: {
+        activityId: '',
         activityName: '',
         finishedAt: 0,
         duration: 0,
@@ -47,7 +48,12 @@ interface updateImmediatePoints {
         payload: any,
 }
 
-type action = updateActivityValue | resetActivityValue | updateRecordActivityTimer | updateRecordDistanceMeter | updatRecordSpeedMeter | updateImmediatePoints;
+interface updateActivityId {
+    type: 'UPDATE_ACTIVITY_ID',
+    payload: string
+}
+
+type action = updateActivityValue | resetActivityValue | updateRecordActivityTimer | updateRecordDistanceMeter | updatRecordSpeedMeter | updateImmediatePoints | updateActivityId;
 
 const RecordActivityReducer = (state = initialState , action: action) => {
     switch (action.type) {
@@ -96,7 +102,16 @@ const RecordActivityReducer = (state = initialState , action: action) => {
             }
         }
 
-            
+        case 'UPDATE_ACTIVITY_ID': {
+            return {
+                ...state,
+                activity: {
+                    ...state.activity,
+                    activityId: action.payload,
+                }
+            }
+        }
+  
         default:
             return state
     }
@@ -142,5 +157,12 @@ export const setImmediatePoints = (data: any) => {
     return {
         type: 'UPDATE_IMMEDIATE_POINTS',
         payload: data,
+    }
+}
+
+export const updateActivityId = (id: string) => {
+    return {
+        type: 'UPDATE_ACTIVITY_ID',
+        payload: id,
     }
 }

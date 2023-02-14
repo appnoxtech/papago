@@ -12,7 +12,7 @@ import {
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import { useDispatch } from 'react-redux';
-import { updateRecordActivityValue } from '../../../redux/reducers/recordActivityReducer';
+import { resetRecordActivityValue, updateRecordActivityValue } from '../../../redux/reducers/recordActivityReducer';
 import { updateRecordStatus } from '../../../redux/reducers/record.reducer';
 import { useNavigation } from '@react-navigation/native';
 
@@ -21,12 +21,7 @@ const Record = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const handleReset = () => {
-    dispatch(updateRecordActivityValue({key: 'isActive', value: false}));
-    dispatch(updateRecordStatus({key: 'isEnd', value: true}));
-  };
   const handleFinishActivityBtnClick = () => {
-    handleReset();
     navigation.reset({
       index: 0,
       routes: [{name: 'RecordPreview' as never}]

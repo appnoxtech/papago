@@ -11,8 +11,7 @@ import RecordActivityCard from './RecordActivityCard';
 
 const ViewPlannedActivity: React.FC<any> = ({userDetails}) => {
   const {activityList} = useSelector((state: any) => state.user);
-  console.log('activity List', activityList);
-  
+
   return (
     <View style={styles.container}>
       {activityList.length > 0 ? (
@@ -21,7 +20,11 @@ const ViewPlannedActivity: React.FC<any> = ({userDetails}) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.challengesListContainer}>
             {
-              activityList.map((acitivity: any, id: number) => <RecordActivityCard id={id} userDetails={userDetails} acitivity={acitivity} />)
+              activityList.map((acitivity: any) => (
+                <View key={acitivity._id}>
+                  <RecordActivityCard userDetails={userDetails} acitivity={acitivity} />
+                </View>
+              ))
             }
           </ScrollView>
         </View>

@@ -27,7 +27,7 @@ const UserReducer = (state = initialState, action: action) => {
     case 'UPDATE_USER_ACTIVITY_LIST': {
       return {
         ...state,
-        activityList: [...state.activityList, ...action.payload]
+        activityList: [...action.payload]
       }
     }
 

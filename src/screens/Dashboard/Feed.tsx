@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, View} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Headers from '../../components/Dashboard/common/Headers';
@@ -8,8 +8,12 @@ import ViewSharedActivity from '../../components/Dashboard/feed/ViewSharedActivi
 import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import useGetActivityList from '../../hooks/getActivityList.hook';
 import { getUserDataFromLocalStorage } from '../../utlis/auth';
+import { GetActivityListService } from '../../services/Dashboard/record.service';
+import { useDispatch } from 'react-redux';
+import { updateUserActivityList } from '../../redux/reducers/user';
 
 const Feed = () => {
+  const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState<any | null>(null);
   useGetActivityList();
   const getUserDetails = async () => {
@@ -18,8 +22,21 @@ const Feed = () => {
     setUserDetails(data);
   }
   useEffect(() => {
-    getUserDetails()
+    getUserDetails();
+    getUserActivityFeedList();
   }, []);
+
+  const getUserActivityFeedList = async() => {
+     try {
+      const response = await GetActivityListService();
+      const list = response.data.data;
+      if(list.length){
+        dispatch(updateUserActivityList([...list]));
+      }
+     } catch (error: any) {
+       Alert.alert('Error', error.response.data.errors[0].message);
+     }
+  }
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>

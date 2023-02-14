@@ -21,7 +21,8 @@ import {
   resetRecordStatus,
   updateRecordStatus,
 } from '../../../redux/reducers/record.reducer';
-import { resetRecordActivityValue, setImmediatePoints, updateDistanceMeter, updateRecordActivityValue, updateSpeedMeter } from '../../../redux/reducers/recordActivityReducer';
+import { resetRecordActivityValue, setImmediatePoints, updateActivityId, updateDistanceMeter, updateRecordActivityValue, updateSpeedMeter } from '../../../redux/reducers/recordActivityReducer';
+import { updateCurrentLocation, updateDestinationCords, updateInitialCords, updateWayPoints } from '../../../redux/reducers/map.reducer';
 
 interface cords {
   latitude: number;
@@ -40,27 +41,22 @@ const boundingBox = {
 
 
 const MapViewComponent = () => {
-  const [crrLocation, setLocation]: any = useState(null);
+  const {crrLocation, initialCords, destination, wayPoints} = useSelector((state: any) => state.mapData);
   const markerRef = useRef<any>(null);
   let mapRef : any;
   const dispatch = useDispatch();
   const {selectedActivity} = useSelector((state: any) => state.activity);
   const recordStatus = useSelector((state: any) => state.recordStatus);
   const {isStart, isPaused, isEnd} = recordStatus;
-  const [initialCords, setInitialCords] = useState<cords | null>(null);
-  const [finalCords, setFinalCords] = useState<cords | null>(null);
-  const [destination, setDestination] = useState<cords | null>(null);
-  const [wayPoints, setWayPoints] = useState<Array<cords>>([]);
   let Points: Array<cords> = [];
   const [watchId, setWatchId] = useState<number>(0);
-  const {timer} = useSelector((state: any) => state.recordActivity);
+
 
   useEffect(() => {
     let centroid: any;
     const {width, height} = Dimensions.get('window');
     const ASPECT_RATIO = width / height;
     Geolocation.getCurrentPosition(info => {
-      console.log(info);
       centroid = info.coords;
       const lat = parseFloat(centroid.latitude);
       const lng = parseFloat(centroid.longitude);
@@ -68,12 +64,12 @@ const MapViewComponent = () => {
       const southwestLat = parseFloat(boundingBox.southWest.latitude);
       const latDelta = northeastLat - southwestLat;
       const lngDelta = latDelta * ASPECT_RATIO;
-      setLocation({
+      dispatch(updateCurrentLocation({
         latitude: lat,
         longitude: lng,
         latitudeDelta: 0.0041,
         longitudeDelta: 0.0021,
-      });
+      }));
     },
     (error) => console.log(error)
     );
@@ -81,7 +77,8 @@ const MapViewComponent = () => {
 
   const setNewWayPointsCord = (points: cords) => {
     Points.push(points);
-    setWayPoints([...Points]);
+    console.log('Points', Points);
+    dispatch(updateWayPoints([...Points]))
   };
 
   // once user clicks on the start recording btn
@@ -90,14 +87,32 @@ const MapViewComponent = () => {
       Geolocation.getCurrentPosition(info => {
         const {coords} = info;
         const {latitude, longitude} = coords;
-        setInitialCords({latitude, longitude});
+        dispatch(updateInitialCords({latitude, longitude}));
         setNewWayPointsCord({latitude, longitude});
         watchLocation();
+        AddActivtyServiceHandler({latitude, longitude});
       },
       (error) => console.log('Error', error),
       );
     }
   }, [isStart]);
+
+  const AddActivtyServiceHandler = async (coords: cords) => {
+     try {
+       const data = {
+        activityTypeId: selectedActivity._id,
+        from: {
+          lat: coords.latitude,
+          lng: coords.longitude,
+        }
+       }
+       const res = await AddActivityService(data);
+       const activityId = res.data.data;
+       dispatch(updateActivityId(activityId));
+     } catch (error: any) {
+        Alert.alert('Error', error.response.data.errors[0].message);
+     }
+  };
 
   useEffect(() => {
     // stop watching the location when user clicks on the stop watch
@@ -110,26 +125,14 @@ const MapViewComponent = () => {
       Points = [...wayPoints];
       watchLocation();
     }
-  }, [isPaused])
+  }, [isPaused]);
 
   // calculate distace by using initial cords and new cords by watch location
   const calculateDistance = () => {
-    console.log('Points', Points)
     const distance = getDistance(Points[0], Points[Points.length - 1]) / 1000;
-    console.log('Distance', distance)
     dispatch(updateDistanceMeter(distance));
-    // calculateSpeed(distance);
     return distance;
   }
-
-  // const calculateSpeed = (distance: number) => {
-  //   if(timer){
-  //     const speed = distance / (timer / 3600000);
-  //     if(speed){
-  //       dispatch(updateSpeedMeter(speed));
-  //     }
-  //   }
-  // }
 
   //watch and set the users device location
   const watchLocation = () => {
@@ -137,11 +140,9 @@ const MapViewComponent = () => {
       ({coords}) => {
         const {latitude, longitude} = coords;
         const cords = {latitude, longitude};
-        setDestination({...cords});
-        console.log('Updated Location :=>', cords);
+        dispatch(updateDestinationCords({...cords}))
         setNewWayPointsCord(cords);
         calculateDistance();
-        // console.log('speed', coords.speed)
       },
       error => {
         Alert.alert('Location Error', error.message);
@@ -157,21 +158,6 @@ const MapViewComponent = () => {
     );
     setWatchId(Id);
   };
-
-  //once user finish the recording we will set the final cords state
-  useEffect(() => {
-    if (isEnd) {
-      setTimeout(() => {
-        Geolocation.clearWatch(watchId);
-        setInitialCords(null);
-        setDestination(null);
-        setFinalCords(null);
-        dispatch(resetRecordStatus());
-        dispatch(resetRecordActivityValue());
-        setWayPoints([]);
-      }, 3000);
-    }
-  }, [isEnd]);
 
   if (Platform.OS === 'android') {
     return (
@@ -199,17 +185,6 @@ const MapViewComponent = () => {
                 />
               ) : null}
 
-              {/* Path will only show if recording is started and we have initial and dest. cords */}
-              {/* {isStart && initialCords && finalCords ? (
-                <MapViewDirections
-                  origin={initialCords}
-                  destination={finalCords}
-                  apikey={GOOGLE_MAP_APIKEY}
-                  strokeWidth={3}
-                  strokeColor={colorPrimary}
-                  waypoints={wayPoints}
-                />
-              ) : null} */}
             </MapView>
           ) : (
             <MapView
@@ -222,8 +197,8 @@ const MapViewComponent = () => {
               style={styles.map}
               provider="google"
               region={crrLocation}
+              showsUserLocation={true}
             > 
-              <Marker coordinate={crrLocation} />
             </MapView>
           )
         ) : (
