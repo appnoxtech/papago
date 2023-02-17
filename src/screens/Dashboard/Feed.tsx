@@ -9,17 +9,17 @@ import {responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import useGetActivityList from '../../hooks/getActivityList.hook';
 import { getUserDataFromLocalStorage } from '../../utlis/auth';
 import { GetActivityListService } from '../../services/Dashboard/record.service';
-import { useDispatch } from 'react-redux';
-import { updateUserActivityList } from '../../redux/reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserActivityList, updateUserDetails } from '../../redux/reducers/user';
 
 const Feed = () => {
   const dispatch = useDispatch();
-  const [userDetails, setUserDetails] = useState<any | null>(null);
+  const {userDetails} = useSelector((state: any) => state.user);
+
   useGetActivityList();
   const getUserDetails = async () => {
     const data = await getUserDataFromLocalStorage();
-    console.log('data', data);
-    setUserDetails(data);
+    dispatch(updateUserDetails({...data}));
   }
   useEffect(() => {
     getUserDetails();
@@ -30,6 +30,8 @@ const Feed = () => {
      try {
       const response = await GetActivityListService();
       const list = response.data.data;
+      console.log('list 7777777', list);
+      
       if(list.length){
         dispatch(updateUserActivityList([...list]));
       }

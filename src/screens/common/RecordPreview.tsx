@@ -16,8 +16,8 @@ import BtnPrimary from '../../components/common/buttons/BtnPrimary';
 import { resetRecordActivityValue, updateRecordActivityValue } from '../../redux/reducers/recordActivityReducer';
 import { useNavigation } from '@react-navigation/native';
 import { updateUserActivityList } from '../../redux/reducers/user';
-import { UpdateActivityService } from '../../services/Dashboard/record.service';
-import { recordActivityData } from '../../interfaces/Dashboard/record.interface';
+import { AddActivityService, UpdateActivityService } from '../../services/Dashboard/record.service';
+import { addActivity, recordActivityData } from '../../interfaces/Dashboard/record.interface';
 import { resetMapData } from '../../redux/reducers/map.reducer';
 import { resetRecordStatus } from '../../redux/reducers/record.reducer';
 const date = new Date();
@@ -69,30 +69,35 @@ const RecordPreview = () => {
 
   const handleSaveActivity = () => {
       const data = {
-        activityId: activity.activityId,
+         finishedAt: activity.finishedAt,
+         startedAt: activity.startedAt,
          activityName: input.title,
          distance: distance,
          duration: timer,
          activityTypeId: selectedActivity._id,
          immediatePoints: [...activity.immediatePoints],
     }
-    updateActivityServiceHandler(data);
-    navigation.reset({
-        index: 0,
-        routes: [{name: 'Dashboard' as never}]
-      });
+    console.log('data', data);
+    AddActivtyServiceHandler(data);
   };
 
-  const updateActivityServiceHandler = async (data: recordActivityData) => {
-     try {
-      await UpdateActivityService(data);
+  const AddActivtyServiceHandler = async (data: addActivity) => {
+    try {
+      const res = await AddActivityService(data);
+      // const activityId = res.data.data;
       dispatch(resetMapData());
       dispatch(resetRecordStatus());
       dispatch(resetRecordActivityValue());
-     } catch (error: any) {
-        Alert.alert('Error', error.response.data.errors[0].message);
-     }
-  }
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Dashboard' as never}]
+      });
+    } catch (error: any) {
+      console.log('error', error);
+      
+       Alert.alert('Error', error.response.data.errors[0].message);
+    }
+ };
 
   return (
     <SafeAreaView style={styles.container}>

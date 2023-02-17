@@ -7,12 +7,10 @@ import {
   View,
 } from 'react-native';
 import { getDistance } from 'geolib';
-import MapViewDirections from 'react-native-maps-directions';
-import MapView, {Marker, AnimatedRegion, Polyline} from 'react-native-maps';
+import MapView, {Marker, Polyline} from 'react-native-maps';
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import {useDispatch, useSelector} from 'react-redux';
-import {GOOGLE_MAP_APIKEY} from '@env';
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import startPointImage from '../../../../assets/images/Dashboard/Oval.png';
 import finishPointImage from '../../../../assets/images/Dashboard/greenMarker.png';
@@ -21,7 +19,7 @@ import {
   resetRecordStatus,
   updateRecordStatus,
 } from '../../../redux/reducers/record.reducer';
-import { resetRecordActivityValue, setImmediatePoints, updateActivityId, updateDistanceMeter, updateRecordActivityValue, updateSpeedMeter } from '../../../redux/reducers/recordActivityReducer';
+import { resetRecordActivityValue, setImmediatePoints, updateActivityFinishedAt, updateActivityId, updateDistanceMeter, updateRecordActivityValue, updateSpeedMeter } from '../../../redux/reducers/recordActivityReducer';
 import { updateCurrentLocation, updateDestinationCords, updateInitialCords, updateWayPoints } from '../../../redux/reducers/map.reducer';
 
 interface cords {
@@ -90,36 +88,23 @@ const MapViewComponent = () => {
         dispatch(updateInitialCords({latitude, longitude}));
         setNewWayPointsCord({latitude, longitude});
         watchLocation();
-        AddActivtyServiceHandler({latitude, longitude});
+        // AddActivtyServiceHandler({latitude, longitude});
       },
       (error) => console.log('Error', error),
       );
     }
   }, [isStart]);
 
-  const AddActivtyServiceHandler = async (coords: cords) => {
-     try {
-       const data = {
-        activityTypeId: selectedActivity._id,
-        from: {
-          lat: coords.latitude,
-          lng: coords.longitude,
-        }
-       }
-       const res = await AddActivityService(data);
-       const activityId = res.data.data;
-       dispatch(updateActivityId(activityId));
-     } catch (error: any) {
-        Alert.alert('Error', error.response.data.errors[0].message);
-     }
-  };
+  
 
   useEffect(() => {
     // stop watching the location when user clicks on the stop watch
     if(isStart && isPaused){
+      const date = new Date;
       console.log('stopped watching user location')
       Geolocation.clearWatch(watchId);
       dispatch(setImmediatePoints(wayPoints));
+      dispatch(updateActivityFinishedAt(date.getTime()));
     }else if(isStart && !isPaused){
       console.log('started watching user location');
       Points = [...wayPoints];

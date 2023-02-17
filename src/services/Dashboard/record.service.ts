@@ -1,12 +1,8 @@
 import axios from 'axios';
 import {URL} from '@env';
 import {getUserDataFromLocalStorage} from '../../utlis/auth';
-import { recordActivityData } from '../../interfaces/Dashboard/record.interface';
+import { addActivity, cords } from '../../interfaces/Dashboard/record.interface';
 
-interface addActivity {
-  activityTypeId: string;
-  from: cord;
-}
 
 
 type cord = {lat: number; lng: number};
@@ -19,6 +15,11 @@ export const GetActivityTypeList = async () => {
 export const AddActivityService = async (data: addActivity) => {
   const url = `${URL}activity/add-activity`;
   const user = await getUserDataFromLocalStorage();
+  
+  console.log('tokkken', user.accessToken);
+  console.log('data', data);
+  console.log('url', url);
+  
   return axios.post(url, data, {
     headers: {
       'x-auth-token': user.accessToken,
@@ -26,7 +27,19 @@ export const AddActivityService = async (data: addActivity) => {
   });
 };
 
-export const UpdateActivityService = async (data: recordActivityData) => {
+export const GetActivityByIdService = async(activityId: string) => {
+  const url = `${URL}activity/get-one-activity/${activityId}`;
+  const user = await getUserDataFromLocalStorage();
+  
+  return axios.get(url, {
+    headers: {
+      'x-auth-token': user.accessToken,
+    },
+  });
+}
+
+export const UpdateActivityService = async (data: addActivity) => {
+  
   const url = `${URL}activity/update-activity`;
   const user = await getUserDataFromLocalStorage();
   return axios.post(url, data, {
@@ -37,8 +50,10 @@ export const UpdateActivityService = async (data: recordActivityData) => {
 }
 
 export const GetActivityListService = async () => {
-  const url = `${URL}activity/get-all-activity`;
+  const PRL = 'http://192.168.68.105:5000/api/'
+  const url = `${PRL}activity/get-all-activity`;
   const user = await getUserDataFromLocalStorage();
+  
   return axios.get(url, {
     headers: {
       'x-auth-token': user.accessToken,

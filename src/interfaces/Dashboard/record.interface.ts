@@ -16,11 +16,12 @@ export interface cords {
   longitude: number
 }
 
-export interface recordActivityData {
-  activityId: string,
+export interface addActivity {
+  finishedAt: number,
+  startedAt: number,
   activityName: string,
-  duration: number,
   distance: number,
+  duration: number,
+  activityTypeId: string,
   immediatePoints: Array<cords>,
-  activityTypeId: string
 }

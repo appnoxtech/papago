@@ -18,6 +18,7 @@ import {Styles} from '../../../../assets/styles/GlobalStyles';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateRecordStatus} from '../../../redux/reducers/record.reducer';
 import {
+  updateActivityStartedAt,
   updateRecordActivityTimer,
   updateRecordActivityValue,
 } from '../../../redux/reducers/recordActivityReducer';
@@ -55,9 +56,11 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   }, [isActive, isPaused]);
 
   const startBtnPress = () => {
+    const data = new Date;
     dispatch(updateRecordActivityValue({key: 'isActive', value: true}));
     dispatch(updateRecordActivityValue({key: 'isPaused', value: false}));
     dispatch(updateRecordStatus({key: 'isStart', value: true}));
+    dispatch(updateActivityStartedAt(data.getTime()));
   };
 
   const handlePauseResume = () => {

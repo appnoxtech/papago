@@ -5,13 +5,14 @@ const initialState = {
     distance: 0,
     speed: 0,
     activity: {
+        startedAt: 0,
         activityId: '',
         activityName: '',
         finishedAt: 0,
         duration: 0,
         distance: 0,
         immediatePoints: [],
-        activityTypeId: ''
+        activityTypeId: '',
     }
 }
 
@@ -53,7 +54,25 @@ interface updateActivityId {
     payload: string
 }
 
-type action = updateActivityValue | resetActivityValue | updateRecordActivityTimer | updateRecordDistanceMeter | updatRecordSpeedMeter | updateImmediatePoints | updateActivityId;
+interface updateActivityStartedAt {
+    type: 'UPDATE_ACTIVITY_STARTED_AT',
+    payload: number
+}
+
+interface updateActivityFinishedAt {
+    type: 'UPDATE_ACTIVITY_FINISHED_AT',
+    payload: number
+}
+
+type action =  updateActivityValue 
+              | resetActivityValue 
+              | updateRecordActivityTimer 
+              | updateRecordDistanceMeter 
+              | updatRecordSpeedMeter 
+              | updateImmediatePoints 
+              | updateActivityId
+              | updateActivityStartedAt
+              | updateActivityFinishedAt;
 
 const RecordActivityReducer = (state = initialState , action: action) => {
     switch (action.type) {
@@ -111,6 +130,26 @@ const RecordActivityReducer = (state = initialState , action: action) => {
                 }
             }
         }
+
+        case 'UPDATE_ACTIVITY_STARTED_AT': {
+            return {
+                ...state,
+                activity: {
+                    ...state.activity,
+                    startedAt: action.payload
+                }
+            }
+        }
+
+        case 'UPDATE_ACTIVITY_FINISHED_AT': {
+            return {
+                ...state,
+                activity: {
+                    ...state.activity,
+                    finishedAt: action.payload
+                }
+            }
+        }
   
         default:
             return state
@@ -164,5 +203,19 @@ export const updateActivityId = (id: string) => {
     return {
         type: 'UPDATE_ACTIVITY_ID',
         payload: id,
+    }
+}
+
+export const updateActivityStartedAt = (milliSeconds: number): updateActivityStartedAt => {
+    return {
+        type: 'UPDATE_ACTIVITY_STARTED_AT',
+        payload: milliSeconds
+    }
+}
+
+export const updateActivityFinishedAt = (milliSeconds: number) => {
+    return {
+        type: 'UPDATE_ACTIVITY_FINISHED_AT',
+        payload: milliSeconds
     }
 }

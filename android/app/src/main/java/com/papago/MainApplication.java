@@ -8,6 +8,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
+import cl.json.RNSharePackage;
+import cl.json.ShareApplication;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {

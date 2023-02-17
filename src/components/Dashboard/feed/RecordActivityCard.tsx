@@ -1,5 +1,12 @@
-import {LogBox, StyleSheet, Text, View, TextInput} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  LogBox,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
+import React from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -13,41 +20,50 @@ import {
   colorPrimary,
   colorSecondary,
 } from '../../../../assets/styles/GlobalTheme';
-import { data } from '../../../interfaces/Dashboard/record.interface';
+import {data} from '../../../interfaces/Dashboard/record.interface';
+import { useNavigation } from '@react-navigation/native';
 
 interface params {
-    Activity: data;
-  }
+  Activity: data;
+}
+
 const RenderActivityIcon = ({Activity}: params) => {
-    console.log('Activity', Activity)
-    if (Activity.iconFamily === 'MaterialCommunityIcons') {
-      return (
-        <MaterialCommunityIcons
-          size={25}
-          name={Activity.iconName}
-          color={colorSecondary}
-        />
-      );
-    } else if (Activity.iconFamily === 'FontAwesome5') {
-      return <FontAwesome5 size={35} name={Activity.iconName} color={colorSecondary} />;
-    } else {
-      return <Ionicons size={35} name={Activity.iconName} color={colorSecondary} />;
-    }
+  console.log('Activity', Activity);
+  if (Activity.iconFamily === 'MaterialCommunityIcons') {
+    return (
+      <MaterialCommunityIcons
+        size={25}
+        name={Activity.iconName}
+        color={colorSecondary}
+      />
+    );
+  } else if (Activity.iconFamily === 'FontAwesome5') {
+    return (
+      <FontAwesome5 size={35} name={Activity.iconName} color={colorSecondary} />
+    );
+  } else {
+    return (
+      <Ionicons size={35} name={Activity.iconName} color={colorSecondary} />
+    );
+  }
 };
 
 const RenderDistance: React.FC<any> = ({distance}) => {
-    if(distance < 1){
-        return (
-            <Text style={styles.activityDistanceText}>{(distance * 1000)} m</Text>
-        )
-    }else{
-        <Text style={styles.activityDistanceText}>{distance?.toFixed(2)} Km</Text>
-    }
+  if (distance < 1) {
+    return <Text style={styles.activityDistanceText}>{distance * 1000} m</Text>;
+  } else {
+    <Text style={styles.activityDistanceText}>{distance?.toFixed(2)} Km</Text>;
+  }
 };
 
+
+
 const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
-//   console.log('acitivity', acitivity)
-  console.log('ison data', acitivity.activityData)
+    const navigation = useNavigation();
+
+    const handleCardPress = () => {
+        navigation.navigate('ViewActivity' as never, {acitivity} as never);
+    }
   return (
     <View style={styles.container} key={id}>
       <View style={styles.head}>
@@ -72,19 +88,23 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
           </Button>
         </View>
       </View>
-      <View style={styles.activtyCard}>
-        <View style={styles.activitySummary}>
-          <View style={styles.activitySummaryContainer}>
-             <View style={styles.activityIconContainer}>
-                <RenderActivityIcon Activity={acitivity.activityData}  />
-             </View>
-             <View style={styles.activityDistanceTextContainer}>
+      <TouchableOpacity onPress={handleCardPress}>
+        <View style={styles.activtyCard}>
+          <View style={styles.activitySummary}>
+            <View style={styles.activitySummaryContainer}>
+              <View style={styles.activityIconContainer}>
+                <RenderActivityIcon Activity={acitivity.activityData} />
+              </View>
+              <View style={styles.activityDistanceTextContainer}>
                 <RenderDistance distance={acitivity.distance} />
-             </View>
+              </View>
+            </View>
+            <Text style={styles.activitySummaryText}>
+              {acitivity.activityName}
+            </Text>
           </View>
-          <Text style={styles.activitySummaryText}>{acitivity.activityName}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
       <View style={styles.btnsContainer}>
         <IconButton
           icon="heart-outline"
@@ -101,12 +121,9 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
       </View>
       <View style={styles.footer}>
         <Avatar.Text size={28} label="SC" />
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Add a Comment"
-        />
+        <TextInput style={styles.commentInput} placeholder="Add a Comment" />
         <Button>
-            <Text style={styles.cmntBtnText}>Post</Text>
+          <Text style={styles.cmntBtnText}>Post</Text>
         </Button>
       </View>
     </View>
@@ -120,7 +137,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: responsiveScreenWidth(3),
     paddingVertical: responsiveScreenHeight(1),
     alignItems: 'center',
-    marginBottom: responsiveScreenHeight(2)
+    marginBottom: responsiveScreenHeight(2),
   },
   head: {
     flexDirection: 'row',
@@ -204,26 +221,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cmntBtnText: {
-    color: 'grey'
+    color: 'grey',
   },
   activitySummaryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   activityIconContainer: {
-     padding: 1.5,
-     paddingHorizontal: 2.5,
-     backgroundColor: 'black',
-     justifyContent: 'center',
-     alignItems: 'center',
-     borderBottomLeftRadius: 3,
-     borderTopLeftRadius: 3,
+    padding: 1.5,
+    paddingHorizontal: 2.5,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomLeftRadius: 3,
+    borderTopLeftRadius: 3,
   },
   activityDistanceTextContainer: {
     paddingVertical: responsiveScreenHeight(0.4),
     paddingHorizontal: 3,
     justifyContent: 'center',
-     alignItems: 'center',
+    alignItems: 'center',
     backgroundColor: 'black',
     marginLeft: responsiveScreenWidth(1.3),
     borderBottomRightRadius: 3,
@@ -232,6 +249,6 @@ const styles = StyleSheet.create({
   activityDistanceText: {
     color: colorSecondary,
     fontSize: responsiveFontSize(2.2),
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
