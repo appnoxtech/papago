@@ -1,5 +1,5 @@
 import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -9,10 +9,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import LinearGradient from 'react-native-linear-gradient';
 import Share from 'react-native-share';
+import useGenerateDynamicLinks from '../../../hooks/dynamicLinks/createDynamicLinks';
 
 interface props {
   iconName: 'facebook' | 'whatsapp' | 'instagram' | 'dots-three-horizontal';
   Label: 'Facebook' | 'Whatsapp' | 'Instagram' | 'Others';
+  url: string;
 }
 
 interface customOptions {
@@ -26,7 +28,8 @@ interface customOptions {
   filename: string;
   attributionURL?: string;
 }
-const SocialShareBtn: React.FC<props> = ({iconName, Label}) => {
+const SocialShareBtn: React.FC<props> = ({iconName, Label, url}) => {
+
   const getBtnBackgroundColor = () => {
     if (Label === 'Whatsapp') {
       return '#25d366';
@@ -39,31 +42,11 @@ const SocialShareBtn: React.FC<props> = ({iconName, Label}) => {
     }
   };
 
-  const singleShare = async (customOptions: any) => {
-    try {
-      const {isInstalled} = await Share.isPackageInstalled(
-        'com.whatsapp.android',
-      );
-
-      if (isInstalled) {
-        //@ts-ignore
-        await Share.shareSingle(customOptions);
-      } else {
-        Alert.alert(
-          'Whatsapp not installed',
-          'Whatsapp not installed, please install.',
-          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-        );
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleShareActivity = () => {
     if (Label === 'Others') {
       const options = {
-        url: 'https://google.com',
+        url: url,
         message: 'Teting',
       };
       Share.open(options);
@@ -71,12 +54,12 @@ const SocialShareBtn: React.FC<props> = ({iconName, Label}) => {
       Share.shareSingle({
         title: 'Share via whatsapp',
         message: 'some awesome dangerous message',
-        url: 'https://google.com',
+        url: url,
         social: Share.Social.WHATSAPP,
       });
     } else if (Label === 'Facebook') {
       Share.shareSingle({
-        backgroundImage: 'http://google.com', // url or an base64 string
+        backgroundImage: url, // url or an base64 string
         appId: '1841318379580781', //facebook appId
         social: Share.Social.FACEBOOK_STORIES,
       });
@@ -87,7 +70,7 @@ const SocialShareBtn: React.FC<props> = ({iconName, Label}) => {
       })
     } else {
       const options = {
-        url: 'https://google.com',
+        url: url,
         message: 'Teting',
       };
       Share.open(options);

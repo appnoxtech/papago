@@ -50,8 +50,7 @@ export const UpdateActivityService = async (data: addActivity) => {
 }
 
 export const GetActivityListService = async () => {
-  const PRL = 'http://192.168.68.105:5000/api/'
-  const url = `${PRL}activity/get-all-activity`;
+  const url = `${URL}activity/get-all-activity`;
   const user = await getUserDataFromLocalStorage();
   
   return axios.get(url, {

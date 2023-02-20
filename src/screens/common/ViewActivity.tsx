@@ -18,6 +18,8 @@ import ActivityMapPreview from '../../components/Dashboard/common/ActivityMapPre
 import {GetActivityByIdService} from '../../services/Dashboard/record.service';
 import { activity, cords, data } from '../../interfaces/Dashboard/record.interface';
 import { getDayFromTimestamp, getMonthNameByIndex, getYearFromTimeStamp } from '../../utlis/common';
+import useGenerateDynamicLinks from '../../hooks/dynamicLinks/createDynamicLinks';
+import { useNavigation } from '@react-navigation/native';
 
 interface activityDetails {
   _id: string,
@@ -30,33 +32,38 @@ interface activityDetails {
   startedAt: number,
   userId: string,
 }
+
+const RenderDistance: React.FC<any> = ({distance}) => {
+  if (distance < 1) {
+    return <Text style={styles.meterReading}>{distance * 1000} m</Text>;
+  } else {
+    <Text style={styles.meterReading}>{distance?.toFixed(2)} Km</Text>;
+  }
+};
+
+
 const ViewActivity: React.FC<any> = ({route}) => {
-  const {acitivity} = route.params;
+  const {id} = route.params;
+  const navigation = useNavigation();
+  const GenerateDynamicLinks = useGenerateDynamicLinks();
+  const [url, setUrl] = useState('');
   const {userDetails} = useSelector((state: any) => state.user);
   const [activityDetails, setActivityDetails] = useState<null | activityDetails>(null);
-  const getTime = () => {
-    const d = new Date(acitivity.finishedAt);
-    console.log('d.getTime()', d.getMinutes());
-  };
-  useEffect(() => {
-    getTime();
-  }, []);
-
-  const RenderDistance: React.FC<any> = ({distance}) => {
-    if (distance < 1) {
-      return <Text style={styles.meterReading}>{distance * 1000} m</Text>;
-    } else {
-      <Text style={styles.meterReading}>{distance?.toFixed(2)} Km</Text>;
-    }
-  };
 
   useEffect(() => {
     GetActivityByIdHandler();
+    handleLinkGenration();
   }, []);
+
+  const handleLinkGenration = async () => {
+    const link = await GenerateDynamicLinks('activity', id );
+    console.log('link', link);
+    setUrl(link);
+  }
 
   const GetActivityByIdHandler = async () => {
     try {
-      const res = await GetActivityByIdService(acitivity._id);
+      const res = await GetActivityByIdService(id);
       const {data} = res.data;
       setActivityDetails(data);
     } catch (error: any) {
@@ -78,6 +85,10 @@ const ViewActivity: React.FC<any> = ({route}) => {
     return str;
   };
 
+  const handleActivityActivity = () => {
+    navigation.navigate('EditActivity' as never, {activityDetails} as never);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithBackBtn title="My activity" />
@@ -96,14 +107,14 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 <View style={styles.line}></View>
                 <View>
                   <Text style={styles.activityName}>
-                    {acitivity.activityName}
+                    {activityDetails.activityName}
                   </Text>
                 </View>
                 <View style={styles.activityTypeMainContainer}>
                   <View style={styles.line}></View>
                   <View style={styles.activityTypeContainer}>
                     <Text style={styles.activityType}>
-                      {acitivity.activityData.activityName}
+                      {activityDetails.activityData.activityName}
                     </Text>
                   </View>
                 </View>
@@ -120,7 +131,9 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 <Button
                   style={styles.btn}
                   mode="contained"
-                  buttonColor={colorPrimary}>
+                  buttonColor={colorPrimary}
+                  onPress={handleActivityActivity}
+                >
                   <Text style={styles.btnText}>Edit this activity</Text>
                 </Button>
               </View>
@@ -129,10 +142,11 @@ const ViewActivity: React.FC<any> = ({route}) => {
               <View style={styles.shareContainer}>
                 <Text style={styles.shareTextHeading}>Share your activity</Text>
                 <View style={styles.btnContainer}>
-                  <SocialShareBtn iconName="facebook" Label="Facebook" />
-                  <SocialShareBtn iconName="whatsapp" Label="Whatsapp" />
-                  <SocialShareBtn iconName="instagram" Label="Instagram" />
+                  <SocialShareBtn url={url} iconName="facebook" Label="Facebook" />
+                  <SocialShareBtn url={url}iconName="whatsapp" Label="Whatsapp" />
+                  <SocialShareBtn url={url} iconName="instagram" Label="Instagram" />
                   <SocialShareBtn
+                    url={url}
                     iconName="dots-three-horizontal"
                     Label="Others"
                   />
@@ -146,7 +160,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                   </View>
                   <View style={styles.meterContainer}>
                     <Text style={styles.meterName}>Distance</Text>
-                    <RenderDistance distance={acitivity.distance} />
+                    <RenderDistance distance={activityDetails.distance} />
                   </View>
                   <View style={styles.meterContainer}>
                     <Text style={styles.meterName}>Speed (Km/h)</Text>
@@ -163,7 +177,9 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 <Button
                   style={styles.mainBtn}
                   mode="contained"
-                  buttonColor={colorPrimary}>
+                  buttonColor={colorPrimary}
+                  onPress={handleActivityActivity}
+                >
                   <Text style={styles.mainBtnText}>Edit this activity</Text>
                 </Button>
               </View>

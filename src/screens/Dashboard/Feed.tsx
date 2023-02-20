@@ -30,8 +30,6 @@ const Feed = () => {
      try {
       const response = await GetActivityListService();
       const list = response.data.data;
-      console.log('list 7777777', list);
-      
       if(list.length){
         dispatch(updateUserActivityList([...list]));
       }

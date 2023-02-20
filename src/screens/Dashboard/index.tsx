@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,14 +11,50 @@ import Feed from './Feed';
 import Search from './Friends';
 import Menu from './Menu';
 import { colorPrimary } from '../../../assets/styles/GlobalTheme';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import Events from './Events';
 import RecordStackScreen from './Records';
 import { responsiveFontSize } from 'react-native-responsive-dimensions';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 
 const Dashboard: React.FC<any> = () => {
+  const navigation = useNavigation();
+
+  const handleDynamicLink = (link: any) => {
+    // Handle dynamic link inside your own application
+    if(link){
+      if (link.url.includes('activity')) {
+        // ...navigate to your offers screen
+        const subStringList = link.url.split("/");
+        const id = subStringList[subStringList.length - 1];
+        navigation.navigate('ViewActivity' as never , {id} as never);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    // When the component is unmounted, remove the listener
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    dynamicLinks()
+      .getInitialLink()
+      .then((link: any) => {
+        if(link){
+          if (link.url.includes('activity')) {
+            // ...navigate to your offers screen
+            const subStringList = link.url.split("/");
+            const id = subStringList[subStringList.length - 1];
+            navigation.navigate('ViewActivity' as never , {id} as never);
+          }
+        }
+      });
+  }, []);
 
   return (
     <>

@@ -22,6 +22,7 @@ import {
 } from '../../../../assets/styles/GlobalTheme';
 import {data} from '../../../interfaces/Dashboard/record.interface';
 import { useNavigation } from '@react-navigation/native';
+import { parseMillisecondsIntoReadableTime } from '../../../utlis/common';
 
 interface params {
   Activity: data;
@@ -62,7 +63,7 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
     const navigation = useNavigation();
 
     const handleCardPress = () => {
-        navigation.navigate('ViewActivity' as never, {acitivity} as never);
+        navigation.navigate('ViewActivity' as never, {id: acitivity._id} as never);
     }
   return (
     <View style={styles.container} key={id}>
@@ -70,7 +71,7 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
         <Avatar.Text size={33} label="SC" />
         <View style={styles.headUserDetails}>
           <Text style={styles.headText}>{userDetails.name}</Text>
-          <Text style={styles.headSubText}>Today at 10:26 AM</Text>
+          <Text style={styles.headSubText}>Today at {parseMillisecondsIntoReadableTime(acitivity.startedAt)}</Text>
         </View>
       </View>
       <View style={styles.shareContainer}>
