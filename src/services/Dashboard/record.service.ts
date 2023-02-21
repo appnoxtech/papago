@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {URL} from '@env';
 import {getUserDataFromLocalStorage} from '../../utlis/auth';
-import { addActivity, cords } from '../../interfaces/Dashboard/record.interface';
+import { addActivity, cords, updateActivity } from '../../interfaces/Dashboard/record.interface';
 
 
 
@@ -38,7 +38,7 @@ export const GetActivityByIdService = async(activityId: string) => {
   });
 }
 
-export const UpdateActivityService = async (data: addActivity) => {
+export const UpdateActivityService = async (data: updateActivity) => {
   
   const url = `${URL}activity/update-activity`;
   const user = await getUserDataFromLocalStorage();
@@ -52,7 +52,6 @@ export const UpdateActivityService = async (data: addActivity) => {
 export const GetActivityListService = async () => {
   const url = `${URL}activity/get-all-activity`;
   const user = await getUserDataFromLocalStorage();
-  
   return axios.get(url, {
     headers: {
       'x-auth-token': user.accessToken,

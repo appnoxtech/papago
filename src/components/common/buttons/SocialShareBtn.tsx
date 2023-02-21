@@ -1,4 +1,4 @@
-import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, Linking, Pressable, StyleSheet, Text, View} from 'react-native';
 import React, { useState } from 'react';
 import {
   responsiveFontSize,
@@ -10,6 +10,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import LinearGradient from 'react-native-linear-gradient';
 import Share from 'react-native-share';
 import useGenerateDynamicLinks from '../../../hooks/dynamicLinks/createDynamicLinks';
+import { ShareDialog } from 'react-native-fbsdk-next';
 
 interface props {
   iconName: 'facebook' | 'whatsapp' | 'instagram' | 'dots-three-horizontal';
@@ -53,19 +54,27 @@ const SocialShareBtn: React.FC<props> = ({iconName, Label, url}) => {
     } else if (Label === 'Whatsapp') {
       Share.shareSingle({
         title: 'Share via whatsapp',
-        message: 'some awesome dangerous message',
+        message: 'Hey Checkout this Activity.',
         url: url,
         social: Share.Social.WHATSAPP,
       });
     } else if (Label === 'Facebook') {
       Share.shareSingle({
-        backgroundImage: url, // url or an base64 string
+        backgroundImage: 'https://img.freepik.com/free-photo/blue-concrete-wall-textures-background_74190-7757.jpg?w=1380&t=st=1676881610~exp=1676882210~hmac=8f676e719819616db41d7a8b9f27ce693a6059deedd5d126f3f824a729c80d53', // url or an base64 string
+        // stickerImage: 'data:https://dejpknyizje2n.cloudfront.net/marketplace/products/3251981e869a49cdab8e219b12e7adbb.png', //or you can use "data:" url
+        backgroundBottomColor: '#fefefe',
+        backgroundTopColor: '#906df4',
+        message: 'checkout my activity',
+        attributionURL: url, //in beta
         appId: '1841318379580781', //facebook appId
         social: Share.Social.FACEBOOK_STORIES,
       });
+
     }else if (Label === 'Instagram') {
       Share.shareSingle({
-        url: 'instagram://share', 
+        url: `instagram://share`, 
+        message: 'Checkout my activity',
+        urls: [url],
         social: Share.Social.INSTAGRAM
       })
     } else {

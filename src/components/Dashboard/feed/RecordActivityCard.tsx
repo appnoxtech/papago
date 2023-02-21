@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -23,6 +23,8 @@ import {
 import {data} from '../../../interfaces/Dashboard/record.interface';
 import { useNavigation } from '@react-navigation/native';
 import { parseMillisecondsIntoReadableTime } from '../../../utlis/common';
+import Share from 'react-native-share';
+import useGenerateDynamicLinks from '../../../hooks/dynamicLinks/createDynamicLinks';
 
 interface params {
   Activity: data;
@@ -40,11 +42,11 @@ const RenderActivityIcon = ({Activity}: params) => {
     );
   } else if (Activity.iconFamily === 'FontAwesome5') {
     return (
-      <FontAwesome5 size={35} name={Activity.iconName} color={colorSecondary} />
+      <FontAwesome5 size={25} name={Activity.iconName} color={colorSecondary} />
     );
   } else {
     return (
-      <Ionicons size={35} name={Activity.iconName} color={colorSecondary} />
+      <Ionicons size={25} name={Activity.iconName} color={colorSecondary} />
     );
   }
 };
@@ -61,10 +63,27 @@ const RenderDistance: React.FC<any> = ({distance}) => {
 
 const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
     const navigation = useNavigation();
-
+    const [url, setUrl] = useState('');
+    const GenrateDynamicLinks = useGenerateDynamicLinks();
     const handleCardPress = () => {
-        navigation.navigate('ViewActivity' as never, {id: acitivity._id} as never);
+      navigation.navigate('ViewActivity' as never, {id: acitivity._id} as never);
     }
+
+    const handleLinkGenration = async () => {
+      const link = await GenrateDynamicLinks('activity', id);
+      console.log('link', link);
+      setUrl(link);
+    };
+    const handleShareBtnPress = () => {
+      const options = {
+        url: url,
+        message: 'Teting',
+      };
+      Share.open(options);
+    }
+  useEffect(() => {
+    handleLinkGenration();
+  }, []);
   return (
     <View style={styles.container} key={id}>
       <View style={styles.head}>
@@ -84,7 +103,9 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
           <Button
             style={styles.btn}
             mode="contained"
-            buttonColor={colorPrimary}>
+            buttonColor={colorPrimary}
+            onPress={handleShareBtnPress}
+          >
             <Text style={styles.btnText}>Share</Text>
           </Button>
         </View>

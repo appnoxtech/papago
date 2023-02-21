@@ -25,3 +25,9 @@ export interface addActivity {
   activityTypeId: string,
   immediatePoints: Array<cords>,
 }
+
+export interface updateActivity {
+  activityId?: string,
+  activityName?: string,
+  activityTypeId?: string,
+}

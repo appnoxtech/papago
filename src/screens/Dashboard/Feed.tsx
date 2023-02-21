@@ -11,11 +11,13 @@ import { getUserDataFromLocalStorage } from '../../utlis/auth';
 import { GetActivityListService } from '../../services/Dashboard/record.service';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserActivityList, updateUserDetails } from '../../redux/reducers/user';
+import useGetActivityFeedList from '../../hooks/Feed/GetFeedList.hook';
 
 const Feed = () => {
   const dispatch = useDispatch();
   const {userDetails} = useSelector((state: any) => state.user);
-
+  const getUserActivityFeedList = useGetActivityFeedList();
+  
   useGetActivityList();
   const getUserDetails = async () => {
     const data = await getUserDataFromLocalStorage();
@@ -26,17 +28,7 @@ const Feed = () => {
     getUserActivityFeedList();
   }, []);
 
-  const getUserActivityFeedList = async() => {
-     try {
-      const response = await GetActivityListService();
-      const list = response.data.data;
-      if(list.length){
-        dispatch(updateUserActivityList([...list]));
-      }
-     } catch (error: any) {
-       Alert.alert('Error', error.response.data.errors[0].message);
-     }
-  }
+
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>

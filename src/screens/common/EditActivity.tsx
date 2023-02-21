@@ -1,22 +1,55 @@
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import React, { useState } from 'react';
+import {Alert, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderWithBackBtn from '../../components/common/Headers/HeaderWithBackBtn';
 import { responsiveFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { colorPrimary } from '../../../assets/styles/GlobalTheme';
 import { Button } from 'react-native-paper';
+import { updateActivity } from '../../redux/reducers/activity';
+import { UpdateActivityService } from '../../services/Dashboard/record.service';
+import useGetActivityFeedList from '../../hooks/Feed/GetFeedList.hook';
 
-const EditActivity = () => {
+const EditActivity: React.FC<any> = ({route}) => {
+  const dispatch = useDispatch();
+  const getUserActivityFeedList = useGetActivityFeedList();
+  const {activityDetails} = route.params;
   const [title, setTitle] = useState('')
   const navigation = useNavigation();
   const {selectedActivity} = useSelector((state: any) => state.activity);
   const handleActivityPress = () => {
     navigation.navigate('SelectActivity' as never);
   };
+
+  useEffect(() => {
+    dispatch(updateActivity(activityDetails.activityData));
+  }, []);
+
+  console.log('selectedActivity', selectedActivity);
+  
+  const updateActivtyServiceHandler = async () => {
+    try {
+      const data = {
+         activityId: activityDetails._id,
+         activityTypeId: selectedActivity._id,
+         activityName: title,
+      }
+      console.log('data', data);
+      await UpdateActivityService(data);
+      await  getUserActivityFeedList();
+      Alert.alert('Notification', 'Successfully Updated Activity');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Dashboard' as never}],
+      });
+    } catch (error) {
+      Alert.alert('Notification', 'Successfully Updated Activity');
+    }
+  }
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainContainer}>
@@ -47,38 +80,13 @@ const EditActivity = () => {
             </TouchableOpacity>
           </View>
         </View>
-        {/* <View style={styles.tiles}>
-          <View>
-            <Text style={styles.primaryText}>Video orientation</Text>
-          </View>
-          <View>
-            <TouchableOpacity onPress={handleActivityPress}>
-              <View style={styles.activityContainer}>
-                <Text style={styles.activityName}>{selectedActivity.activityName}</Text>
-                <Entypo style={styles.icon} name="chevron-right" size={18} />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View> */}
-        {/* <View style={styles.tiles}>
-          <View>
-            <Text style={styles.primaryText}>Video settings</Text>
-          </View>
-          <View>
-            <TouchableOpacity onPress={handleActivityPress}>
-              <View style={styles.activityContainer}>
-                <Text style={styles.activityName}>{selectedActivity.activityName}</Text>
-                <Entypo style={styles.icon} name="chevron-right" size={18} />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View> */}
       </View>
       <View style={styles.btnContainer}>
             <Button
                mode='contained'
                buttonColor={colorPrimary}
                style={styles.btn}
+               onPress={updateActivtyServiceHandler}
             >
                 <Text style={styles.btnText}>Save Changes</Text>
             </Button>

@@ -1,7 +1,7 @@
 import {ScrollView, StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Headers from '../../components/Dashboard/common/Headers';
+import Headers from '../../../components/Dashboard/common/Headers';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {
@@ -11,10 +11,15 @@ import {
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import {Button} from 'react-native-paper';
-import ChallengesCard from '../../components/Dashboard/chalenges/ChallengesCard';
-import ProgressCard from '../../components/Dashboard/chalenges/ProgressCard';
+import ChallengesCard from '../../../components/Dashboard/chalenges/ChallengesCard';
+import ProgressCard from '../../../components/Dashboard/chalenges/ProgressCard';
+import { useNavigation } from '@react-navigation/native';
 
 const Events = () => {
+  const navigation = useNavigation();
+  const handleCreateActivity = () => {
+    navigation.navigate('CreateEvent' as never);
+  }
   return (
     <SafeAreaView style={styles.mainContainer}>
       <Headers title="Events" />
@@ -24,7 +29,7 @@ const Events = () => {
             <Image
               resizeMode="contain"
               style={styles.image}
-              source={require('../../../assets/images/Dashboard/card1.png')}
+              source={require('../../../../assets/images/Dashboard/card1.png')}
             />
           </View>
           <View style={styles.cardRightContainer}>
@@ -35,7 +40,7 @@ const Events = () => {
               mode="contained"
               buttonColor={'#34b8ed'}
               style={styles.btn}
-              onPress={() => console.log('heelo')}>
+              onPress={handleCreateActivity}>
               Let's Go
             </Button>
           </View>

@@ -5,6 +5,7 @@ import RecordPreview from '../screens/common/RecordPreview';
 import ViewActivity from '../screens/common/ViewActivity';
 import {useNavigation} from '@react-navigation/native';
 import EditActivity from '../screens/common/EditActivity';
+import SelectActivityType from '../screens/common/SelectActivity';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,11 @@ const AuthRoutes = () => {
       <Stack.Screen
         name="EditActivity"
         component={EditActivity}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SelectActivity"
+        component={SelectActivityType}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

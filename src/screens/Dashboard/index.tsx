@@ -16,6 +16,7 @@ import Events from './Events';
 import RecordStackScreen from './Records';
 import { responsiveFontSize } from 'react-native-responsive-dimensions';
 import { useNavigation } from '@react-navigation/native';
+import EventsStackScreen from './Events';
 
 const Tab = createBottomTabNavigator();
 
@@ -108,7 +109,7 @@ const Dashboard: React.FC<any> = () => {
         />
         <Tab.Screen
           name="Events"
-          component={Events}
+          component={EventsStackScreen}
           options={{
             headerShown: false,
           }}

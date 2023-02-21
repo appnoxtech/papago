@@ -1,4 +1,4 @@
-import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderWithBackBtn from '../../components/common/Headers/HeaderWithBackBtn';
@@ -16,21 +16,30 @@ import {colorPrimary} from '../../../assets/styles/GlobalTheme';
 import SocialShareBtn from '../../components/common/buttons/SocialShareBtn';
 import ActivityMapPreview from '../../components/Dashboard/common/ActivityMapPreview';
 import {GetActivityByIdService} from '../../services/Dashboard/record.service';
-import { activity, cords, data } from '../../interfaces/Dashboard/record.interface';
-import { getDayFromTimestamp, getMonthNameByIndex, getYearFromTimeStamp } from '../../utlis/common';
+import {
+  activity,
+  cords,
+  data,
+} from '../../interfaces/Dashboard/record.interface';
+import {
+  getDayFromTimestamp,
+  getMonthNameByIndex,
+  getYearFromTimeStamp,
+} from '../../utlis/common';
 import useGenerateDynamicLinks from '../../hooks/dynamicLinks/createDynamicLinks';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import SocialBtnList from '../../components/common/SocialBtnList';
 
 interface activityDetails {
-  _id: string,
-  activityData: data,
-  activityName: string,
-  distance: number,
-  duration: number,
-  finishedAt: number,
-  immediatePoints: Array<cords>,
-  startedAt: number,
-  userId: string,
+  _id: string;
+  activityData: data;
+  activityName: string;
+  distance: number;
+  duration: number;
+  finishedAt: number;
+  immediatePoints: Array<cords>;
+  startedAt: number;
+  userId: string;
 }
 
 const RenderDistance: React.FC<any> = ({distance}) => {
@@ -41,14 +50,14 @@ const RenderDistance: React.FC<any> = ({distance}) => {
   }
 };
 
-
 const ViewActivity: React.FC<any> = ({route}) => {
   const {id} = route.params;
   const navigation = useNavigation();
   const GenerateDynamicLinks = useGenerateDynamicLinks();
   const [url, setUrl] = useState('');
   const {userDetails} = useSelector((state: any) => state.user);
-  const [activityDetails, setActivityDetails] = useState<null | activityDetails>(null);
+  const [activityDetails, setActivityDetails] =
+    useState<null | activityDetails>(null);
 
   useEffect(() => {
     GetActivityByIdHandler();
@@ -56,10 +65,10 @@ const ViewActivity: React.FC<any> = ({route}) => {
   }, []);
 
   const handleLinkGenration = async () => {
-    const link = await GenerateDynamicLinks('activity', id );
+    const link = await GenerateDynamicLinks('activity', id);
     console.log('link', link);
     setUrl(link);
-  }
+  };
 
   const GetActivityByIdHandler = async () => {
     try {
@@ -67,7 +76,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
       const {data} = res.data;
       setActivityDetails(data);
     } catch (error: any) {
-      Alert.alert('Error', error.response.data.errors[0].message)
+      Alert.alert('Error', error.response.data.errors[0].message);
     }
   };
 
@@ -87,7 +96,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
 
   const handleActivityActivity = () => {
     navigation.navigate('EditActivity' as never, {activityDetails} as never);
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -101,7 +110,11 @@ const ViewActivity: React.FC<any> = ({route}) => {
               <FontAwesome size={40} name="play-circle" color="white" />
               <View style={styles.acitivityCard}>
                 <View>
-                  <Text style={styles.activityText}>On {getMonthNameByIndex(activityDetails.startedAt)} {getDayFromTimestamp(activityDetails.startedAt)}, {getYearFromTimeStamp(activityDetails.startedAt)} by</Text>
+                  <Text style={styles.activityText}>
+                    On {getMonthNameByIndex(activityDetails.startedAt)}{' '}
+                    {getDayFromTimestamp(activityDetails.startedAt)},{' '}
+                    {getYearFromTimeStamp(activityDetails.startedAt)} by
+                  </Text>
                   <Text style={styles.userName}>{userDetails.name}</Text>
                 </View>
                 <View style={styles.line}></View>
@@ -120,7 +133,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 </View>
                 <View style={styles.iconContainer}>
                   <View style={styles.likeContainer}>
-                    <FontAwesome name="heart-o" size={20} color="black" />
+                    <Octicons name="heart" size={20} color="black" />
                     <Text style={styles.iconCount}>0</Text>
                   </View>
                   <View style={styles.commentContainer}>
@@ -128,35 +141,22 @@ const ViewActivity: React.FC<any> = ({route}) => {
                     <Text style={styles.iconCount}>0</Text>
                   </View>
                 </View>
-                <Button
-                  style={styles.btn}
-                  mode="contained"
-                  buttonColor={colorPrimary}
-                  onPress={handleActivityActivity}
-                >
-                  <Text style={styles.btnText}>Edit this activity</Text>
-                </Button>
               </View>
             </View>
             <View style={styles.body}>
               <View style={styles.shareContainer}>
                 <Text style={styles.shareTextHeading}>Share your activity</Text>
                 <View style={styles.btnContainer}>
-                  <SocialShareBtn url={url} iconName="facebook" Label="Facebook" />
-                  <SocialShareBtn url={url}iconName="whatsapp" Label="Whatsapp" />
-                  <SocialShareBtn url={url} iconName="instagram" Label="Instagram" />
-                  <SocialShareBtn
-                    url={url}
-                    iconName="dots-three-horizontal"
-                    Label="Others"
-                  />
+                  <SocialBtnList url={url} />
                 </View>
               </View>
               <View style={styles.MeterReadingContainer}>
                 <View style={styles.readingContainer}>
                   <View style={styles.meterContainer}>
                     <Text style={styles.meterName}>Duration</Text>
-                    <Text style={styles.meterReading}>{getTimeFormat(activityDetails.duration)}</Text>
+                    <Text style={styles.meterReading}>
+                      {getTimeFormat(activityDetails.duration)}
+                    </Text>
                   </View>
                   <View style={styles.meterContainer}>
                     <Text style={styles.meterName}>Distance</Text>
@@ -164,13 +164,18 @@ const ViewActivity: React.FC<any> = ({route}) => {
                   </View>
                   <View style={styles.meterContainer}>
                     <Text style={styles.meterName}>Speed (Km/h)</Text>
-                    <Text style={styles.meterReading}>{(activityDetails.distance / (activityDetails.duration / 3600000)).toFixed(2)}</Text>
+                    <Text style={styles.meterReading}>
+                      {(
+                        activityDetails.distance /
+                        (activityDetails.duration / 3600000)
+                      ).toFixed(2)}
+                    </Text>
                   </View>
                 </View>
               </View>
-              <ActivityMapPreview 
-                wayPoints={activityDetails.immediatePoints} 
-                startedAt={activityDetails.startedAt} 
+              <ActivityMapPreview
+                wayPoints={activityDetails.immediatePoints}
+                startedAt={activityDetails.startedAt}
                 finishedAt={activityDetails.finishedAt}
               />
               <View style={styles.mainBtnContainer}>
@@ -178,8 +183,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                   style={styles.mainBtn}
                   mode="contained"
                   buttonColor={colorPrimary}
-                  onPress={handleActivityActivity}
-                >
+                  onPress={handleActivityActivity}>
                   <Text style={styles.mainBtnText}>Edit this activity</Text>
                 </Button>
               </View>
@@ -216,12 +220,13 @@ const styles = StyleSheet.create({
   body: {},
   acitivityCard: {
     position: 'absolute',
-    bottom: responsiveScreenHeight(-32),
+    bottom: responsiveScreenHeight(-24),
     left: responsiveScreenWidth(18),
     backgroundColor: 'white',
     paddingHorizontal: responsiveScreenWidth(2),
     paddingVertical: responsiveScreenHeight(2),
     width: responsiveScreenWidth(65),
+    elevation: 8,
     borderRadius: 5,
     shadowColor: '#171717',
     shadowOffset: {width: -2, height: 4},
@@ -294,19 +299,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   btn: {
+    zIndex: 100,
     width: responsiveScreenWidth(50),
     paddingVertical: responsiveScreenHeight(0.5),
     marginTop: responsiveScreenHeight(1),
+    backgroundColor: colorPrimary,
   },
   btnText: {
     fontSize: responsiveFontSize(2),
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
   },
   shareContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: responsiveScreenHeight(36),
+    marginTop: responsiveScreenHeight(30),
     borderBottomWidth: 1,
     borderBottomColor: '#bbbbbb',
     paddingVertical: responsiveScreenHeight(1),

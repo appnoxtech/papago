@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
-    width: responsiveScreenWidth(30)
+    width: responsiveScreenWidth(80)
   },
 });
