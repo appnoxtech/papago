@@ -5,8 +5,9 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -20,11 +21,24 @@ import {
   colorPrimary,
   colorSecondary,
 } from '../../../../assets/styles/GlobalTheme';
-import {data} from '../../../interfaces/Dashboard/record.interface';
-import { useNavigation } from '@react-navigation/native';
-import { parseMillisecondsIntoReadableTime } from '../../../utlis/common';
+import {
+  activityDetails,
+  actvityCommentDetails,
+  actvityLikeCommentDetails,
+  actvityLikeDetails,
+  data,
+} from '../../../interfaces/Dashboard/record.interface';
+import {useNavigation} from '@react-navigation/native';
+import {parseMillisecondsIntoReadableTime} from '../../../utlis/common';
 import Share from 'react-native-share';
 import useGenerateDynamicLinks from '../../../hooks/dynamicLinks/createDynamicLinks';
+import {
+  GetActivityByIdService,
+  GetRecordLikeAndCommentDetails,
+  LikeRecordActivityService,
+} from '../../../services/Dashboard/record.service';
+import useHandleError from '../../../hooks/common/handelError';
+import CommentModal from '../../../screens/common/CommentModal';
 
 interface params {
   Activity: data;
@@ -59,38 +73,124 @@ const RenderDistance: React.FC<any> = ({distance}) => {
   }
 };
 
-
-
 const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
-    const navigation = useNavigation();
-    const [url, setUrl] = useState('');
-    const GenrateDynamicLinks = useGenerateDynamicLinks();
-    const handleCardPress = () => {
-      navigation.navigate('ViewActivity' as never, {id: acitivity._id} as never);
-    }
+  const navigation = useNavigation();
+  const handleError = useHandleError();
+  const inputRef = useRef(null);
+  const [url, setUrl] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [activityDetails, setActivityDetails] =
+    useState<null | activityDetails>(null);
+  const [commentList, setCommentList] =
+    useState<Array<actvityCommentDetails> | null>(null);
+  const [likeList, setLikeList] = useState<Array<actvityLikeDetails> | null>(
+    null,
+  );
+  const [comment, setComment] = useState('');
+  const [isLiked, setIsLiked] = useState<0 | 1>(0);
+  const GenrateDynamicLinks = useGenerateDynamicLinks();
 
-    const handleLinkGenration = async () => {
-      const link = await GenrateDynamicLinks('activity', id);
-      console.log('link', link);
-      setUrl(link);
+  const handleCardPress = () => {
+    navigation.navigate('ViewActivity' as never, {id: acitivity._id} as never);
+  };
+
+  const handleLinkGenration = async () => {
+    const link = await GenrateDynamicLinks('activity', acitivity._id);
+    setUrl(link);
+  };
+
+  const handleShareBtnPress = () => {
+    const options = {
+      url: url,
+      message: 'Teting',
     };
-    const handleShareBtnPress = () => {
-      const options = {
-        url: url,
-        message: 'Teting',
+    Share.open(options);
+  };
+
+  const handleLikeActivityService = async () => {
+    try {
+      const data = {
+        activityId: acitivity._id as string,
+        like: activityDetails?.isLiked ? 0 : (1 as 0 | 1),
       };
-      Share.open(options);
+      console.log('data', data);
+      await LikeRecordActivityService(data);
+      setIsLiked(isLiked === 0 ? 1 : 0);
+      Alert.alert('Notification', 'Liked');
+      GetActivityByIdHandler();
+    } catch (error: any) {
+      handleError(error);
     }
+  };
+
+  const handleCommentActivityService = async () => {
+    try {
+      const data = {
+        activityId: acitivity._id as string,
+        message: comment,
+      };
+      console.log('data', data);
+      await LikeRecordActivityService(data);
+      Alert.alert('Notification', 'Comment');
+      setComment('');
+      handleGetActivityLikeAndCommentDetails();
+    } catch (error: any) {
+      handleError(error);
+    }
+  };
+
+  const handleGetActivityLikeAndCommentDetails = async () => {
+    try {
+      const res = await GetRecordLikeAndCommentDetails(acitivity._id);
+      const {commentData, likeData} = res.data.data;
+      console.log('commentData', commentData);
+      console.log('likeData', likeData);
+      
+      if (commentData.length) {
+        setCommentList([...commentData]);
+      }
+      if (likeData.length) {
+        setLikeList([...likeData]);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const commentClickHandler = () => {
+    //@ts-ignore
+    inputRef.current.focus();
+  };
+
   useEffect(() => {
     handleLinkGenration();
+    handleGetActivityLikeAndCommentDetails();
+    GetActivityByIdHandler();
   }, []);
+
+  const GetActivityByIdHandler = async () => {
+    try {
+      const res = await GetActivityByIdService(acitivity._id);
+      const {data} = res.data;
+      setActivityDetails(data);
+    } catch (error: any) {
+      Alert.alert('Error', error.response.data.errors[0].message);
+    }
+  };
+
+  //console.log('activityDetails', activityDetails);
+  // console.log('acitivity', acitivity);
+  // console.log('commentList', commentList);
+
   return (
     <View style={styles.container} key={id}>
       <View style={styles.head}>
         <Avatar.Text size={33} label="SC" />
         <View style={styles.headUserDetails}>
-          <Text style={styles.headText}>{userDetails.name}</Text>
-          <Text style={styles.headSubText}>Today at {parseMillisecondsIntoReadableTime(acitivity.startedAt)}</Text>
+          <Text style={styles.headText}>{acitivity.name}</Text>
+          <Text style={styles.headSubText}>
+            Today at {parseMillisecondsIntoReadableTime(acitivity.startedAt)}
+          </Text>
         </View>
       </View>
       <View style={styles.shareContainer}>
@@ -104,8 +204,7 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
             style={styles.btn}
             mode="contained"
             buttonColor={colorPrimary}
-            onPress={handleShareBtnPress}
-          >
+            onPress={handleShareBtnPress}>
             <Text style={styles.btnText}>Share</Text>
           </Button>
         </View>
@@ -129,25 +228,68 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
       </TouchableOpacity>
       <View style={styles.btnsContainer}>
         <IconButton
-          icon="heart-outline"
-          iconColor={'black'}
+          icon={activityDetails?.isLiked ? 'heart' : 'heart-outline'}
+          iconColor={activityDetails?.isLiked ? colorPrimary : 'black'}
           size={25}
-          onPress={() => console.log('Pressed')}
+          onPress={handleLikeActivityService}
         />
         <IconButton
           icon="comment-outline"
           iconColor={'black'}
           size={25}
-          onPress={() => console.log('Pressed')}
+          onPress={commentClickHandler}
         />
       </View>
+      {commentList ? (
+        <TouchableOpacity
+          onPress={() => setIsModalVisible(true)}
+          style={styles.commentPreviewMainContainer}>
+          <View style={styles.commentPreviewContainer}>
+            <Avatar.Text size={30} label="SC" />
+            <View style={styles.rightContainer}>
+              <Text style={styles.userName}>
+                {commentList[commentList.length - 1].name}
+              </Text>
+              <Text style={styles.message}>
+                {commentList[commentList.length - 1].message}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      ) : null}
       <View style={styles.footer}>
         <Avatar.Text size={28} label="SC" />
-        <TextInput style={styles.commentInput} placeholder="Add a Comment" />
-        <Button>
-          <Text style={styles.cmntBtnText}>Post</Text>
+        <TextInput
+          ref={inputRef}
+          value={comment}
+          onChangeText={text => setComment(text)}
+          style={styles.commentInput}
+          placeholder="Add a Comment"
+        />
+        <Button
+          onPress={handleCommentActivityService}
+          disabled={comment.length ? false : true}>
+          <Text
+            style={[
+              styles.cmntBtnText,
+              {color: comment.length ? colorPrimary : 'grey'},
+            ]}>
+            Post
+          </Text>
         </Button>
       </View>
+      <CommentModal
+        isModalVisible={isModalVisible}
+        setModalVisible={setIsModalVisible}
+        activityId={acitivity._id}
+      />
+      {/* {isModalVisible ? (
+        <CommentModal
+          isModalVisible={isModalVisible}
+          setModalVisible={setIsModalVisible}
+          activityId={acitivity._id}
+        />
+      ) : null} */}
     </View>
   );
 };
@@ -272,5 +414,28 @@ const styles = StyleSheet.create({
     color: colorSecondary,
     fontSize: responsiveFontSize(2.2),
     fontWeight: 'bold',
+  },
+  userName: {
+    fontSize: responsiveFontSize(2),
+    color: 'black',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  commentPreviewMainContainer: {
+    width: '100%',
+  },
+  commentPreviewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: responsiveScreenHeight(1.7),
+  },
+  rightContainer: {
+    marginLeft: responsiveScreenWidth(2),
+  },
+  message: {
+    marginTop: responsiveScreenHeight(0.5),
+    fontSize: responsiveFontSize(1.7),
+    fontWeight: 400,
   },
 });

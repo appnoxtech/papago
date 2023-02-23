@@ -11,8 +11,10 @@ const initialState = {
         finishedAt: 0,
         duration: 0,
         distance: 0,
+        speed: 0,
         immediatePoints: [],
         activityTypeId: '',
+        images: []
     }
 }
 
@@ -64,6 +66,16 @@ interface updateActivityFinishedAt {
     payload: number
 }
 
+interface updateActivitySpeed {
+    type: 'UPDATE_ACTIVTY_SPEED',
+    payload: number
+}
+
+interface updateActvityImage {
+    type: 'UPDATE_ACTIVITY_IMAGE',
+    payload: any
+}
+
 type action =  updateActivityValue 
               | resetActivityValue 
               | updateRecordActivityTimer 
@@ -72,7 +84,9 @@ type action =  updateActivityValue
               | updateImmediatePoints 
               | updateActivityId
               | updateActivityStartedAt
-              | updateActivityFinishedAt;
+              | updateActivitySpeed
+              | updateActivityFinishedAt
+              | updateActvityImage;
 
 const RecordActivityReducer = (state = initialState , action: action) => {
     switch (action.type) {
@@ -150,6 +164,26 @@ const RecordActivityReducer = (state = initialState , action: action) => {
                 }
             }
         }
+
+        case 'UPDATE_ACTIVTY_SPEED' : {
+            return {
+                ...state,
+                activity: {
+                    ...state.activity,
+                    speed: action.payload
+                }
+            }
+        }
+
+        case 'UPDATE_ACTIVITY_IMAGE': {
+            return {
+                ...state,
+                activity: {
+                    ...state.activity,
+                    images: [...state.activity.images, action.payload],
+                }
+            }
+        }
   
         default:
             return state
@@ -217,5 +251,19 @@ export const updateActivityFinishedAt = (milliSeconds: number) => {
     return {
         type: 'UPDATE_ACTIVITY_FINISHED_AT',
         payload: milliSeconds
+    }
+}
+
+export const updateActivitySpeed = (speed: number) : updateActivitySpeed => {
+    return {
+        type: 'UPDATE_ACTIVTY_SPEED',
+        payload: speed,
+    }
+}
+
+export const updateActvityImage = (data: any): updateActvityImage => {
+    return {
+        type: 'UPDATE_ACTIVITY_IMAGE',
+        payload: data,
     }
 }

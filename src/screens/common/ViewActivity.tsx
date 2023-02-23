@@ -18,6 +18,7 @@ import ActivityMapPreview from '../../components/Dashboard/common/ActivityMapPre
 import {GetActivityByIdService} from '../../services/Dashboard/record.service';
 import {
   activity,
+  activityDetails,
   cords,
   data,
 } from '../../interfaces/Dashboard/record.interface';
@@ -30,17 +31,7 @@ import useGenerateDynamicLinks from '../../hooks/dynamicLinks/createDynamicLinks
 import {useNavigation} from '@react-navigation/native';
 import SocialBtnList from '../../components/common/SocialBtnList';
 
-interface activityDetails {
-  _id: string;
-  activityData: data;
-  activityName: string;
-  distance: number;
-  duration: number;
-  finishedAt: number;
-  immediatePoints: Array<cords>;
-  startedAt: number;
-  userId: string;
-}
+
 
 const RenderDistance: React.FC<any> = ({distance}) => {
   if (distance < 1) {
@@ -133,8 +124,8 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 </View>
                 <View style={styles.iconContainer}>
                   <View style={styles.likeContainer}>
-                    <Octicons name="heart" size={20} color="black" />
-                    <Text style={styles.iconCount}>0</Text>
+                    <Octicons name={activityDetails.likeCount ? "heart-fill" : "heart"} size={20} color={activityDetails.likeCount ? 'red' : 'black'} />
+                    <Text style={styles.iconCount}>{activityDetails.likeCount}</Text>
                   </View>
                   <View style={styles.commentContainer}>
                     <Octicons name="comment" size={20} color="black" />
@@ -177,6 +168,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 wayPoints={activityDetails.immediatePoints}
                 startedAt={activityDetails.startedAt}
                 finishedAt={activityDetails.finishedAt}
+                images={activityDetails.images}
               />
               <View style={styles.mainBtnContainer}>
                 <Button

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { responsiveFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -8,18 +8,33 @@ import { colorPrimary } from '../../../../assets/styles/GlobalTheme'
 import startPointImage from '../../../../assets/images/Dashboard/Oval.png';
 import finishPointImage from '../../../../assets/images/Dashboard/greenMarker.png';
 import { dateStartTimeAndEndTime, getTwelveHourTimeBySeconds, parseMillisecondsIntoReadableTime } from '../../../utlis/common';
+import ShowViewActivityImages from '../Record/ShowViewActivityImages';
 
 interface props {
     wayPoints: Array<cords>,
     startedAt: number,
     finishedAt: number,
+    images: any
 }
-const ActivityMapPreview: React.FC<props> = ({wayPoints, startedAt, finishedAt}) => {
+const ActivityMapPreview: React.FC<props> = ({wayPoints, startedAt, finishedAt, images}) => {
+  const mapRef = useRef(null);
   const initialRegion = {
     ...wayPoints[0],
     latitudeDelta: 0.0030,
     longitudeDelta: 0.0020,
   }
+
+  useEffect(() => {
+    //@ts-ignore
+    mapRef.current.fitToCoordinates(wayPoints, {
+        edgePadding: {
+            top: 5,
+            bottom: 5,
+            left: 0,
+            right: 0,
+        }
+    })
+  }, [])
   
   
   return (
@@ -36,7 +51,7 @@ const ActivityMapPreview: React.FC<props> = ({wayPoints, startedAt, finishedAt})
           </View>
        </View>
        <View style={styles.middleContainer}>
-          <MapView region={initialRegion} style={StyleSheet.absoluteFill}>
+          <MapView ref={mapRef} region={initialRegion} style={StyleSheet.absoluteFill}>
                <Marker image={startPointImage} coordinate={wayPoints[0]} />
                <Marker image={finishPointImage} coordinate={wayPoints[wayPoints.length -1]} />
                <Polyline
@@ -47,6 +62,11 @@ const ActivityMapPreview: React.FC<props> = ({wayPoints, startedAt, finishedAt})
           </MapView>
           {/* <MapView style={StyleSheet.absoluteFill} /> */}
        </View>
+       {
+         images.length ? 
+          <ShowViewActivityImages images={images} startingCords={wayPoints[0]}  />
+         : null
+       }
        <View style={styles.bottomContainer}>
            <View style={styles.bottomLeftContainer}>
               <View style={styles.circle}>

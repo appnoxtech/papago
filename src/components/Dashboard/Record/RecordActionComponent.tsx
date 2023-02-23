@@ -1,11 +1,13 @@
 /*eslint no-bitwise: "error"*/
 import {
+  Alert,
   Linking,
   Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  PermissionsAndroid
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -19,20 +21,27 @@ import {useDispatch, useSelector} from 'react-redux';
 import {updateRecordStatus} from '../../../redux/reducers/record.reducer';
 import {
   updateActivityStartedAt,
+  updateActvityImage,
   updateRecordActivityTimer,
   updateRecordActivityValue,
 } from '../../../redux/reducers/recordActivityReducer';
 import Geolocation from '@react-native-community/geolocation';
 import {Button} from 'react-native-paper';
+import {updateInitialCords} from '../../../redux/reducers/map.reducer';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Feather from 'react-native-vector-icons/Feather';
+import { ImageUploadService } from '../../../services/common/ImageUploadService';
+import useHandleError from '../../../hooks/common/handelError';
 
 interface props {
-  setIsFinished: any
+  setIsFinished: any;
 }
 
 const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   const dispatch = useDispatch();
+  const {destination} = useSelector((state: any) => state.mapData);
   const [gpsAvailable, setGpsAvailable] = useState(false);
-
+  const handleError = useHandleError();
   const {timer, isPaused, isActive, distance, speed} = useSelector(
     (state: any) => state.recordActivity,
   );
@@ -56,11 +65,23 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   }, [isActive, isPaused]);
 
   const startBtnPress = () => {
-    const data = new Date;
-    dispatch(updateRecordActivityValue({key: 'isActive', value: true}));
-    dispatch(updateRecordActivityValue({key: 'isPaused', value: false}));
-    dispatch(updateRecordStatus({key: 'isStart', value: true}));
-    dispatch(updateActivityStartedAt(data.getTime()));
+    console.log('isClicked');
+
+    const data = new Date();
+    Geolocation.getCurrentPosition(
+      info => {
+        const {coords} = info;
+        const {latitude, longitude} = coords;
+        console.log('latitude', latitude);
+        dispatch(updateInitialCords({latitude, longitude}));
+        dispatch(updateRecordActivityValue({key: 'isActive', value: true}));
+        dispatch(updateRecordActivityValue({key: 'isPaused', value: false}));
+        dispatch(updateRecordStatus({key: 'isStart', value: true}));
+        dispatch(updateActivityStartedAt(data.getTime()));
+        // AddActivtyServiceHandler({latitude, longitude});
+      },
+      error => console.log('Error', error),
+    );
   };
 
   const handlePauseResume = () => {
@@ -70,7 +91,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
 
   const handleIsFinishClick = () => {
     setIsFinished(true);
-  }
+  };
 
   const getSecondDigit = () => {
     let seconds = Math.floor((timer / 1000) % 60);
@@ -91,15 +112,6 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   };
 
   useEffect(() => {
-    if (timer) {
-      const speed = distance / (timer / 3600000);
-      if (speed) {
-        dispatch(updateRecordActivityValue({key: 'speed', value: speed}));
-      }
-    }
-  }, [distance]);
-
-  useEffect(() => {
     Geolocation.getCurrentPosition(
       info => {
         setGpsAvailable(true);
@@ -113,6 +125,88 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     await Linking.openSettings();
   }, []);
 
+  const handleCameraClick = async () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+      cameraType: 'back',
+    }
+    //@ts-ignore
+    const response = await launchCamera(options);
+    if(response.assets){
+      // console.log('response.assets', response.assets);
+      const image = response.assets[0];
+      const data = new FormData();
+      // data.append('name', image.fileName);
+      // data.append('avatar', {
+      //   name: image.fileName,
+      //   type: image.type,
+      //   uri: Platform.OS === 'ios' ? image.uri?.replace('file://', '') : image.uri,
+      // });
+      // console.log('data', JSON.stringify(data.getParts(), null, 2));
+      // console.log('DATA', data);
+      data.append('file', {
+        uri: image.uri,
+        type: image.type,
+        name: image.fileName
+      });
+      await handleImageUpdload(data);
+      // dispatch(update)
+
+    }else if(response.errorMessage) {
+      Alert.alert('Message', response.errorMessage);
+    }
+  };
+
+  const handleImageUpdload = async (image: any) => {
+    try {
+      const res = await ImageUploadService(image);
+      console.log('res', res.data);
+      const {data} = res.data;
+      const imageUrl = data.baseUrl + data.imagePath;
+      Geolocation.getCurrentPosition(
+        info => {
+          const {coords} = info;
+          const {latitude, longitude} = coords;
+          console.log('latitude', latitude);
+          const imageData = {
+            image: imageUrl,
+            timestamp: new Date().getTime(),
+            coordinate: {latitude, longitude},
+          }
+          console.log('Activty Image', imageData);
+          dispatch(updateActvityImage(imageData));
+        },
+        error => console.log('Error', error),
+      );
+    } catch (error) {
+      handleError(error)
+    }
+  }
+
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: "App Camera Permission",
+          message:"App needs access to your camera ",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("Camera permission given");
+        handleCameraClick();
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {gpsAvailable ? (
@@ -120,7 +214,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
           <View style={styles.head}>
             <View style={styles.distanceContainer}>
               <Text style={styles.primaryText}>
-                {distance ? distance.toFixed(2) : '0:0'}
+                {distance ? distance.toFixed(2) : '0.0'}
               </Text>
               <Text style={styles.subText}>Km</Text>
             </View>
@@ -136,6 +230,14 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
             </View>
           </View>
           <View style={styles.body}>
+            <TouchableOpacity
+              style={styles.cameraContainer}
+              onPress={requestCameraPermission}>
+              <Feather
+                name="camera"
+                size={30}
+              />
+            </TouchableOpacity>
             {isActive && isPaused ? (
               <View style={styles.btnsContainer}>
                 <TouchableOpacity
@@ -240,27 +342,31 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: responsiveFontSize(4),
     color: 'black',
+    fontWeight: 'bold',
   },
   subText: {
     fontSize: responsiveFontSize(1.5),
     color: 'black',
     textAlign: 'center',
+    fontWeight: '700',
   },
   body: {
     marginVertical: responsiveScreenHeight(1),
     paddingHorizontal: responsiveScreenWidth(2),
     height: responsiveScreenHeight(19),
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    position: 'relative',
   },
   btnContainer: {
     width: responsiveScreenWidth(20),
-    height: responsiveScreenHeight(9.4),
+    height: responsiveScreenWidth(20),
     backgroundColor: colorPrimary,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    borderRadius: 100,
+    borderRadius: responsiveScreenWidth(10),
     shadowColor: 'white',
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -272,8 +378,8 @@ const styles = StyleSheet.create({
   btnResume: {
     fontSize:
       Platform.OS === 'android'
-        ? responsiveFontSize(1.8)
-        : responsiveFontSize(1.6),
+        ? responsiveFontSize(1.3)
+        : responsiveFontSize(1.3),
     textAlign: 'center',
     color: 'black',
   },
@@ -281,5 +387,17 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2),
     textAlign: 'center',
     color: 'white',
+  },
+  cameraContainer: {
+    width: responsiveScreenWidth(15),
+    height: responsiveScreenWidth(15),
+    borderRadius: responsiveScreenWidth(8),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#bbbbbb',
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: responsiveScreenHeight(6.5),
+    left: responsiveScreenWidth(10),
   },
 });

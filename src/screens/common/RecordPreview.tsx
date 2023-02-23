@@ -76,6 +76,8 @@ const RecordPreview = () => {
          duration: timer,
          activityTypeId: selectedActivity._id,
          immediatePoints: [...activity.immediatePoints],
+         speed: activity.speed,
+         images: activity.images
     }
     console.log('data', data);
     AddActivtyServiceHandler(data);
@@ -84,7 +86,6 @@ const RecordPreview = () => {
   const AddActivtyServiceHandler = async (data: addActivity) => {
     try {
       const res = await AddActivityService(data);
-      // const activityId = res.data.data;
       dispatch(resetMapData());
       dispatch(resetRecordStatus());
       dispatch(resetRecordActivityValue());
@@ -93,8 +94,6 @@ const RecordPreview = () => {
         routes: [{name: 'Dashboard' as never}]
       });
     } catch (error: any) {
-      console.log('error', error);
-      
        Alert.alert('Error', error.response.data.errors[0].message);
     }
  };

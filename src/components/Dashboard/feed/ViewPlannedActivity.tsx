@@ -11,7 +11,7 @@ import RecordActivityCard from './RecordActivityCard';
 
 const ViewPlannedActivity: React.FC<any> = ({userDetails}) => {
   const {activityList} = useSelector((state: any) => state.user);
-  console.log('activityList ==>', activityList);
+  // console.log('activityList ==>', activityList);
   
   return (
     <View style={styles.container}>

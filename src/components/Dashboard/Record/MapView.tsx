@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { getDistance } from 'geolib';
+import {getDistance} from 'geolib';
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
@@ -19,8 +19,22 @@ import {
   resetRecordStatus,
   updateRecordStatus,
 } from '../../../redux/reducers/record.reducer';
-import { resetRecordActivityValue, setImmediatePoints, updateActivityFinishedAt, updateActivityId, updateDistanceMeter, updateRecordActivityValue, updateSpeedMeter } from '../../../redux/reducers/recordActivityReducer';
-import { updateCurrentLocation, updateDestinationCords, updateInitialCords, updateWayPoints } from '../../../redux/reducers/map.reducer';
+import {
+  resetRecordActivityValue,
+  setImmediatePoints,
+  updateActivityFinishedAt,
+  updateActivityId,
+  updateActivitySpeed,
+  updateDistanceMeter,
+  updateRecordActivityValue,
+  updateSpeedMeter,
+} from '../../../redux/reducers/recordActivityReducer';
+import {
+  updateCurrentLocation,
+  updateDestinationCords,
+  updateInitialCords,
+  updateWayPoints,
+} from '../../../redux/reducers/map.reducer';
 
 interface cords {
   latitude: number;
@@ -37,11 +51,13 @@ const boundingBox = {
   },
 };
 
-
 const MapViewComponent = () => {
-  const {crrLocation, initialCords, destination, wayPoints} = useSelector((state: any) => state.mapData);
+  const {crrLocation, initialCords, destination, wayPoints} = useSelector(
+    (state: any) => state.mapData,
+  );
+  const {distance, speed} = useSelector((state: any) => state.recordActivity);
   const markerRef = useRef<any>(null);
-  let mapRef : any;
+  const mapRef = useRef(null);
   const dispatch = useDispatch();
   const {selectedActivity} = useSelector((state: any) => state.activity);
   const recordStatus = useSelector((state: any) => state.recordStatus);
@@ -49,63 +65,57 @@ const MapViewComponent = () => {
   let Points: Array<cords> = [];
   const [watchId, setWatchId] = useState<number>(0);
 
-
   useEffect(() => {
     let centroid: any;
     const {width, height} = Dimensions.get('window');
     const ASPECT_RATIO = width / height;
-    Geolocation.getCurrentPosition(info => {
-      centroid = info.coords;
-      const lat = parseFloat(centroid.latitude);
-      const lng = parseFloat(centroid.longitude);
-      const northeastLat = parseFloat(boundingBox.northEast.latitude);
-      const southwestLat = parseFloat(boundingBox.southWest.latitude);
-      const latDelta = northeastLat - southwestLat;
-      const lngDelta = latDelta * ASPECT_RATIO;
-      dispatch(updateCurrentLocation({
-        latitude: lat,
-        longitude: lng,
-        latitudeDelta: 0.0041,
-        longitudeDelta: 0.0021,
-      }));
-    },
-    (error) => console.log(error)
+    Geolocation.getCurrentPosition(
+      info => {
+        centroid = info.coords;
+        const lat = parseFloat(centroid.latitude);
+        const lng = parseFloat(centroid.longitude);
+        const northeastLat = parseFloat(boundingBox.northEast.latitude);
+        const southwestLat = parseFloat(boundingBox.southWest.latitude);
+        const latDelta = northeastLat - southwestLat;
+        const lngDelta = latDelta * ASPECT_RATIO;
+        dispatch(
+          updateCurrentLocation({
+            latitude: lat,
+            longitude: lng,
+            latitudeDelta: 0.0041,
+            longitudeDelta: 0.0021,
+          }),
+        );
+      },
+      error => console.log(error),
     );
   }, []);
 
   const setNewWayPointsCord = (points: cords) => {
     Points.push(points);
-    console.log('Points', Points);
-    dispatch(updateWayPoints([...Points]))
+    dispatch(updateWayPoints([...Points]));
   };
 
   // once user clicks on the start recording btn
   useEffect(() => {
     if (isStart) {
-      Geolocation.getCurrentPosition(info => {
-        const {coords} = info;
-        const {latitude, longitude} = coords;
-        dispatch(updateInitialCords({latitude, longitude}));
-        setNewWayPointsCord({latitude, longitude});
-        watchLocation();
-        // AddActivtyServiceHandler({latitude, longitude});
-      },
-      (error) => console.log('Error', error),
-      );
+      console.log('initial Cords', initialCords);
+      setNewWayPointsCord(initialCords);
+      watchLocation();
     }
   }, [isStart]);
 
-  
-
   useEffect(() => {
     // stop watching the location when user clicks on the stop watch
-    if(isStart && isPaused){
-      const date = new Date;
-      console.log('stopped watching user location')
+    if (isStart && isPaused) {
+      const date = new Date();
+      console.log('stopped watching user location');
       Geolocation.clearWatch(watchId);
       dispatch(setImmediatePoints(wayPoints));
       dispatch(updateActivityFinishedAt(date.getTime()));
-    }else if(isStart && !isPaused){
+      dispatch(updateActivitySpeed(speed));
+      dispatch(updateRecordActivityValue({key: 'speed', value: 0}));
+    } else if (isStart && !isPaused) {
       console.log('started watching user location');
       Points = [...wayPoints];
       watchLocation();
@@ -114,18 +124,23 @@ const MapViewComponent = () => {
 
   // calculate distace by using initial cords and new cords by watch location
   const calculateDistance = () => {
-    const distance = getDistance(Points[0], Points[Points.length - 1]) / 1000;
+    const watchDistance = getDistance(Points[0], Points[Points.length - 1]);
+    const distance = watchDistance / 1000;
+    console.log('watchDistance', watchDistance);
     dispatch(updateDistanceMeter(distance));
     return distance;
-  }
+  };
 
   //watch and set the users device location
   const watchLocation = () => {
     const Id = Geolocation.watchPosition(
       ({coords}) => {
-        const {latitude, longitude} = coords;
+        const {latitude, longitude, speed} = coords;
+        console.log('speed', speed);
+        
         const cords = {latitude, longitude};
-        dispatch(updateDestinationCords({...cords}))
+        dispatch(updateDestinationCords({...cords}));
+        dispatch(updateRecordActivityValue({key: 'speed', value: speed ? (speed * 3.6) : speed}))
         setNewWayPointsCord(cords);
         calculateDistance();
       },
@@ -139,111 +154,98 @@ const MapViewComponent = () => {
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 1,
-      },  
+      },
     );
     setWatchId(Id);
   };
 
-  if (Platform.OS === 'android') {
-    return (
-      <>
-        {crrLocation ? (
-          initialCords ? (
-            <MapView ref={(ref) => {mapRef = ref}} showsBuildings={false} style={StyleSheet.absoluteFill}>
-              {/*  Show Marker for the initial starting point */}
-              {initialCords ? (
-                <Marker image={startPointImage} coordinate={initialCords} />
-              ) : null}
+  const fitMapView = async () => {
+    //@ts-ignore
+    mapRef.current.animateToRegion({
+      ...destination,
+      latitudeDelta: 0.0009,
+      longitudeDelta: 0.0021,
+    })
+  };
+  
 
-              {/* Show Marker for the final end point  */}
-              {destination ? (
-                <Marker
-                  image={finishPointImage}
-                  coordinate={destination}
-                />
-              ) : null}
-              {wayPoints.length > 0 ? (
-                <Polyline
-                  strokeWidth={3}
-                  strokeColor={colorPrimary}
-                  coordinates={wayPoints}
-                />
-              ) : null}
+  useEffect(() => {
+    fitMapView();
+  }, [wayPoints]);
 
-            </MapView>
-          ) : (
-            <MapView
-              ref={(ref) => {
-                if(ref){
-                  Object.keys(ref).map(keyName => console.log(keyName))
-                }
-              }}
-              showsBuildings={false}
-              style={styles.map}
-              provider="google"
-              region={crrLocation}
-              showsUserLocation={true}
-            > 
-            </MapView>
-          )
+  // useEffect(() => {
+  //   const watchDistance = distance * 1000;
+  //   console.log('watchDistance', watchDistance);
+  //   if(watchDistance % 100 === 0) {
+  //     console.log('map adjust fn. runned');
+  //      //@ts-ignore
+  //     mapRef.current.fitToCoordinates(wayPoints, {
+  //       edgePadding: {
+  //         top: 20,
+  //         right: 20,
+  //         bottom: 60,
+  //         left: 20,
+  //       },
+  //       animated: true,
+  //     });
+  //   }
+  // }, [distance]);
+
+  return (
+    <>
+      {crrLocation ? (
+        initialCords ? (
+          <MapView
+            ref={mapRef}
+            initialRegion={{
+              ...initialCords,
+              latitudeDelta: 0.0041,
+              longitudeDelta: 0.0021,
+            }}
+            showsBuildings={false}
+            style={StyleSheet.absoluteFill}
+            onMapReady={() => fitMapView()}>
+            {/*  Show Marker for the initial starting point */}
+            {initialCords ? (
+              <Marker image={startPointImage} coordinate={initialCords} />
+            ) : null}
+
+            {/* Show Marker for the final end point  */}
+            {destination ? (
+              <Marker image={finishPointImage} coordinate={destination} />
+            ) : null}
+            {wayPoints.length > 0 ? (
+              <Polyline
+                strokeWidth={3}
+                strokeColor={colorPrimary}
+                coordinates={wayPoints}
+              />
+            ) : null}
+          </MapView>
         ) : (
           <MapView
-            style={StyleSheet.absoluteFill}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-          />
-        )}
-      </>
-    );
-  } else {
-    return (
-      <>
-        {crrLocation ? (
-          initialCords ? (
-            <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
-              {/*  Show Marker for the initial starting point */}
-              {initialCords ? (
-                <Marker image={startPointImage} coordinate={initialCords} />
-              ) : null}
+            ref={mapRef}
+            showsBuildings={false}
+            style={styles.map}
+            region={crrLocation}
+            showsUserLocation={true}
+            followsUserLocation={true}></MapView>
+        )
+      ) : (
+        <MapView
+          ref={mapRef}
+          style={StyleSheet.absoluteFill}
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      )}
+    </>
+  );
 
-              {/* Show Marker for the final end point  */}
-              {destination ? (
-                <Marker
-                  image={finishPointImage}
-                  coordinate={destination}
-                />
-              ) : null}
-              {wayPoints.length > 0 ? (
-                <Polyline
-                  strokeWidth={3}
-                  strokeColor={colorPrimary}
-                  coordinates={wayPoints}
-                />
-              ) : null}
-
-            </MapView>
-          ) : (
-            <MapView
-              showsBuildings={false}
-              style={StyleSheet.absoluteFill}
-              initialRegion={crrLocation}
-              showsUserLocation={true}
-            >
-              {/* <Marker coordinate={crrLocation} /> */}
-            </MapView>
-          )
-        ) : (
-          <View>
-            <Text>Loading ...</Text>
-          </View>
-        )}
-      </>
-    );
-  }
 };
 
 export default MapViewComponent;
@@ -254,3 +256,111 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+
+
+  // if (Platform.OS === 'android') {
+  //   return (
+  //     <>
+  //       {crrLocation ? (
+  //         initialCords ? (
+  //           <MapView ref={(ref) => {mapRef = ref}} showsBuildings={false} style={StyleSheet.absoluteFill}>
+  //             {/*  Show Marker for the initial starting point */}
+  //             {initialCords ? (
+  //               <Marker image={startPointImage} coordinate={initialCords} />
+  //             ) : null}
+
+  //             {/* Show Marker for the final end point  */}
+  //             {destination ? (
+  //               <Marker
+  //                 image={finishPointImage}
+  //                 coordinate={destination}
+  //               />
+  //             ) : null}
+  //             {wayPoints.length > 0 ? (
+  //               <Polyline
+  //                 strokeWidth={3}
+  //                 strokeColor={colorPrimary}
+  //                 coordinates={wayPoints}
+  //               />
+  //             ) : null}
+
+  //           </MapView>
+  //         ) : (
+  //           <MapView
+  //             ref={(ref) => {
+  //               if(ref){
+  //                 Object.keys(ref).map(keyName => console.log(keyName))
+  //               }
+  //             }}
+  //             showsBuildings={false}
+  //             style={styles.map}
+  //             provider="google"
+  //             region={crrLocation}
+  //             showsUserLocation={true}
+  //           >
+  //           </MapView>
+  //         )
+  //       ) : (
+  //         <MapView
+  //           style={StyleSheet.absoluteFill}
+  //           initialRegion={{
+  //             latitude: 37.78825,
+  //             longitude: -122.4324,
+  //             latitudeDelta: 0.0922,
+  //             longitudeDelta: 0.0421,
+  //           }}
+  //         />
+  //       )}
+  //     </>
+  //   );
+  // } else {
+  //   return (
+  //     <>
+  //       {crrLocation ? (
+  //         initialCords ? (
+  //           <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
+  //             {/*  Show Marker for the initial starting point */}
+  //             {initialCords ? (
+  //               <Marker image={startPointImage} coordinate={initialCords} />
+  //             ) : null}
+
+  //             {/* Show Marker for the final end point  */}
+  //             {destination ? (
+  //               <Marker
+  //                 image={finishPointImage}
+  //                 coordinate={destination}
+  //               />
+  //             ) : null}
+  //             {wayPoints.length > 0 ? (
+  //               <Polyline
+  //                 strokeWidth={3}
+  //                 strokeColor={colorPrimary}
+  //                 coordinates={wayPoints}
+  //               />
+  //             ) : null}
+
+  //           </MapView>
+  //         ) : (
+  //           <MapView
+  //             showsBuildings={false}
+  //             style={StyleSheet.absoluteFill}
+  //             initialRegion={crrLocation}
+  //             showsUserLocation={true}
+  //           >
+  //             {/* <Marker coordinate={crrLocation} /> */}
+  //           </MapView>
+  //         )
+  //       ) : (
+  //         <MapView
+  //           style={StyleSheet.absoluteFill}
+  //           initialRegion={{
+  //             latitude: 37.78825,
+  //             longitude: -122.4324,
+  //             latitudeDelta: 0.0922,
+  //             longitudeDelta: 0.0421,
+  //           }}
+  //         />
+  //       )}
+  //     </>
+  //   );
+  // }
