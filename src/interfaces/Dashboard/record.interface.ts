@@ -66,7 +66,7 @@ export interface activityDetails {
   userId: string;
   likeCount: number;
   isLiked: boolean;
-  images: any,
+  images?: any,
 }
 
 export interface image {

@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
@@ -10,16 +10,26 @@ import {useDispatch, useSelector} from 'react-redux';
 import month from '../../utlis/month';
 import TextInputComponent from '../../components/common/inputs/TextInputComponent';
 import {inputsHandlerParams} from '../../interfaces/components/inputs';
-import {colorPrimary} from '../../../assets/styles/GlobalTheme';
+import {colorPrimary, colorSecondary} from '../../../assets/styles/GlobalTheme';
 import {Button} from 'react-native-paper';
 import BtnPrimary from '../../components/common/buttons/BtnPrimary';
-import { resetRecordActivityValue, updateRecordActivityValue } from '../../redux/reducers/recordActivityReducer';
-import { useNavigation } from '@react-navigation/native';
-import { updateUserActivityList } from '../../redux/reducers/user';
-import { AddActivityService, UpdateActivityService } from '../../services/Dashboard/record.service';
-import { addActivity, recordActivityData } from '../../interfaces/Dashboard/record.interface';
-import { resetMapData } from '../../redux/reducers/map.reducer';
-import { resetRecordStatus } from '../../redux/reducers/record.reducer';
+import {
+  resetRecordActivityValue,
+  updateActivityType,
+  updateRecordActivityValue,
+} from '../../redux/reducers/recordActivityReducer';
+import {useNavigation} from '@react-navigation/native';
+import {updateUserActivityList} from '../../redux/reducers/user';
+import {
+  AddActivityService,
+  UpdateActivityService,
+} from '../../services/Dashboard/record.service';
+import {
+  addActivity,
+  recordActivityData,
+} from '../../interfaces/Dashboard/record.interface';
+import {resetMapData} from '../../redux/reducers/map.reducer';
+import {resetRecordStatus} from '../../redux/reducers/record.reducer';
 const date = new Date();
 
 const RecordPreview = () => {
@@ -32,7 +42,9 @@ const RecordPreview = () => {
   const [isMediaAccess, setIsMediaAccess] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const {selectedActivity} = useSelector((state: any) => state.activity);
-  const {timer, distance, activity} = useSelector((state: any) => state.recordActivity);
+  const {timer, distance, activity} = useSelector(
+    (state: any) => state.recordActivity,
+  );
   const getTimeFormat = () => {
     var d = new Date(1000 * Math.round(timer / 1000)); // round to nearest second
     function pad(i: number) {
@@ -68,18 +80,18 @@ const RecordPreview = () => {
   };
 
   const handleSaveActivity = () => {
-      const data = {
-         finishedAt: activity.finishedAt,
-         startedAt: activity.startedAt,
-         activityName: input.title,
-         distance: distance,
-         duration: timer,
-         activityTypeId: selectedActivity._id,
-         immediatePoints: [...activity.immediatePoints],
-         speed: activity.speed,
-         images: activity.images
-    }
-    console.log('data', data);
+    const data = {
+      finishedAt: activity.finishedAt,
+      startedAt: activity.startedAt,
+      activityName: input.title,
+      distance: distance,
+      duration: timer,
+      activityTypeId: selectedActivity._id,
+      immediatePoints: [...activity.immediatePoints],
+      speed: activity.speed,
+      images: activity.images,
+      isPublic: activity.isPublic
+    };
     AddActivtyServiceHandler(data);
   };
 
@@ -91,12 +103,16 @@ const RecordPreview = () => {
       dispatch(resetRecordActivityValue());
       navigation.reset({
         index: 0,
-        routes: [{name: 'Dashboard' as never}]
+        routes: [{name: 'Dashboard' as never}],
       });
     } catch (error: any) {
-       Alert.alert('Error', error.response.data.errors[0].message);
+      Alert.alert('Error', error.response.data.errors[0].message);
     }
- };
+  };
+
+  const handleRadioBtnClick = (isPublic: boolean) => {
+      dispatch(updateActivityType(isPublic));
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -118,6 +134,17 @@ const RecordPreview = () => {
             subText=""
           />
         </View>
+        <View style={styles.activityTypeTextContainer}>
+          <Text style={styles.typeText}>Activity Type</Text>
+        </View>
+        <View style={styles.radioBtnContainer}>
+          <TouchableOpacity onPress={() => handleRadioBtnClick(true)} style={activity.isPublic ? styles.selectedRadioBtn : styles.radioBtn}>
+            <Text style={activity.isPublic ? styles.radioBtnTextSelected : styles.radioBtnText }>Public</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleRadioBtnClick(false)} style={activity.isPublic ? styles.radioBtn : styles.selectedRadioBtn}>
+            <Text style={activity.isPublic ? styles.radioBtnText : styles.radioBtnTextSelected}>Private</Text>
+          </TouchableOpacity>
+        </View>
         {isMediaAccess ? null : (
           <View style={styles.mediaAccessContainer}>
             <Text style={styles.textHead}>No Photo permission</Text>
@@ -135,12 +162,8 @@ const RecordPreview = () => {
           isActive={isActive}
           handlePress={handleSaveActivity}
         />
-        <Button 
-           mode="contained"
-           buttonColor="white"
-           style={styles.btn}
-        >
-            <Text style={styles.btnText}>Not now</Text>
+        <Button mode="contained" buttonColor="white" style={styles.btn}>
+          <Text style={styles.btnText}>Not now</Text>
         </Button>
       </View>
     </SafeAreaView>
@@ -186,7 +209,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginTop: responsiveScreenHeight(5),
-    width: '92%',
+    width: '94%',
   },
   textHead: {
     fontSize: responsiveFontSize(1.8),
@@ -215,11 +238,59 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: colorPrimary,
-    fontSize: responsiveFontSize(1.8)
+    fontSize: responsiveFontSize(1.8),
   },
   btn: {
     marginTop: responsiveScreenHeight(0.5),
     paddingVertical: responsiveScreenHeight(0.6),
     width: responsiveScreenWidth(95),
-  }
+  },
+  radioBtnContainer: {
+    width: '92%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: responsiveScreenHeight(3)
+  },
+  radioBtn: {
+    width: responsiveScreenWidth(40),
+    paddingVertical: responsiveScreenHeight(1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+  },
+  selectedRadioBtn: {
+    width: responsiveScreenWidth(40),
+    paddingVertical: responsiveScreenHeight(1),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colorPrimary,
+    borderRadius: 5,
+    backgroundColor: 'rgba(52, 184, 237, 0.3)',
+  },
+  radioBtnText: {
+    fontSize: responsiveFontSize(2.3),
+    fontWeight: 'bold',
+    color: 'black',
+    letterSpacing: 0.9
+  },
+  radioBtnTextSelected: {
+    fontSize: responsiveFontSize(2.3),
+    fontWeight: 'bold',
+    color: 'white',
+    letterSpacing: 0.9
+  },
+  activityTypeTextContainer: {
+    width: '100%',
+    marginTop: responsiveScreenHeight(3),
+    paddingHorizontal: responsiveScreenWidth(3),
+    marginBottom: responsiveScreenHeight(2),
+  },
+  typeText: {
+    fontSize: responsiveFontSize(3),
+    fontWeight: 'bold',
+  },
 });

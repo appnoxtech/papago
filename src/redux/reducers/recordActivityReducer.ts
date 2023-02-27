@@ -14,7 +14,8 @@ const initialState = {
         speed: 0,
         immediatePoints: [],
         activityTypeId: '',
-        images: []
+        images: [],
+        isPublic: true,
     }
 }
 
@@ -76,6 +77,11 @@ interface updateActvityImage {
     payload: any
 }
 
+interface updateActivtyType {
+    type: 'UPDATE_ACTIVTY_TYPE',
+    payload: boolean
+}
+
 type action =  updateActivityValue 
               | resetActivityValue 
               | updateRecordActivityTimer 
@@ -86,7 +92,8 @@ type action =  updateActivityValue
               | updateActivityStartedAt
               | updateActivitySpeed
               | updateActivityFinishedAt
-              | updateActvityImage;
+              | updateActvityImage
+              | updateActivtyType;
 
 const RecordActivityReducer = (state = initialState , action: action) => {
     switch (action.type) {
@@ -184,6 +191,16 @@ const RecordActivityReducer = (state = initialState , action: action) => {
                 }
             }
         }
+
+        case 'UPDATE_ACTIVTY_TYPE': {
+            return {
+                ...state,
+                activity: {
+                    ...state.activity,
+                    isPublic: action.payload
+                }
+            }
+        }
   
         default:
             return state
@@ -193,47 +210,47 @@ const RecordActivityReducer = (state = initialState , action: action) => {
 export default RecordActivityReducer;
 
 
-export const updateRecordActivityValue = (data: data) => {
+export const updateRecordActivityValue = (data: data): updateActivityValue => {
     return {
         type: 'UPDATE_ACTIVITY_VALUE',
         payload: data,
     }
 };
 
-export const resetRecordActivityValue = () => {
+export const resetRecordActivityValue = (): resetActivityValue => {
     return {
         type: 'RESET_ACTIVITY_VALUE'
     }
 };
 
-export const updateRecordActivityTimer = () => {
+export const updateRecordActivityTimer = (): updateRecordActivityTimer => {
     return {
         type: 'UPDATE_RECORD_TIMER'
     }
 };
 
-export const updateDistanceMeter = (distance: number) => {
+export const updateDistanceMeter = (distance: number): updateRecordDistanceMeter => {
     return {
         type: 'UPDATE_RECORD_DISTANCE_METER',
         payload: distance
     }
 }
 
-export const updateSpeedMeter = (speed: number) => {
+export const updateSpeedMeter = (speed: number): updatRecordSpeedMeter => {
     return {
         type: 'UPDATE_SPEED_METER',
         payload: speed,
     }
 }
 
-export const setImmediatePoints = (data: any) => {
+export const setImmediatePoints = (data: any): updateImmediatePoints => {
     return {
         type: 'UPDATE_IMMEDIATE_POINTS',
         payload: data,
     }
 }
 
-export const updateActivityId = (id: string) => {
+export const updateActivityId = (id: string): updateActivityId => {
     return {
         type: 'UPDATE_ACTIVITY_ID',
         payload: id,
@@ -247,7 +264,7 @@ export const updateActivityStartedAt = (milliSeconds: number): updateActivitySta
     }
 }
 
-export const updateActivityFinishedAt = (milliSeconds: number) => {
+export const updateActivityFinishedAt = (milliSeconds: number): updateActivityFinishedAt => {
     return {
         type: 'UPDATE_ACTIVITY_FINISHED_AT',
         payload: milliSeconds
@@ -265,5 +282,12 @@ export const updateActvityImage = (data: any): updateActvityImage => {
     return {
         type: 'UPDATE_ACTIVITY_IMAGE',
         payload: data,
+    }
+}
+
+export const updateActivityType = (type: boolean): updateActivtyType => {
+    return {
+        type: 'UPDATE_ACTIVTY_TYPE',
+        payload: type
     }
 }
