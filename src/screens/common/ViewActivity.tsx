@@ -1,4 +1,12 @@
-import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderWithBackBtn from '../../components/common/Headers/HeaderWithBackBtn';
@@ -31,8 +39,6 @@ import useGenerateDynamicLinks from '../../hooks/dynamicLinks/createDynamicLinks
 import {useNavigation} from '@react-navigation/native';
 import SocialBtnList from '../../components/common/SocialBtnList';
 
-
-
 const RenderDistance: React.FC<any> = ({distance}) => {
   if (distance < 1) {
     return <Text style={styles.meterReading}>{distance * 1000} m</Text>;
@@ -47,6 +53,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
   const GenerateDynamicLinks = useGenerateDynamicLinks();
   const [url, setUrl] = useState('');
   const {userDetails} = useSelector((state: any) => state.user);
+
   const [activityDetails, setActivityDetails] =
     useState<null | activityDetails>(null);
 
@@ -76,13 +83,18 @@ const ViewActivity: React.FC<any> = ({route}) => {
     function pad(i: number) {
       return ('0' + i).slice(-2);
     }
-    var str =
-      d.getUTCHours() +
-      ':' +
-      pad(d.getUTCMinutes()) +
-      ':' +
-      pad(d.getUTCSeconds());
-    return str;
+    if (d.getUTCHours() === 0) {
+      var str = pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds());
+      return str;
+    } else {
+      var str =
+        d.getUTCHours() +
+        ':' +
+        pad(d.getUTCMinutes()) +
+        ':' +
+        pad(d.getUTCSeconds());
+      return str;
+    }
   };
 
   const handleActivityActivity = () => {
@@ -124,8 +136,14 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 </View>
                 <View style={styles.iconContainer}>
                   <View style={styles.likeContainer}>
-                    <Octicons name={activityDetails.likeCount ? "heart-fill" : "heart"} size={20} color={activityDetails.likeCount ? 'red' : 'black'} />
-                    <Text style={styles.iconCount}>{activityDetails.likeCount}</Text>
+                    <Octicons
+                      name={activityDetails.likeCount ? 'heart-fill' : 'heart'}
+                      size={20}
+                      color={activityDetails.likeCount ? 'red' : 'black'}
+                    />
+                    <Text style={styles.iconCount}>
+                      {activityDetails.likeCount}
+                    </Text>
                   </View>
                   <View style={styles.commentContainer}>
                     <Octicons name="comment" size={20} color="black" />
@@ -138,7 +156,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
               <View style={styles.shareContainer}>
                 <Text style={styles.shareTextHeading}>Share your activity</Text>
                 <View style={styles.btnContainer}>
-                  <SocialBtnList url={url} />
+                  <SocialBtnList activityDetails={activityDetails} url={url} />
                 </View>
               </View>
               <View style={styles.MeterReadingContainer}>
@@ -168,7 +186,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 wayPoints={activityDetails.immediatePoints}
                 startedAt={activityDetails.startedAt}
                 finishedAt={activityDetails.finishedAt}
-                images={activityDetails.images}
+                images={activityDetails.images ? activityDetails.images : []}
               />
               <View style={styles.mainBtnContainer}>
                 <Button

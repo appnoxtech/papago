@@ -12,6 +12,7 @@ import { GetActivityListService } from '../../services/Dashboard/record.service'
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserActivityList, updateUserDetails } from '../../redux/reducers/user';
 import useGetActivityFeedList from '../../hooks/Feed/GetFeedList.hook';
+import AnimatedMap from '../../components/maps/AnimatedMap';
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -33,13 +34,12 @@ const Feed = () => {
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
      <Headers title="Feed" />
+      
       <ScrollView
         style={styles.scollContainer}
         contentContainerStyle={styles.contentContainer}>
         <WelcomeSection />
-        {
-          userDetails ? <ViewPlannedActivity userDetails={userDetails} /> : null
-        }
+        <ViewPlannedActivity />
       </ScrollView>
     </SafeAreaView>
   );
