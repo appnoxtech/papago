@@ -51,7 +51,13 @@ const ActivityMapPreview: React.FC<props> = ({wayPoints, startedAt, finishedAt, 
           </View>
        </View>
        <View style={styles.middleContainer}>
-          <MapView ref={mapRef} region={initialRegion} style={StyleSheet.absoluteFill}>
+          <MapView 
+            ref={mapRef} 
+            region={initialRegion} 
+            style={StyleSheet.absoluteFill}
+            scrollEnabled={false}
+            zoomEnabled={false}
+          >
                <Marker image={startPointImage} coordinate={wayPoints[0]} />
                <Marker image={finishPointImage} coordinate={wayPoints[wayPoints.length -1]} />
                <Polyline
