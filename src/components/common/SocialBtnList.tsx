@@ -9,15 +9,20 @@ import SocialShareBtn from './buttons/SocialShareBtn';
 import {Button} from 'react-native-paper';
 import { responsiveFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import { colorPrimary } from '../../../assets/styles/GlobalTheme';
+import { useNavigation } from '@react-navigation/native';
+import { activityDetails } from '../../interfaces/Dashboard/record.interface';
 
 interface props {
   url: string;
+  activityDetails: activityDetails;
 }
 
-const SocialBtnList: React.FC<props> = ({url}) => {
+const SocialBtnList: React.FC<props> = ({url, activityDetails}) => {
   const [isWhatsapp, setIsWhatsapp] = useState(false);
   const [isFacebook, setIsFacebook] = useState(false);
   const [isInstagram, setIsInstagram] = useState(false);
+  const Navigation = useNavigation();
+
   useEffect(() => {
     // check if whatsapp is install or not
     AppInstalledChecker.isAppInstalled('whatsapp').then(
@@ -57,22 +62,18 @@ const SocialBtnList: React.FC<props> = ({url}) => {
   });
 
   const handlePress = () => {
-    const options = {
-        url: url,
-        message: 'Teting',
-      };
-      Share.open(options);
+    Navigation.navigate('SharePreviewScreen' as never, {source: 'Others', activityDetails} as never);
   }
   return (
     <>
       {isWhatsapp ? (
-        <SocialShareBtn url={url} iconName="whatsapp" Label="Whatsapp" />
+        <SocialShareBtn url={url} activityDetails={activityDetails} iconName="whatsapp" Label="Whatsapp" />
       ) : null}
       {isFacebook ? (
-        <SocialShareBtn url={url} iconName="facebook" Label="Facebook" />
+        <SocialShareBtn url={url} activityDetails={activityDetails} iconName="facebook" Label="Facebook" />
       ) : null}
       {isInstagram ? (
-        <SocialShareBtn url={url} iconName="instagram" Label="Instagram" />
+        <SocialShareBtn url={url} activityDetails={activityDetails} iconName="instagram" Label="Instagram" />
       ) : null}
       {!isFacebook && !isInstagram && !isWhatsapp ? (
        <View style={styles.btnContainer}>
@@ -90,6 +91,7 @@ const SocialBtnList: React.FC<props> = ({url}) => {
           url={url}
           iconName="dots-three-horizontal"
           Label="Others"
+          activityDetails={activityDetails}
         />
       )}
     </>

@@ -39,31 +39,11 @@ import {
 } from '../../../services/Dashboard/record.service';
 import useHandleError from '../../../hooks/common/handelError';
 import CommentModal from '../../../screens/common/CommentModal';
+import RenderActivityIcon from '../../common/RenderActivityIcon';
 
 interface params {
   Activity: data;
 }
-
-const RenderActivityIcon = ({Activity}: params) => {
-  console.log('Activity', Activity);
-  if (Activity.iconFamily === 'MaterialCommunityIcons') {
-    return (
-      <MaterialCommunityIcons
-        size={25}
-        name={Activity.iconName}
-        color={colorSecondary}
-      />
-    );
-  } else if (Activity.iconFamily === 'FontAwesome5') {
-    return (
-      <FontAwesome5 size={25} name={Activity.iconName} color={colorSecondary} />
-    );
-  } else {
-    return (
-      <Ionicons size={25} name={Activity.iconName} color={colorSecondary} />
-    );
-  }
-};
 
 const RenderDistance: React.FC<any> = ({distance}) => {
   if (distance < 1) {
@@ -73,7 +53,7 @@ const RenderDistance: React.FC<any> = ({distance}) => {
   }
 };
 
-const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
+const RecordActivityCard: React.FC<any> = ({acitivity}) => {
   const navigation = useNavigation();
   const handleError = useHandleError();
   const inputRef = useRef(null);
@@ -143,9 +123,7 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
     try {
       const res = await GetRecordLikeAndCommentDetails(acitivity._id);
       const {commentData, likeData} = res.data.data;
-      console.log('commentData', commentData);
-      console.log('likeData', likeData);
-      
+     
       if (commentData.length) {
         setCommentList([...commentData]);
       }
@@ -178,12 +156,8 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
     }
   };
 
-  //console.log('activityDetails', activityDetails);
-  // console.log('acitivity', acitivity);
-  // console.log('commentList', commentList);
-
   return (
-    <View style={styles.container} key={id}>
+    <View style={styles.container} key={acitivity._id}>
       <View style={styles.head}>
         <Avatar.Text size={33} label="SC" />
         <View style={styles.headUserDetails}>
@@ -196,7 +170,7 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
       <View style={styles.shareContainer}>
         <View style={styles.shareContainerLeft}>
           <Text style={styles.shareContainerLeftText}>
-            {`Hey ${userDetails.name}, you didn't share this video yet!`}
+            {`Hey ${acitivity.name}, you didn't share this video yet!`}
           </Text>
         </View>
         <View>
@@ -214,7 +188,7 @@ const RecordActivityCard: React.FC<any> = ({userDetails, id, acitivity}) => {
           <View style={styles.activitySummary}>
             <View style={styles.activitySummaryContainer}>
               <View style={styles.activityIconContainer}>
-                <RenderActivityIcon Activity={acitivity.activityData} />
+                <RenderActivityIcon size={25} Activity={acitivity.activityData} />
               </View>
               <View style={styles.activityDistanceTextContainer}>
                 <RenderDistance distance={acitivity.distance} />

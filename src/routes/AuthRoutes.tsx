@@ -6,6 +6,7 @@ import ViewActivity from '../screens/common/ViewActivity';
 import {useNavigation} from '@react-navigation/native';
 import EditActivity from '../screens/common/EditActivity';
 import SelectActivityType from '../screens/common/SelectActivity';
+import SharePreviewScreen from '../screens/common/SharePreviewScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,11 @@ const AuthRoutes = () => {
       <Stack.Screen
         name="SelectActivity"
         component={SelectActivityType}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SharePreviewScreen"
+        component={SharePreviewScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
