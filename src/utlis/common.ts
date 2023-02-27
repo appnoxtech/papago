@@ -485,7 +485,7 @@ export const dateStartTimeAndEndTime = (dateTimeStamp: number) => {
 export function parseMillisecondsIntoReadableTime(timeStamp: number){
     const date = new Date(timeStamp);
     const h = date.getHours();
-    const m = date.getMinutes();
+    const m = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
     const hours = (h % 12) || 12;
     const state = h > 12 ? 'PM' : 'AM';
     return `${hours}:${m} ${state}`;
