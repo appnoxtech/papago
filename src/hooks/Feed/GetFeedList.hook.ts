@@ -14,6 +14,8 @@ const useGetActivityFeedList = () => {
          
          if(list.length){
            dispatch(updateUserActivityList([...list]));
+         }else {
+          dispatch(updateUserActivityList([]));
          }
         } catch (error: any) {
           Alert.alert('Error', error.response.data.errors[0].message);

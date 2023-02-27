@@ -9,7 +9,7 @@ import TripCard from './TripCard';
 import { useSelector } from 'react-redux';
 import RecordActivityCard from './RecordActivityCard';
 
-const ViewPlannedActivity: React.FC<any> = ({userDetails}) => {
+const ViewPlannedActivity: React.FC<any> = () => {
   const {activityList} = useSelector((state: any) => state.user);
   // console.log('activityList ==>', activityList);
   
@@ -23,7 +23,7 @@ const ViewPlannedActivity: React.FC<any> = ({userDetails}) => {
             {
               activityList.map((acitivity: any) => (
                 <View key={acitivity._id}>
-                  <RecordActivityCard userDetails={userDetails} acitivity={acitivity} />
+                  <RecordActivityCard acitivity={acitivity} />
                 </View>
               ))
             }
