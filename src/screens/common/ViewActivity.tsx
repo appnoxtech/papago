@@ -18,6 +18,8 @@ import {
 } from 'react-native-responsive-dimensions';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Octicons from 'react-native-vector-icons/Octicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector} from 'react-redux';
 import {Button} from 'react-native-paper';
 import {colorPrimary} from '../../../assets/styles/GlobalTheme';
@@ -33,6 +35,7 @@ import {
 import {
   getDayFromTimestamp,
   getMonthNameByIndex,
+  getTimeFormat,
   getYearFromTimeStamp,
 } from '../../utlis/common';
 import useGenerateDynamicLinks from '../../hooks/dynamicLinks/createDynamicLinks';
@@ -78,27 +81,18 @@ const ViewActivity: React.FC<any> = ({route}) => {
     }
   };
 
-  const getTimeFormat = (timer: number) => {
-    var d = new Date(1000 * Math.round(timer / 1000)); // round to nearest second
-    function pad(i: number) {
-      return ('0' + i).slice(-2);
-    }
-    if (d.getUTCHours() === 0) {
-      var str = pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds());
-      return str;
-    } else {
-      var str =
-        d.getUTCHours() +
-        ':' +
-        pad(d.getUTCMinutes()) +
-        ':' +
-        pad(d.getUTCSeconds());
-      return str;
-    }
-  };
+
 
   const handleActivityActivity = () => {
     navigation.navigate('EditActivity' as never, {activityDetails} as never);
+  };
+
+  // function run user clicks on the see stats of activty
+  const handleViewActivityStatsClick = () => {
+    navigation.navigate(
+      'ViewActivityGraph' as never,
+      {activityDetails} as never,
+    );
   };
 
   return (
@@ -182,6 +176,25 @@ const ViewActivity: React.FC<any> = ({route}) => {
                   </View>
                 </View>
               </View>
+              <TouchableOpacity
+                style={styles.viewStatsActivityContainer}
+                onPress={handleViewActivityStatsClick}>
+                <View style={styles.viewStatsLeftContainer}>
+                  <View style={styles.chartIconContainer}>
+                    <MaterialCommunityIcons
+                      name="chart-line"
+                      color={'black'}
+                      size={30}
+                    />
+                  </View>
+                  <Text style={styles.viewActivityText}>
+                    See stats of this activity
+                  </Text>
+                </View>
+                <View style={styles.viewStatsRightContainer}>
+                  <Entypo name="chevron-right" color={'black'} size={25} />
+                </View>
+              </TouchableOpacity>
               <ActivityMapPreview
                 wayPoints={activityDetails.immediatePoints}
                 startedAt={activityDetails.startedAt}
@@ -380,5 +393,29 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.9),
     letterSpacing: 0.8,
     fontWeight: '700',
+  },
+  viewStatsActivityContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: responsiveScreenHeight(2),
+    paddingHorizontal: responsiveScreenWidth(3),
+    borderBottomWidth: 1,
+    borderBottomColor: '#bbbbbb',
+  },
+  viewStatsRightContainer: {},
+  viewStatsLeftContainer: {
+    flexDirection: 'row',
+    width: responsiveScreenWidth(60),
+    alignItems: 'center',
+  },
+  viewActivityText: {
+    fontSize: responsiveFontSize(2),
+    fontWeight: 'bold',
+    color: 'black',
+    letterSpacing: 0.3,
+  },
+  chartIconContainer: {
+    marginRight: responsiveScreenWidth(2.5),
   },
 });

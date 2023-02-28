@@ -458,6 +458,8 @@ PODS:
     - React-RCTImage
   - RNShare (8.2.0):
     - React-Core
+  - RNSVG (13.8.0):
+    - React-Core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -511,6 +513,7 @@ DEPENDENCIES:
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -629,6 +632,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -698,6 +703,7 @@ SPEC CHECKSUMS:
   RNGoogleSignin: 22e468a9474dbcb8618d8847205ad4f0b2575d13
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
   RNShare: b089c33619bbfb0a32bc4069c858b9274e694187
+  RNSVG: c1e76b81c76cdcd34b4e1188852892dc280eb902
   Yoga: 5b0304b3dbef2b52e078052138e23a19c7dacaef
 
 PODFILE CHECKSUM: daa2ab48119eb00aa11b6673910e5bcfdd99704b

@@ -7,6 +7,7 @@ import {useNavigation} from '@react-navigation/native';
 import EditActivity from '../screens/common/EditActivity';
 import SelectActivityType from '../screens/common/SelectActivity';
 import SharePreviewScreen from '../screens/common/SharePreviewScreen';
+import ViewActivityGraph from '../screens/common/ViewActivityGraph';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,11 @@ const AuthRoutes = () => {
       <Stack.Screen
         name="SharePreviewScreen"
         component={SharePreviewScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ViewActivityGraph"
+        component={ViewActivityGraph}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

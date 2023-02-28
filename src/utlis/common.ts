@@ -139,12 +139,7 @@
 //     return { month: curr.getMonth(), year: curr.getFullYear() };
 // };
 // ​
-// //#region Get Month Name From Number
-// export const getMonthString = (monthNumber) => {
-//     let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-//     return months[monthNumber];
-// };
-// //#endregion
+
 // ​
 // //#region Get Today StartTime And End Time
 // export const todayStartTimeAndEndTime = () => {
@@ -490,3 +485,30 @@ export function parseMillisecondsIntoReadableTime(timeStamp: number){
     const state = h > 12 ? 'PM' : 'AM';
     return `${hours}:${m} ${state}`;
   }
+
+//#region Get Month Name From Number
+export const getMonthString = (timestamp: number) => {
+    const monthNumber = new Date(timestamp).getMonth();
+    let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return months[monthNumber];
+};
+//#endregion
+
+export const getTimeFormat = (timer: number) => {
+    var d = new Date(1000 * Math.round(timer / 1000)); // round to nearest second
+    function pad(i: number) {
+      return ('0' + i).slice(-2);
+    }
+    if (d.getUTCHours() === 0) {
+      var str = pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds());
+      return str;
+    } else {
+      var str =
+        d.getUTCHours() +
+        ':' +
+        pad(d.getUTCMinutes()) +
+        ':' +
+        pad(d.getUTCSeconds());
+      return str;
+    }
+  };
