@@ -18,8 +18,11 @@ interface props {
 }
 const Headers = ({title}: props) => {
   const {handleLogout} = useAuthHooks();
+  const recordStatus = useSelector((state: any) => state.recordStatus);
+  const {isStart, isPaused, isEnd} = recordStatus;
   const navigation = useNavigation();
   const {selectedActivity} = useSelector((state: any) => state.activity);
+
   const handleIconPress = () => {
     console.log('btn pressed');
   };
@@ -45,14 +48,22 @@ const Headers = ({title}: props) => {
         showHideTransition={'slide'}
       />
       {title === 'Record' ? (
-        <TouchableOpacity
-          onPress={handleChangeActivity}
-          style={{width: responsiveScreenWidth(50)}}>
-          <View style={styles.activityTypeContainer}>
+        <>
+          {!(isStart && !isPaused) ? (
+            <TouchableOpacity
+              onPress={handleChangeActivity}
+              style={{width: responsiveScreenWidth(50)}}>
+              <View style={styles.activityTypeContainer}>
+                <Text style={styles.activity}>
+                  {selectedActivity.activityName}
+                </Text>
+                <Entypo name="chevron-down" color={'black'} size={20} />
+              </View>
+            </TouchableOpacity>
+          ) : (
             <Text style={styles.activity}>{selectedActivity.activityName}</Text>
-            <Entypo name="chevron-down" color={'black'} size={20} />
-          </View>
-        </TouchableOpacity>
+          )}
+        </>
       ) : (
         <Text style={styles.title}>{title}</Text>
       )}
@@ -64,7 +75,18 @@ const Headers = ({title}: props) => {
           size={26}
           style={styles.icon}
         />
-      ) : title === 'Menu' || title === 'Record' ? (
+      ) : title === 'Record' ? (
+        <>
+          {!(isStart && !isPaused) ? (
+            <Feather
+              onPress={handleSettingIconClick}
+              name="settings"
+              size={25}
+              style={styles.icon}
+            />
+          ) : null}
+        </>
+      ) : title === 'Menu' ? (
         <Feather
           onPress={handleSettingIconClick}
           name="settings"

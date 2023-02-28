@@ -9,6 +9,7 @@ import {
 
 export const SsoService = async (data: ssoData) => {
   console.log('URL', URL);
+  
   console.log('ssoData', data);
   const url = `${URL}access/oauth/single-sign-on`;
   return axios.post(url, data);

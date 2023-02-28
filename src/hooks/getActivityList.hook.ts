@@ -11,7 +11,7 @@ const useGetActivityList = () => {
     try {
       const res = await GetAllActivityService();
       const {data} = res.data;
-      console.log('Data', data);
+      
       const Data = [
         {
           title: 'POPULAR ACTIVITIES',

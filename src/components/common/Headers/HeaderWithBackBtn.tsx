@@ -18,7 +18,7 @@ const HeaderWithBackBtn = ({title}: props) => {
   const navgation = useNavigation();
 
   const handlePress = () => {
-    navgation.navigate('Record' as never);
+    navgation.goBack();
   };
 
   return (
@@ -33,7 +33,7 @@ const HeaderWithBackBtn = ({title}: props) => {
         style={styles.btnContainer}
         name="chevron-left"
         size={32}
-        onPress={() => console.log('Hello')}
+        onPress={handlePress}
       />
       <Text style={styles.title}>{title}</Text>
     </View>
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     paddingVertical: responsiveScreenHeight(1.3),
     borderBottomColor: colorGrey,
     borderBottomWidth: 0.5,
+    alignItems: 'center',
   },
   btnContainer: {
     position: 'absolute',
@@ -61,5 +62,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
+    width: responsiveScreenWidth(80)
   },
 });

@@ -6,19 +6,17 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
-import HeaderWithBackBtn from '../../../components/common/Headers/HeaderWithBackBtn';
+import HeaderWithBackBtn from '../../components/common/Headers/HeaderWithBackBtn';
 import {Text} from 'react-native-paper';
-import ActivityTile from '../../../components/Dashboard/Record/ActivityTile';
-import {ActivityTypes} from '../../../../assets/dummyData/ActivityType';
-import {activity, data} from '../../../interfaces/Dashboard/record.interface';
-import {GetAllActivityService} from '../../../services/Dashboard/activity.service';
+import ActivityTile from '../../components/Dashboard/Record/ActivityTile';
+import {ActivityTypes} from '../../../assets/dummyData/ActivityType';
+import {activity, data} from '../../interfaces/Dashboard/record.interface';
+import {GetAllActivityService} from '../../services/Dashboard/activity.service';
 import {Alert} from 'react-native';
 import {useSelector} from 'react-redux';
 
 const SelectActivityType = () => {
   const {activityList} = useSelector((state: any) => state.activity);
-
-  console.log('activityList', activityList[0].data);
 
   return (
     <SafeAreaView style={styles.container}>
