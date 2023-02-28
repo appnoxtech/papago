@@ -48,6 +48,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNViewShot;
 		};
+		04D1FD5D29ACE3D200A2012D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04D1FD5929ACE3D200A2012D /* RCTSystemSetting.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 30D12B621EDC0C3A00775BF0;
+			remoteInfo = RCTSystemSetting;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +80,7 @@
 		048109CC299106AD00880027 /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
 		048109DD2991252C00880027 /* papago.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = papago.entitlements; path = papago/papago.entitlements; sourceTree = "<group>"; };
 		04D1FD4F29AC8FF800A2012D /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
+		04D1FD5929ACE3D200A2012D /* RCTSystemSetting.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSystemSetting.xcodeproj; path = "../node_modules/react-native-system-setting/ios/RCTSystemSetting.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* papago.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = papago.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = papago/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = papago/AppDelegate.mm; sourceTree = "<group>"; };
@@ -158,6 +166,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		04D1FD5A29ACE3D200A2012D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04D1FD5E29ACE3D200A2012D /* libRCTSystemSetting.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* papago */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,6 +203,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				04D1FD5929ACE3D200A2012D /* RCTSystemSetting.xcodeproj */,
 				04D1FD4F29AC8FF800A2012D /* RNViewShot.xcodeproj */,
 			);
 			name = Libraries;
@@ -304,6 +321,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 04D1FD5A29ACE3D200A2012D /* Products */;
+					ProjectRef = 04D1FD5929ACE3D200A2012D /* RCTSystemSetting.xcodeproj */;
+				},
+				{
 					ProductGroup = 04D1FD5029AC8FF800A2012D /* Products */;
 					ProjectRef = 04D1FD4F29AC8FF800A2012D /* RNViewShot.xcodeproj */;
 				},
@@ -322,6 +343,13 @@
 			fileType = archive.ar;
 			path = libRNViewShot.a;
 			remoteRef = 04D1FD5329AC8FF800A2012D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		04D1FD5E29ACE3D200A2012D /* libRCTSystemSetting.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTSystemSetting.a;
+			remoteRef = 04D1FD5D29ACE3D200A2012D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

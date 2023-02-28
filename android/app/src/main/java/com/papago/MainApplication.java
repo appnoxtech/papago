@@ -11,6 +11,8 @@ import com.facebook.soloader.SoLoader;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import java.util.List;
+import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage; // <-- add this import 
+import com.ninty.system.setting.SystemSettingPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

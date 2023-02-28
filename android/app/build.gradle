@@ -158,6 +158,7 @@ dependencies {
     implementation project(':react-native-share')
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation project(':react-native-android-open-settings')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'

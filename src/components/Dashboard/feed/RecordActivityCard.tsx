@@ -80,11 +80,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity}) => {
   };
 
   const handleShareBtnPress = () => {
-    const options = {
-      url: url,
-      message: 'Teting',
-    };
-    Share.open(options);
+    navigation.navigate('SharePreviewScreen' as never, {source: 'Others', activityDetails} as never);
   };
 
   const handleLikeActivityService = async () => {

@@ -9,12 +9,14 @@ import {
   View,
   PermissionsAndroid
 } from 'react-native';
+import SystemSetting from 'react-native-system-setting'
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+import AndroidOpenSettings from 'react-native-android-open-settings'
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import {Styles} from '../../../../assets/styles/GlobalStyles';
 import {useDispatch, useSelector} from 'react-redux';
@@ -121,8 +123,9 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   });
 
   const _openAppSetting = useCallback(async () => {
-    // Open the custom settings if the app has one
-    await Linking.openSettings();
+    Platform.OS === 'ios'
+    ? Linking.openURL('App-Prefs:Location')
+    : AndroidOpenSettings.locationSourceSettings();
   }, []);
 
   const handleCameraClick = async () => {
@@ -134,17 +137,8 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     //@ts-ignore
     const response = await launchCamera(options);
     if(response.assets){
-      // console.log('response.assets', response.assets);
       const image = response.assets[0];
       const data = new FormData();
-      // data.append('name', image.fileName);
-      // data.append('avatar', {
-      //   name: image.fileName,
-      //   type: image.type,
-      //   uri: Platform.OS === 'ios' ? image.uri?.replace('file://', '') : image.uri,
-      // });
-      // console.log('data', JSON.stringify(data.getParts(), null, 2));
-      // console.log('DATA', data);
       data.append('file', {
         uri: image.uri,
         type: image.type,
@@ -206,6 +200,19 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
       console.warn(err);
     }
   };
+
+  //adding listner for gps location
+  useEffect(() => {
+    SystemSetting.addLocationListener(locationEnabled => setGpsAvailable(locationEnabled));
+  }, []);
+
+  //stop activity if gps off
+  useEffect(() => {
+    if(isActive && isPaused === false && !gpsAvailable){
+      dispatch(updateRecordActivityValue({key: 'isPaused', value: !isPaused}));
+      dispatch(updateRecordStatus({key: 'isPaused', value: !isPaused}));
+    }
+  }, [gpsAvailable])
 
   return (
     <View style={styles.container}>
@@ -282,7 +289,8 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
             mode="contained"
             buttonColor={'#34b8ed'}
             style={styles.btn}
-            onPress={_openAppSetting}>
+            onPress={_openAppSetting}
+          >
             <Text style={styles.btnText}>Open Setting</Text>
           </Button>
         </View>
