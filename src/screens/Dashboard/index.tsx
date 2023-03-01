@@ -81,7 +81,7 @@ const Dashboard: React.FC<any> = () => {
           tabBarLabelStyle: {
             fontSize: responsiveFontSize(1.5),
             fontWeight: 'bold',
-            letterSpacing: 0.8
+            letterSpacing: 0.8,
           },
         })}
         

@@ -27,10 +27,7 @@ const ViewActivityGraph: FC<any> = ({route}) => {
 
   // function run user clicks on the see stats of activty
   const handleViewActivityStatsClick = () => {
-    navigation.navigate(
-      'ViewActivityGraph' as never,
-      {activityDetails} as never,
-    );
+    navigation.navigate('ViewUserStats' as never);
   };
 
   return (
@@ -40,10 +37,9 @@ const ViewActivityGraph: FC<any> = ({route}) => {
           activityDetails.startedAt,
         )} ${getMonthString(activityDetails.startedAt)}`}
       />
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        style={styles.scrollContainer}
-      >
+        style={styles.scrollContainer}>
         <TouchableOpacity
           style={styles.viewStatsActivityContainer}
           onPress={handleViewActivityStatsClick}>
@@ -90,7 +86,7 @@ const ViewActivityGraph: FC<any> = ({route}) => {
           </View>
           <View style={styles.mapContainer}>
             <MapGraphHeader
-              titles={["max speed", "Avg Speed"]}
+              titles={['max speed', 'Avg Speed']}
               type={'speed'}
               readings={[40.2, 26.6]}
               total={'19.1'}
@@ -101,7 +97,7 @@ const ViewActivityGraph: FC<any> = ({route}) => {
           </View>
           <View style={styles.mapContainer}>
             <MapGraphHeader
-              titles={["max elevation", "total elevation gain"]}
+              titles={['max elevation', 'total elevation gain']}
               type={'elevation'}
               readings={[130, 0]}
               total={'0'}

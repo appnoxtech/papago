@@ -1,9 +1,13 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { FC } from 'react';
 import { LineChart } from 'react-native-chart-kit';
-import { responsiveScreenWidth } from 'react-native-responsive-dimensions';
+import { responsiveScreenWidth, responsiveWidth } from 'react-native-responsive-dimensions';
 
-const BezierLineChartMap = () => {
+interface props {
+  width?: number
+}
+
+const BezierLineChartMap: FC<props> = ({width}) => {
   return (
     <View>
       <LineChart
@@ -15,7 +19,7 @@ const BezierLineChartMap = () => {
             },
           ],
         }}
-        width={responsiveScreenWidth(93.5)} // from react-native
+        width={responsiveScreenWidth(width ? width : 93)} // from react-native
         height={220}
         // yAxisLabel="$"
         // yAxisSuffix="k"

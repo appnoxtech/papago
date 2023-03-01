@@ -8,6 +8,7 @@ import EditActivity from '../screens/common/EditActivity';
 import SelectActivityType from '../screens/common/SelectActivity';
 import SharePreviewScreen from '../screens/common/SharePreviewScreen';
 import ViewActivityGraph from '../screens/common/ViewActivityGraph';
+import ViewUserStats from '../screens/common/ViewUserStats';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,11 @@ const AuthRoutes = () => {
       <Stack.Screen
         name="ViewActivityGraph"
         component={ViewActivityGraph}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ViewUserStats"
+        component={ViewUserStats}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

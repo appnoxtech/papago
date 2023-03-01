@@ -512,3 +512,11 @@ export const getTimeFormat = (timer: number) => {
       return str;
     }
   };
+
+//#region Get Month Name From Number
+export const getMonthStringList = () => {
+    const length = new Date().getMonth() + 1;
+    let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return months.splice(0, length);
+};
+//#endregion
