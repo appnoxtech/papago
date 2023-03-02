@@ -4,9 +4,10 @@ import { responsiveScreenHeight, responsiveScreenWidth } from 'react-native-resp
 import StatsGraphContainer from './StatsGraphContainer'
 
 interface props {
-  duration: string
+  duration: string,
+  isHide?: boolean,
 }
-const StatGraphsContainer: FC<props> = ({duration}) => {
+const StatGraphsContainer: FC<props> = ({duration, isHide = false}) => {
   return (
     <ScrollView 
       style={styles.container}
@@ -22,6 +23,7 @@ const StatGraphsContainer: FC<props> = ({duration}) => {
          totalScale={'m'}
          avgValue={0}
          avgScale={'m'}
+         isHide={isHide}
       />
       <StatsGraphContainer
          iconFamiy='MaterialCommunityIcons'
@@ -32,6 +34,7 @@ const StatGraphsContainer: FC<props> = ({duration}) => {
          totalScale={'m'}
          avgValue={0}
          avgScale={'m'}
+         isHide={isHide}
       />
 
      <StatsGraphContainer
@@ -43,6 +46,7 @@ const StatGraphsContainer: FC<props> = ({duration}) => {
          totalScale={'h'}
          avgValue={0}
          avgScale={'h'}
+         isHide={isHide}
       />
 
       <StatsGraphContainer
@@ -54,6 +58,7 @@ const StatGraphsContainer: FC<props> = ({duration}) => {
          totalScale={''}
          avgValue={0.3}
          avgScale={''}
+         isHide={isHide}
       />
     </ScrollView>
   )

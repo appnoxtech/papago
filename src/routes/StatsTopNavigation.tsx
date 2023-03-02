@@ -24,7 +24,7 @@ function StatsTopNavigation() {
       <StatsTab.Screen name="Week" component={WeekStats} />
       <StatsTab.Screen name="Month" component={MonthsStats} />
       <StatsTab.Screen name="Year" component={YearsStats} />
-      {/* <StatsTab.Screen name="All time" component={AllTimeStats} /> */}
+      <StatsTab.Screen name="All time" component={AllTimeStats} />
     </StatsTab.Navigator>
   );
 }

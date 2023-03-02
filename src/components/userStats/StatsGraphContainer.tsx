@@ -14,10 +14,11 @@ interface props {
   iconName: string;
   label: string;
   alaisTimeFrame: string;
-  totalValue: number,
-  totalScale: string,
-  avgValue: number,
-  avgScale: string,
+  totalValue: number;
+  totalScale: string;
+  avgValue: number;
+  avgScale: string;
+  isHide: boolean;
 }
 
 const StatsGraphContainer: FC<props> = ({
@@ -29,6 +30,7 @@ const StatsGraphContainer: FC<props> = ({
   totalScale,
   avgValue,
   avgScale,
+  isHide,
 }) => {
   return (
     <View style={styles.container}>
@@ -49,26 +51,34 @@ const StatsGraphContainer: FC<props> = ({
       <View style={styles.graphSectionContainer}>
         <View style={styles.graphSectionHeader}>
           <Text style={styles.graphTextPrimary}>Total</Text>
-          <View style={styles.aliasContainer}>
-            <View style={styles.aliasItemContainer}>
-              <View
-                style={[styles.circle, {backgroundColor: colorPrimary}]}></View>
-              <Text
-                style={
-                  styles.aliasItemText
-                }>{`Previous ${alaisTimeFrame}`}</Text>
+          {!isHide ? (
+            <View style={styles.aliasContainer}>
+              <View style={styles.aliasItemContainer}>
+                <View
+                  style={[
+                    styles.circle,
+                    {backgroundColor: colorPrimary},
+                  ]}></View>
+                <Text
+                  style={
+                    styles.aliasItemText
+                  }>{`Previous ${alaisTimeFrame}`}</Text>
+              </View>
+              <View style={styles.aliasItemContainer}>
+                <View
+                  style={[
+                    styles.circle,
+                    {backgroundColor: colorPrimary},
+                  ]}></View>
+                <Text
+                  style={styles.aliasItemText}>{`This ${alaisTimeFrame}`}</Text>
+              </View>
+              <View style={styles.aliasItemContainer}>
+                <Text style={[styles.aliasLineBreak]}>- - -</Text>
+                <Text style={styles.aliasItemText}>{`Average`}</Text>
+              </View>
             </View>
-            <View style={styles.aliasItemContainer}>
-              <View
-                style={[styles.circle, {backgroundColor: colorPrimary}]}></View>
-              <Text
-                style={styles.aliasItemText}>{`This ${alaisTimeFrame}`}</Text>
-            </View>
-            <View style={styles.aliasItemContainer}>
-              <Text style={[styles.aliasLineBreak]}>- - -</Text>
-              <Text style={styles.aliasItemText}>{`Average`}</Text>
-            </View>
-          </View>
+          ) : null}
         </View>
         <View style={styles.graphSectionBody}>
           <BezierLineChartMap width={88} />
@@ -76,13 +86,17 @@ const StatsGraphContainer: FC<props> = ({
         <View style={styles.graphSectionFooter}>
           <View style={styles.meterValueSummaryContainer}>
             <View style={styles.meterContainer}>
-                <Text style={styles.meterValue}>{`${totalValue} ${totalScale}`}</Text>
-                <Text style={styles.meterScale}>Total</Text>
+              <Text
+                style={styles.meterValue}>{`${totalValue} ${totalScale}`}</Text>
+              <Text style={styles.meterScale}>Total</Text>
             </View>
-            <View>
-                <Text style={styles.meterValue}>{`${avgValue} ${avgScale}`}</Text>
+            {!isHide ? (
+              <View>
+                <Text
+                  style={styles.meterValue}>{`${avgValue} ${avgScale}`}</Text>
                 <Text style={styles.meterScale}>Average per day</Text>
-            </View>
+              </View>
+            ) : null}
           </View>
           <View style={styles.shareIconContainer}>
             <LoadIcon
@@ -107,12 +121,12 @@ const styles = StyleSheet.create({
     paddingBottom: responsiveScreenHeight(4),
     paddingHorizontal: responsiveScreenWidth(3),
     borderBottomWidth: 3,
-    borderBottomColor: '#eeeeee'
+    borderBottomColor: '#eeeeee',
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: responsiveScreenHeight(2)
+    marginBottom: responsiveScreenHeight(2),
   },
   label: {
     fontSize: responsiveFontSize(3),
@@ -133,7 +147,7 @@ const styles = StyleSheet.create({
   },
   graphSectionHeader: {
     width: '100%',
-    paddingHorizontal: responsiveScreenWidth(3)
+    paddingHorizontal: responsiveScreenWidth(3),
   },
   graphTextPrimary: {
     fontSize: responsiveFontSize(2.6),
@@ -144,7 +158,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: responsiveScreenWidth(1),
     justifyContent: 'space-between',
-    marginTop: responsiveScreenHeight(1.5)
+    marginTop: responsiveScreenHeight(1.5),
   },
   aliasItemContainer: {
     flexDirection: 'row',
@@ -155,19 +169,19 @@ const styles = StyleSheet.create({
     width: responsiveScreenWidth(2.4),
     height: responsiveScreenWidth(2.4),
     borderRadius: responsiveScreenWidth(1.2),
-    marginRight: responsiveScreenWidth(1)
+    marginRight: responsiveScreenWidth(1),
   },
   aliasItemText: {
     color: 'rgba(0,0,0, 0.6)',
-    fontSize: responsiveFontSize(1.6)
+    fontSize: responsiveFontSize(1.6),
   },
   aliasLineBreak: {
     marginRight: responsiveScreenWidth(1),
     fontWeight: 'bold',
-    fontSize: responsiveFontSize(2)
+    fontSize: responsiveFontSize(2),
   },
   graphSectionBody: {
-    marginTop: responsiveScreenHeight(1)
+    marginTop: responsiveScreenHeight(1),
   },
   graphSectionFooter: {
     width: '100%',
@@ -175,30 +189,29 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(2),
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   meterValueSummaryContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: responsiveScreenWidth(45)
+    width: responsiveScreenWidth(45),
   },
   shareIconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   meterValue: {
     fontSize: responsiveFontSize(2.7),
     fontWeight: 'bold',
     color: 'black',
-    letterSpacing: 0.8
+    letterSpacing: 0.8,
   },
   meterScale: {
     fontSize: responsiveFontSize(1.7),
-    color: 'rgba(0,0,0,0.5)'
+    color: 'rgba(0,0,0,0.5)',
   },
   meterContainer: {
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });

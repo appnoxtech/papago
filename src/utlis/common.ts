@@ -34,6 +34,8 @@
 //     return weekday[day.toLowerCase()];
 // };
 
+import { colorPrimary } from "../../assets/styles/GlobalTheme";
+
 // ​
 // export const generateUniqueId = () => {
 //     var text = '';
@@ -520,3 +522,70 @@ export const getMonthStringList = () => {
     return months.splice(0, length);
 };
 //#endregion
+
+export const timestampToLocaleDateConverterFunction = (timeStamp: number, format?: string) => {
+    let d = new Date(timeStamp);
+    const date = d.getDate() < 10 ? `0${d.getDate()}` : d.getDate();
+    const month = d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth() + 1;
+
+    if (format == 'dd/mm/yyyy') {
+        return `${date}-${month}-${d.getFullYear()}`;
+    } else if (format == 'yyyy-mm-dd') {
+        return `${d.getFullYear()}-${month}-${date}`;
+    } else {
+        return `${date} ${getMonthNameByIndex(d.getMonth())} ${d.getFullYear()}`;
+    }
+};
+
+export const getWeekDatesArray = (timeStamp: number) => {
+    const week = new Date(timeStamp).getDay();
+    let weekList = [];
+    const oneDay = 86400000;
+
+    weekList[0] = timeStamp - oneDay * week; 
+    
+    for(var i = 1; i < 7; i++) {
+        weekList[i] = weekList[i-1] + oneDay;
+    }
+    const weekListInFormat = weekList.map(day => timestampToLocaleDateConverterFunction(day, 'yyyy-mm-dd'));
+    return weekListInFormat;
+}
+
+export const getCalenderSelectedDaysFormat = (list: Array<string>) => {
+    let obj: {[key: string]: {selected: boolean, selectedColor: string}}  = {};
+    list.map(item => {
+        obj[item] = {selected: true, selectedColor: colorPrimary}
+    });
+    return obj;
+}
+
+export const getMonthName = (index: number) => {
+    switch (index) {
+        case 0:
+            return 'Jan';
+        case 1:
+            return 'Feb';
+        case 2:
+            return 'Mar';
+        case 3:
+            return 'Apr';
+        case 4:
+            return 'May';
+        case 5:
+            return 'Jun';
+        case 6:
+            return 'Jul';
+        case 7:
+            return 'Aug';
+        case 8:
+            return 'Sep';
+        case 9:
+            return 'Oct';
+        case 10:
+            return 'Nov';
+        case 11:
+            return 'Dec';
+        default:
+            return '';
+    }
+};
