@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "start": "react-native start",
     "reset": "node node_modules/react-native/local-cli/cli.js start --reset-cache",
-    "test": "jest"
+    "test": "jest",
+    "build": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
     "@mapcreator/api": "^3.0.1",

@@ -589,3 +589,16 @@ export const getMonthName = (index: number) => {
             return '';
     }
 };
+
+export const getDateRefrenceByTimeStamp = (timestamp: number) => {
+    const currDate = new Date().getDate();
+    const givenDate = new Date(timestamp).getDate();
+
+    if(currDate - 1 === givenDate) {
+        return 'Yesterday'
+    } else if (currDate === givenDate) {
+        return 'Today'
+    } else {
+        return `${new Date(timestamp).getDate()} ${getMonthNameByIndex(timestamp)}`
+    }
+}

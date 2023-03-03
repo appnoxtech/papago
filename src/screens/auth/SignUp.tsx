@@ -32,8 +32,14 @@ const initialState = {
   password: '',
 };
 
+const subTextInitialState = {
+  email: '',
+  password: ''
+}
+
 const SignUp = () => {
   const [inputs, setInputs] = useState(initialState);
+  const [subTexts, setSubTexts] = useState(subTextInitialState);
   const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const navigation = useNavigation();
@@ -53,12 +59,33 @@ const SignUp = () => {
     let state: boolean;
     if (inputs.email === '') {
       state = false;
+      setSubTexts({
+        ...subTexts,
+        email: 'Email is Required !'
+      })
+      
     } else if (!regex.test(inputs.email)) {
       state = false;
-    } else if (inputs.password === '' || inputs.password.length < 5) {
+      setSubTexts({
+        ...subTexts,
+        email: 'Invalid Email !'
+      });
+    } else if (inputs.password === '') {
       state = false;
+      setSubTexts({
+        ...subTexts,
+        email: '',
+        password: 'Password is Required !'
+      });
+    } else if (inputs.password.length < 5) {
+      state = false;
+      setSubTexts({
+        ...subTexts,
+        password: 'Password must contain 5 character !'
+      });
     } else {
       state = true;
+      setSubTexts(subTextInitialState);
     }
     setIsActive(state);
   };
@@ -83,7 +110,7 @@ const SignUp = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={style.flex1}>
       <SafeAreaView style={style.flex1}>
-        <ScrollView>
+        <ScrollView style={style.mainConatiner}>
           <View>
             <View style={style.imgContainer}>
               <Image
@@ -112,14 +139,14 @@ const SignUp = () => {
                   id="email"
                   value={inputs.email}
                   handleChange={handleChange}
-                  subText=""
+                  subText={subTexts.email}
                 />
                 <TextInputComponent
                   label="Your Password"
                   id="password"
                   value={inputs.password}
                   handleChange={handleChange}
-                  subText="Make sure your password is five or more characters long"
+                  subText={subTexts.password}
                 />
                 <TermsCondition />
                 <View style={{marginTop: responsiveScreenHeight(0.5)}}>
@@ -168,8 +195,9 @@ const style = StyleSheet.create({
     width: responsiveScreenWidth(95),
   },
   container: {
-    paddingHorizontal: responsiveScreenWidth(2.5),
+   
   },
+  mainConatiner : { paddingHorizontal: responsiveScreenWidth(2.5),},
   primaryText: {
     // fontFamily: 'NunitoSans-Bold',
     fontSize: responsiveFontSize(4),

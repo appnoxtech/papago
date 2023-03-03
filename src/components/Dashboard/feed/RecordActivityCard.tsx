@@ -29,7 +29,7 @@ import {
   data,
 } from '../../../interfaces/Dashboard/record.interface';
 import {useNavigation} from '@react-navigation/native';
-import {parseMillisecondsIntoReadableTime} from '../../../utlis/common';
+import {getDateRefrenceByTimeStamp, parseMillisecondsIntoReadableTime} from '../../../utlis/common';
 import Share from 'react-native-share';
 import useGenerateDynamicLinks from '../../../hooks/dynamicLinks/createDynamicLinks';
 import {
@@ -159,7 +159,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity}) => {
         <View style={styles.headUserDetails}>
           <Text style={styles.headText}>{acitivity.name}</Text>
           <Text style={styles.headSubText}>
-            Today at {parseMillisecondsIntoReadableTime(acitivity.startedAt)}
+            {getDateRefrenceByTimeStamp(acitivity.startedAt)} at {parseMillisecondsIntoReadableTime(acitivity.startedAt)}
           </Text>
         </View>
       </View>

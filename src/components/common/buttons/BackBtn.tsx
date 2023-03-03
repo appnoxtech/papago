@@ -31,16 +31,13 @@ export default BackBtn;
 
 const styles = StyleSheet.create({
   container: {
-    width: '30%',
     paddingVertical: responsiveScreenWidth(1),
   },
   btn: {
-    width: responsiveScreenWidth(15),
     borderRadius: responsiveScreenWidth(3.3),
     borderColor: 'white',
     borderWidth: 0.6,
     paddingVertical: responsiveScreenHeight(2),
-    paddingHorizontal: responsiveScreenWidth(1),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',

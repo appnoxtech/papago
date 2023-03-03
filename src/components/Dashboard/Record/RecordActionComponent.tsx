@@ -66,9 +66,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     };
   }, [isActive, isPaused]);
 
-  const startBtnPress = () => {
-    console.log('isClicked');
-
+  const startBtnPress = (accuracy: boolean) => {
     const data = new Date();
     Geolocation.getCurrentPosition(
       info => {
@@ -82,7 +80,16 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
         dispatch(updateActivityStartedAt(data.getTime()));
         // AddActivtyServiceHandler({latitude, longitude});
       },
-      error => console.log('Error', error),
+      error => {
+        if(error.code === 3) {
+          WeakLocationPopup();
+        }
+      },
+      {
+        timeout: 1500,
+        distanceFilter: 0,
+        enableHighAccuracy: accuracy,
+      }
     );
   };
 
@@ -212,7 +219,18 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
       dispatch(updateRecordActivityValue({key: 'isPaused', value: !isPaused}));
       dispatch(updateRecordStatus({key: 'isPaused', value: !isPaused}));
     }
-  }, [gpsAvailable])
+  }, [gpsAvailable]);
+
+  const WeakLocationPopup = () => {
+    Alert.alert('Notification', 'Unable to fetch location', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'Retry', onPress: () => startBtnPress(false)},
+    ])
+  }
 
   return (
     <View style={styles.container}>
@@ -271,7 +289,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
             ) : (
               <TouchableOpacity
                 style={styles.btnContainer}
-                onPress={startBtnPress}>
+                onPress={() => startBtnPress(true)}>
                 <Text style={styles.btnText}>START</Text>
               </TouchableOpacity>
             )}
@@ -392,7 +410,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   btnText: {
-    fontSize: responsiveFontSize(2),
+    fontSize: responsiveFontSize(1.8),
     textAlign: 'center',
     color: 'white',
   },

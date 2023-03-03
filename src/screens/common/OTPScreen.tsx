@@ -142,7 +142,9 @@ const OTP: React.FC<params> = ({route}) => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <BackBtn />
+      <View style={styles.backBtnContainer}>
+        <BackBtn />
+      </View>
       <View style={styles.body}>
         {
           <View style={styles.container}>
@@ -404,4 +406,8 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2),
     color: colorPrimary,
   },
+  backBtnContainer: {
+    width: responsiveScreenWidth(15),
+    paddingHorizontal: responsiveScreenWidth(2)
+  }
 });

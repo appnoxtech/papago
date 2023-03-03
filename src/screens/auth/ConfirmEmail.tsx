@@ -13,6 +13,7 @@ import BtnPrimary from '../../components/common/buttons/BtnPrimary';
 import useNavigate from '../../hooks/navigation/navigationHook';
 import {generateOTPService} from '../../services/common/OTPService';
 import {useNavigation} from '@react-navigation/native';
+import HeaderWithBackBtn from '../../components/common/Headers/HeaderWithBackBtn';
 
 const initialState = {
   email: '',
@@ -73,7 +74,7 @@ const ConfirmEmail = () => {
       <View>
         <View style={styles.headerContainer}>
           <BackBtn />
-          <View>
+          <View style={styles.titleContainer}>
             <Text style={styles.heading}>Reset password</Text>
           </View>
         </View>
@@ -113,6 +114,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: responsiveScreenWidth(2),
   },
   heading: {
     // fontFamily: 'NunitoSans-Bold',
@@ -120,6 +122,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
     fontWeight: 'bold'
+  },
+  titleContainer: {
+    flex: 1,
   },
   helpingText: {
     // fontFamily: 'NunitoSans-Regular',
@@ -136,6 +141,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: responsiveScreenWidth(3),
     width: '100%',
     position: 'absolute',
-    bottom: responsiveScreenHeight(2),
+    bottom: responsiveScreenHeight(5),
   },
 });

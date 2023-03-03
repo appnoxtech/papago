@@ -38,7 +38,7 @@ const ShowViewActivityImages: React.FC<props> = ({images, startingCords}) => {
           calculateDistance(imageItem.coordinate);
         }, []);
         return (
-          <View style={styles.container} key={index}>
+          <View style={index !== 0 ? styles.container : [styles.container, {marginTop:responsiveScreenHeight(0.3)}]} key={index}>
             <View style={styles.topContainer}>
               <View style={styles.verticalLine}></View>
             </View>

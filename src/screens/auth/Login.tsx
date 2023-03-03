@@ -87,7 +87,7 @@ const Login = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={style.safeContainer}>
-        <View style={{flex: 1}}>
+        <View style={style.mainContainer}>
           <View style={style.header}>
             <BackBtn />
           </View>
@@ -161,11 +161,17 @@ const Login = () => {
 export default Login;
 
 const style = StyleSheet.create({
-  safeContainer: {flex: 1, backgroundColor: 'white'},
+  safeContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingHorizontal: responsiveScreenWidth(2.5),
+  },
+  mainContainer: {
+    flex: 1
+  },
   container: {
     flex: 1,
     position: 'relative',
-    paddingHorizontal: responsiveScreenWidth(2.5),
   },
   btn: {
     marginVertical: responsiveScreenHeight(3),
