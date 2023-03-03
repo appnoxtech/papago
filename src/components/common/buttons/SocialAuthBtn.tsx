@@ -40,6 +40,7 @@ const SocialLoginBtn: React.FC<props> = ({label, type}) => {
         accessToken: Data.accessToken,
         userName: Data.userName,
         name: Data.name,
+        userId: Data.userId
       };
       handleUserLogin(userInfo);
       dispatch(updateUserData(true));

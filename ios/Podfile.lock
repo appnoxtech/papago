@@ -458,10 +458,16 @@ PODS:
   - RNScreens (3.19.0):
     - React-Core
     - React-RCTImage
+  - RNSentry (5.0.0):
+    - React-Core
+    - Sentry/HybridSDK (= 8.0.0)
   - RNShare (8.2.0):
     - React-Core
   - RNSVG (13.8.0):
     - React-Core
+  - Sentry/HybridSDK (8.0.0):
+    - SentryPrivate (= 8.0.0)
+  - SentryPrivate (8.0.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -515,6 +521,7 @@ DEPENDENCIES:
   - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -539,6 +546,8 @@ SPEC REPOS:
     - GTMSessionFetcher
     - libevent
     - PromisesObjC
+    - Sentry
+    - SentryPrivate
 
 EXTERNAL SOURCES:
   boost:
@@ -635,6 +644,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-google-signin/google-signin"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSVG:
@@ -708,8 +719,11 @@ SPEC CHECKSUMS:
   RNFBDynamicLinks: 11c1aceb8c823a6bf41cc6b8bbc4c72eb64669ff
   RNGoogleSignin: 22e468a9474dbcb8618d8847205ad4f0b2575d13
   RNScreens: ea4cd3a853063cda19a4e3c28d2e52180c80f4eb
+  RNSentry: eff1f32fe84682feb09a36c5e5f513d6ef964b70
   RNShare: b089c33619bbfb0a32bc4069c858b9274e694187
   RNSVG: c1e76b81c76cdcd34b4e1188852892dc280eb902
+  Sentry: 2158a4621096dcd0a3a4f7c80b84b04dde261035
+  SentryPrivate: 1e3acf96ee818a8d0d95b8e922d39ab6be338ea0
   Yoga: 5b0304b3dbef2b52e078052138e23a19c7dacaef
 
 PODFILE CHECKSUM: daa2ab48119eb00aa11b6673910e5bcfdd99704b
