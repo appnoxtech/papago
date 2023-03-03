@@ -98,12 +98,13 @@ const RecordPreview = () => {
   const AddActivtyServiceHandler = async (data: addActivity) => {
     try {
       const res = await AddActivityService(data);
+      const activityId = res.data.data;
       dispatch(resetMapData());
       dispatch(resetRecordStatus());
       dispatch(resetRecordActivityValue());
       navigation.reset({
         index: 0,
-        routes: [{name: 'Dashboard' as never}],
+        routes: [{name: 'Dashboard' as never}, {name: 'ViewActivity' as never, params: {id: activityId}},],
       });
     } catch (error: any) {
       Alert.alert('Error', error.response.data.errors[0].message);
