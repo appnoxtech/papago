@@ -15,8 +15,10 @@ import { useDispatch } from 'react-redux';
 import { resetRecordActivityValue, updateRecordActivityValue } from '../../../redux/reducers/recordActivityReducer';
 import { updateRecordStatus } from '../../../redux/reducers/record.reducer';
 import { useNavigation } from '@react-navigation/native';
+import useRecordActivityNotification from '../../../hooks/notifications/RecordNotifications';
 
 const Record = () => {
+  useRecordActivityNotification();
   const [isFinished, setIsFinished] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();

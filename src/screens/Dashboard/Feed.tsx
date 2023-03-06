@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateUserActivityList, updateUserDetails } from '../../redux/reducers/user';
 import useGetActivityFeedList from '../../hooks/Feed/GetFeedList.hook';
 import AnimatedMap from '../../components/maps/AnimatedMap';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const Feed = () => {
   const dispatch = useDispatch();

@@ -53,6 +53,15 @@
 	<string>4612f4d9b0e666074b4be1038caeb25c</string>
 	<key>FacebookDisplayName</key>
 	<string>Papa Go</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>mailto</string>
+		<string>instagram</string>
+		<string>instagram-stories</string>
+		<string>fb</string>
+		<string>facebook-stories</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -66,18 +75,18 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app need location access to work properly.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app need location access to work properly.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app need location access to work properly.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app does not require access to the microphone.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the photo library.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -97,15 +106,10 @@
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
 	</array>
-	<key>LSApplicationQueriesSchemes</key>
-		<array>
-			<string>whatsapp</string>
-			<string>mailto</string>
-			<string>instagram</string>
-			<string>instagram-stories</string>
-			<string>fb</string>
-			<string>facebook-stories</string>
-		</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
