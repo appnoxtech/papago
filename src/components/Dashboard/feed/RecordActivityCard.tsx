@@ -92,7 +92,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity}) => {
       console.log('data', data);
       await LikeRecordActivityService(data);
       setIsLiked(isLiked === 0 ? 1 : 0);
-      Alert.alert('Notification', 'Liked');
+      Alert.alert('Notification', isLiked === 0 ? 'Liked' : 'Unliked');
       GetActivityByIdHandler();
     } catch (error: any) {
       handleError(error);

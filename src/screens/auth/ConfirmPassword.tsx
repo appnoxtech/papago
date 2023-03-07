@@ -14,8 +14,13 @@ const initialState = {
     password: '',
     confirmPassword: ''
 }
+const subText = {
+    password: '',
+    confirmPassword: ''
+}
 const ConfirmPassword = ({route}: any) => {
     const [inputs, setInputs] = useState(initialState);
+    const [subTexts, setSubTexts] = useState(subText);
     const [isActive, setIsActive] = useState(false);
     const {email, otp} = route.params;
     const NavigateTo = useNavigate();
@@ -27,27 +32,57 @@ const ConfirmPassword = ({route}: any) => {
                 [id]: value,
             }
         });
+        validation(value, id)
     };
 
-    const validation = () => {
+    const validation = (value: string, id: string) => {
         let state: boolean;
-        if (
-            inputs.password === '' ||
-            inputs.confirmPassword === '' ||
-            inputs.password.length < 5 ||
-            inputs.confirmPassword.length < 5 ||
-            inputs.confirmPassword !== inputs.password
-        ) {
+        if(id === 'password' && value === '') {
             state = false;
+            setSubTexts({
+                ...subTexts,
+                password: 'Required !'
+            });
+        } else if (id === 'password' && value.length < 5) {
+            state = false;
+            setSubTexts({
+                ...subTexts,
+                password: 'Password length must be 5 characters !'
+            });
+        } else if (id === 'confirmPassword' && value === '') {
+            state = false;
+            setSubTexts({
+                ...subTexts,
+                password: '',
+                confirmPassword: 'Required !'
+            });
+        } else if (id === 'confirmPassword' && value.length < 5) {
+            state = false;
+            setSubTexts({
+                ...subTexts,
+                password: '',
+                confirmPassword: 'Password length must be 5 characters !'
+            });
+        } else if (id === 'confirmPassword' && inputs.password !== value) {
+            state = false;
+            setSubTexts({
+                ...subTexts,
+                password: '',
+                confirmPassword: 'Password not matched !'
+            });
+        } else if (id === 'password' && inputs.confirmPassword !== value) {
+            state = false;
+            setSubTexts({
+                ...subTexts,
+                password: '',
+                confirmPassword: 'Password not matched !'
+            });
         } else {
             state = true;
+            setSubTexts(subText);
         }
         setIsActive(state);
     };
-
-    useEffect(() => {
-        validation();
-    }, [inputs])
 
     const handleClick = async () => {
        try {

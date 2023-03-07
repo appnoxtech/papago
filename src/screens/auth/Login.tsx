@@ -31,8 +31,14 @@ const initialState = {
   email: '',
   password: '',
 };
+
+const subText = {
+  email: '',
+  password: '',
+}
 const Login = () => {
   const [inputs, setInputs] = useState(initialState);
+  const [subTexts, setSubTexts] = useState(subText);
   const [isActive, setIsActive] = useState(false);
   const NavigateTo = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -54,12 +60,31 @@ const Login = () => {
     let state: boolean;
     if (inputs.email === '') {
       state = false;
+      setSubTexts({
+        ...subText,
+        email: 'Required !',
+      });
     } else if (!regex.test(inputs.email)) {
       state = false;
-    } else if (inputs.password === '' || inputs.password.length < 5) {
+      setSubTexts({
+        ...subText,
+        email: 'Invalid Email !',
+      });
+    } else if (inputs.password === '') {
       state = false;
+      setSubTexts({
+        email: '',
+        password: 'Required !',
+      });
+    } else if (inputs.password.length < 5) {
+      state = false;
+      setSubTexts({
+        email: '',
+        password: 'Password length must be of 5 character long !',
+      });
     } else {
       state = true;
+      setSubTexts(subText);
     }
     setIsActive(state);
   };
@@ -101,14 +126,14 @@ const Login = () => {
                 id="email"
                 value={inputs.email}
                 handleChange={handleChange}
-                subText=""
+                subText={subTexts.email}
               />
               <TextInputComponent
                 label="Your Password"
                 id="password"
                 value={inputs.password}
                 handleChange={handleChange}
-                subText="Make sure your password is five or more characters long"
+                subText={subText.password}
               />
               <View style={style.forgetPasswordContainer}>
                 <Pressable onPress={() => NavigateTo('ConfirmEmail')}>
