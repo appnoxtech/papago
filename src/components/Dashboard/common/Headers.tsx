@@ -81,7 +81,7 @@ const Headers = ({title}: props) => {
             <Feather
               onPress={handleSettingIconClick}
               name="settings"
-              size={25}
+              size={24}
               style={styles.icon}
             />
           ) : null}
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   activity: {
-    fontSize: responsiveFontSize(2.6),
+    fontSize: responsiveFontSize(2.5),
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: 'absolute',
-    top: responsiveScreenHeight(1.7),
+    top: responsiveScreenHeight(1.8),
     right: responsiveScreenWidth(3),
     color: 'black',
   },

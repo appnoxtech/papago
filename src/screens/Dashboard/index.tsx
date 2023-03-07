@@ -1,37 +1,37 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, {useEffect} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import Feed from './Feed';
 import Search from './Friends';
 import Menu from './Menu';
-import { colorPrimary } from '../../../assets/styles/GlobalTheme';
+import {colorPrimary} from '../../../assets/styles/GlobalTheme';
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import Events from './Events';
 import RecordStackScreen from './Records';
-import { responsiveFontSize } from 'react-native-responsive-dimensions';
-import { useNavigation } from '@react-navigation/native';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
+import {useNavigation} from '@react-navigation/native';
 import EventsStackScreen from './Events';
+import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
-
 const Dashboard: React.FC<any> = () => {
   const navigation = useNavigation();
-
+  const {tabBarVisibility} = useSelector((state: any) => state.recordActivity);
   const handleDynamicLink = (link: any) => {
     // Handle dynamic link inside your own application
-    if(link){
+    if (link) {
       if (link.url.includes('activity')) {
         // ...navigate to your offers screen
-        const subStringList = link.url.split("/");
+        const subStringList = link.url.split('/');
         const id = subStringList[subStringList.length - 1];
-        navigation.navigate('ViewActivity' as never , {id} as never);
+        navigation.navigate('ViewActivity' as never, {id} as never);
       }
     }
   };
@@ -46,12 +46,12 @@ const Dashboard: React.FC<any> = () => {
     dynamicLinks()
       .getInitialLink()
       .then((link: any) => {
-        if(link){
+        if (link) {
           if (link.url.includes('activity')) {
             // ...navigate to your offers screen
-            const subStringList = link.url.split("/");
+            const subStringList = link.url.split('/');
             const id = subStringList[subStringList.length - 1];
-            navigation.navigate('ViewActivity' as never , {id} as never);
+            navigation.navigate('ViewActivity' as never, {id} as never);
           }
         }
       });
@@ -61,19 +61,57 @@ const Dashboard: React.FC<any> = () => {
     <>
       <Tab.Navigator
         //@ts-ignore
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
+        screenOptions={({route}) => ({
+          tabBarIcon: ({focused, color, size}) => {
             let iconName;
             if (route.name === 'Feed') {
-              return <Ionicons style={iconName = focused ? styles.iconFocused : styles.icon} name={iconName = focused ? 'ios-home' : 'ios-home-outline'} />
+              return (
+                <Ionicons
+                  style={
+                    (iconName = focused ? styles.iconFocused : styles.icon)
+                  }
+                  name={(iconName = focused ? 'ios-home' : 'ios-home-outline')}
+                />
+              );
             } else if (route.name === 'Friends') {
-              return <Ionicons style={iconName = focused ? styles.iconFocused : styles.icon} name={iconName = focused ? 'people-sharp' : 'people-outline'} />
+              return (
+                <Ionicons
+                  style={
+                    (iconName = focused ? styles.iconFocused : styles.icon)
+                  }
+                  name={
+                    (iconName = focused ? 'people-sharp' : 'people-outline')
+                  }
+                />
+              );
             } else if (route.name === 'Record') {
-              return <FontAwesome style={iconName = focused ? styles.iconFocused : styles.icon} name="bullseye" />
+              return (
+                <FontAwesome
+                  style={
+                    (iconName = focused ? styles.iconFocused : styles.icon)
+                  }
+                  name="bullseye"
+                />
+              );
             } else if (route.name === 'Events') {
-              return <MaterialIcons name="event" style={iconName = focused ? styles.iconFocused : styles.icon} color="#1f2937" />
+              return (
+                <MaterialIcons
+                  name="event"
+                  style={
+                    (iconName = focused ? styles.iconFocused : styles.icon)
+                  }
+                  color="#1f2937"
+                />
+              );
             } else if (route.name === 'Menu') {
-              return <Entypo style={iconName = focused ? styles.iconFocused : styles.icon} name="menu" />
+              return (
+                <Entypo
+                  style={
+                    (iconName = focused ? styles.iconFocused : styles.icon)
+                  }
+                  name="menu"
+                />
+              );
             }
           },
           tabBarActiveTintColor: colorPrimary,
@@ -83,9 +121,7 @@ const Dashboard: React.FC<any> = () => {
             fontWeight: 'bold',
             letterSpacing: 0.8,
           },
-        })}
-        
-      >
+        })}>
         <Tab.Screen
           name="Feed"
           component={Feed}
@@ -105,6 +141,9 @@ const Dashboard: React.FC<any> = () => {
           component={RecordStackScreen}
           options={{
             headerShown: false,
+            tabBarStyle: {
+              display: tabBarVisibility,
+            },
           }}
         />
         <Tab.Screen
@@ -135,7 +174,7 @@ const styles = StyleSheet.create({
   iconFocused: {
     fontSize: 23,
     fontWeight: 'bold',
-    color: colorPrimary
+    color: colorPrimary,
   },
   icon: {
     fontSize: 23,
@@ -143,6 +182,6 @@ const styles = StyleSheet.create({
   },
   header: {
     textAlign: 'center',
-    fontWeight: 'bold'
-  }
-})
+    fontWeight: 'bold',
+  },
+});

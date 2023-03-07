@@ -15,7 +15,7 @@ import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import {useNavigation} from '@react-navigation/native';
 
 const Setting = () => {
-  const {activity} = useSelector((state: any) => state.activity);
+  const {selectedActivity} = useSelector((state: any) => state.activity);
   const [autoPause, setAutoPause] = useState(false);
   const [isScreenAwake, setIsScreenAwake] = useState(false);
   const navigation = useNavigation();
@@ -35,8 +35,8 @@ const Setting = () => {
           <View>
             <TouchableOpacity onPress={handleActivityPress}>
               <View style={styles.activityContainer}>
-                <Text style={styles.activityName}>{activity}</Text>
-                <Entypo style={styles.icon} name="chevron-right" size={18} />
+                <Text style={styles.activityName}>{selectedActivity.activityName}</Text>
+                <Entypo style={styles.icon} name="chevron-right" size={22} />
               </View>
             </TouchableOpacity>
           </View>

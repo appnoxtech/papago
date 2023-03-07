@@ -4,6 +4,7 @@ const initialState = {
     isActive: false,
     distance: 0,
     speed: 0,
+    tabBarVisibility: 'flex',
     activity: {
         startedAt: 0,
         activityId: '',
@@ -82,6 +83,11 @@ interface updateActivtyType {
     payload: boolean
 }
 
+interface updateTabBarDisplay {
+    type: 'UPDATE_TAB_BAR_VISIBILITY',
+    payload: 'flex' | 'none'
+}
+
 type action =  updateActivityValue 
               | resetActivityValue 
               | updateRecordActivityTimer 
@@ -93,7 +99,8 @@ type action =  updateActivityValue
               | updateActivitySpeed
               | updateActivityFinishedAt
               | updateActvityImage
-              | updateActivtyType;
+              | updateActivtyType
+              | updateTabBarDisplay;
 
 const RecordActivityReducer = (state = initialState , action: action) => {
     switch (action.type) {
@@ -201,6 +208,13 @@ const RecordActivityReducer = (state = initialState , action: action) => {
                 }
             }
         }
+
+        case 'UPDATE_TAB_BAR_VISIBILITY': {
+            return {
+                ...state,
+                tabBarVisibility: action.payload,
+            }
+        }
   
         default:
             return state
@@ -290,4 +304,11 @@ export const updateActivityType = (type: boolean): updateActivtyType => {
         type: 'UPDATE_ACTIVTY_TYPE',
         payload: type
     }
+};
+
+export const updateTabBarDisplay = (type: 'flex' | 'none'): updateTabBarDisplay => {
+    return {
+        type: 'UPDATE_TAB_BAR_VISIBILITY',
+        payload: type,
+    };
 }

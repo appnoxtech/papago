@@ -28,6 +28,7 @@ import {
   updateDistanceMeter,
   updateRecordActivityValue,
   updateSpeedMeter,
+  updateTabBarDisplay,
 } from '../../../redux/reducers/recordActivityReducer';
 import {
   updateCurrentLocation,
@@ -102,6 +103,7 @@ const MapViewComponent = () => {
       console.log('initial Cords', initialCords);
       setNewWayPointsCord(initialCords);
       watchLocation();
+      dispatch(updateTabBarDisplay('none'));
     }
   }, [isStart]);
 
@@ -111,12 +113,14 @@ const MapViewComponent = () => {
       const date = new Date();
       console.log('stopped watching user location');
       Geolocation.clearWatch(watchId);
+      dispatch(updateTabBarDisplay('flex'));
       dispatch(setImmediatePoints(wayPoints));
       dispatch(updateActivityFinishedAt(date.getTime()));
       dispatch(updateActivitySpeed(speed));
       dispatch(updateRecordActivityValue({key: 'speed', value: 0}));
     } else if (isStart && !isPaused) {
       console.log('started watching user location');
+      dispatch(updateTabBarDisplay('none'));
       Points = [...wayPoints];
       watchLocation();
     }

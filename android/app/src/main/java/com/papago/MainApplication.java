@@ -13,6 +13,7 @@ import cl.json.ShareApplication;
 import java.util.List;
 import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage; // <-- add this import 
 import com.ninty.system.setting.SystemSettingPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
 
 public class MainApplication extends Application implements ReactApplication {
 

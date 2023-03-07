@@ -1,5 +1,13 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import {
+  Alert,
+  Keyboard,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   responsiveFontSize,
@@ -30,6 +38,7 @@ import {
 } from '../../interfaces/Dashboard/record.interface';
 import {resetMapData} from '../../redux/reducers/map.reducer';
 import {resetRecordStatus} from '../../redux/reducers/record.reducer';
+import useCameraAccess from '../../hooks/nativeAccess/cameraAccess';
 const date = new Date();
 
 const RecordPreview = () => {
@@ -37,6 +46,9 @@ const RecordPreview = () => {
   const [input, setInput] = useState({
     title: `Morning ${month[date.getMonth()]} ${date.getDate()}th`,
   });
+  const requestCameraPermission = useCameraAccess();
+  const [subText, setSubText] = useState('');
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [isMediaAccess, setIsMediaAccess] = useState(false);
@@ -66,15 +78,17 @@ const RecordPreview = () => {
         [id]: value,
       };
     });
-    validation();
+    validation(value);
   };
 
-  const validation = () => {
+  const validation = (value: string) => {
     let state: boolean;
-    if (input.title.length <= 0) {
+    if (value.length <= 0) {
       state = false;
+      setSubText('Title is required !');
     } else {
       state = true;
+      setSubText('');
     }
     setIsActive(state);
   };
@@ -90,7 +104,7 @@ const RecordPreview = () => {
       immediatePoints: [...activity.immediatePoints],
       speed: activity.speed,
       images: activity.images,
-      isPublic: activity.isPublic
+      isPublic: activity.isPublic,
     };
     AddActivtyServiceHandler(data);
   };
@@ -104,7 +118,10 @@ const RecordPreview = () => {
       dispatch(resetRecordActivityValue());
       navigation.reset({
         index: 0,
-        routes: [{name: 'Dashboard' as never}, {name: 'ViewActivity' as never, params: {id: activityId}},],
+        routes: [
+          {name: 'Dashboard' as never},
+          {name: 'ViewActivity' as never, params: {id: activityId}},
+        ],
       });
     } catch (error: any) {
       Alert.alert('Error', error.response.data.errors[0].message);
@@ -112,8 +129,35 @@ const RecordPreview = () => {
   };
 
   const handleRadioBtnClick = (isPublic: boolean) => {
-      dispatch(updateActivityType(isPublic));
-  }
+    dispatch(updateActivityType(isPublic));
+  };
+
+  const successFn = () => {
+    setIsMediaAccess(true);
+  };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      _keyboardDidShow,
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      _keyboardDidHide,
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const _keyboardDidShow = () => {
+    setIsKeyboardVisible(true);
+  };
+
+  const _keyboardDidHide = () => {
+    setIsKeyboardVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -132,21 +176,43 @@ const RecordPreview = () => {
             id="title"
             value={input.title}
             handleChange={handleChange}
-            subText=""
+            subText={subText}
           />
         </View>
         <View style={styles.activityTypeTextContainer}>
           <Text style={styles.typeText}>Activity Type</Text>
         </View>
         <View style={styles.radioBtnContainer}>
-          <TouchableOpacity onPress={() => handleRadioBtnClick(true)} style={activity.isPublic ? styles.selectedRadioBtn : styles.radioBtn}>
-            <Text style={activity.isPublic ? styles.radioBtnTextSelected : styles.radioBtnText }>Public</Text>
+          <TouchableOpacity
+            onPress={() => handleRadioBtnClick(true)}
+            style={
+              activity.isPublic ? styles.selectedRadioBtn : styles.radioBtn
+            }>
+            <Text
+              style={
+                activity.isPublic
+                  ? styles.radioBtnTextSelected
+                  : styles.radioBtnText
+              }>
+              Public
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleRadioBtnClick(false)} style={activity.isPublic ? styles.radioBtn : styles.selectedRadioBtn}>
-            <Text style={activity.isPublic ? styles.radioBtnText : styles.radioBtnTextSelected}>Private</Text>
+          <TouchableOpacity
+            onPress={() => handleRadioBtnClick(false)}
+            style={
+              activity.isPublic ? styles.radioBtn : styles.selectedRadioBtn
+            }>
+            <Text
+              style={
+                activity.isPublic
+                  ? styles.radioBtnText
+                  : styles.radioBtnTextSelected
+              }>
+              Private
+            </Text>
           </TouchableOpacity>
         </View>
-        {isMediaAccess ? null : (
+        {/* {isMediaAccess ? null : (
           <View style={styles.mediaAccessContainer}>
             <Text style={styles.textHead}>No Photo permission</Text>
             <Text style={styles.subText}>
@@ -155,18 +221,39 @@ const RecordPreview = () => {
             </Text>
             <Text style={styles.permissionText}>Give Permission</Text>
           </View>
-        )}
+        )} */}
       </View>
-      <View style={styles.btnContainer}>
-        <BtnPrimary
-          label="Save these to your activity"
-          isActive={isActive}
-          handlePress={handleSaveActivity}
-        />
-        <Button mode="contained" buttonColor="white" style={styles.btn}>
-          <Text style={styles.btnText}>Not now</Text>
-        </Button>
-      </View>
+      {Platform.OS === 'ios' ? (
+        <View style={styles.btnContainer}>
+          <BtnPrimary
+            label="Save this activity to your feed"
+            isActive={isActive}
+            handlePress={handleSaveActivity}
+          />
+          <Button
+            onPress={handleSaveActivity}
+            mode="contained"
+            buttonColor="white"
+            style={styles.btn}>
+            <Text style={styles.btnText}>Not now</Text>
+          </Button>
+        </View>
+      ) : !isKeyboardVisible ? (
+        <View style={styles.btnContainer}>
+          <BtnPrimary
+            label="Save this activity to your feed"
+            isActive={isActive}
+            handlePress={handleSaveActivity}
+          />
+          <Button
+            onPress={handleSaveActivity}
+            mode="contained"
+            buttonColor="white"
+            style={styles.btn}>
+            <Text style={styles.btnText}>Not now</Text>
+          </Button>
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -251,7 +338,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: responsiveScreenHeight(3)
+    marginBottom: responsiveScreenHeight(3),
   },
   radioBtn: {
     width: responsiveScreenWidth(40),
@@ -276,13 +363,13 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2.3),
     fontWeight: 'bold',
     color: 'black',
-    letterSpacing: 0.9
+    letterSpacing: 0.9,
   },
   radioBtnTextSelected: {
     fontSize: responsiveFontSize(2.3),
     fontWeight: 'bold',
     color: 'white',
-    letterSpacing: 0.9
+    letterSpacing: 0.9,
   },
   activityTypeTextContainer: {
     width: '100%',

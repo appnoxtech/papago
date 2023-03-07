@@ -13,6 +13,7 @@ import SystemSetting from 'react-native-system-setting'
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   responsiveFontSize,
+  responsiveHeight,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
@@ -34,6 +35,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Feather from 'react-native-vector-icons/Feather';
 import { ImageUploadService } from '../../../services/common/ImageUploadService';
 import useHandleError from '../../../hooks/common/handelError';
+import useCameraAccess from '../../../hooks/nativeAccess/cameraAccess';
 
 interface props {
   setIsFinished: any;
@@ -41,6 +43,7 @@ interface props {
 
 const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   const dispatch = useDispatch();
+  const requestCameraPermission = useCameraAccess();
   const {destination} = useSelector((state: any) => state.mapData);
   const [gpsAvailable, setGpsAvailable] = useState(false);
   const handleError = useHandleError();
@@ -185,28 +188,10 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     }
   }
 
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: "App Camera Permission",
-          message:"App needs access to your camera ",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("Camera permission given");
-        handleCameraClick();
-      } else {
-        console.log("Camera permission denied");
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
+  const cameraPressHandler = () => {
+    requestCameraPermission(handleCameraClick);
+  }
+  
 
   //adding listner for gps location
   useEffect(() => {
@@ -249,7 +234,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
             </View>
             <View style={styles.speedContainer}>
               <Text style={styles.primaryText}>
-                {speed ? speed.toFixed(2) : '0:0'}
+                {speed ? speed.toFixed(2) : '0.0'}
               </Text>
               <Text style={styles.subText}>Km/hr</Text>
             </View>
@@ -257,10 +242,10 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
           <View style={styles.body}>
             <TouchableOpacity
               style={styles.cameraContainer}
-              onPress={requestCameraPermission}>
+              onPress={cameraPressHandler}>
               <Feather
                 name="camera"
-                size={30}
+                size={28}
               />
             </TouchableOpacity>
             {isActive && isPaused ? (
@@ -323,6 +308,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     paddingHorizontal: responsiveScreenWidth(3),
     paddingVertical: responsiveScreenHeight(5),
+    
     alignItems: 'center',
   },
   modalPrimaryText: {
@@ -352,7 +338,8 @@ const styles = StyleSheet.create({
   head: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    alignItems: 'center',
+    alignItems: 'baseline',
+    paddingTop: responsiveScreenHeight(2)
   },
   distanceContainer: {},
   timeContainer: {
@@ -377,9 +364,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   body: {
-    marginVertical: responsiveScreenHeight(1),
     paddingHorizontal: responsiveScreenWidth(2),
-    height: responsiveScreenHeight(19),
+    paddingVertical: responsiveScreenHeight(2),
+    // height: Platform.OS === 'ios' ? responsiveScreenHeight(15) : responsiveScreenHeight(18),
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
@@ -415,15 +402,15 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   cameraContainer: {
-    width: responsiveScreenWidth(15),
-    height: responsiveScreenWidth(15),
+    width: responsiveScreenWidth(13),
+    height: responsiveScreenWidth(13),
     borderRadius: responsiveScreenWidth(8),
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#bbbbbb',
     backgroundColor: 'white',
     position: 'absolute',
-    top: responsiveScreenHeight(6.5),
-    left: responsiveScreenWidth(10),
+    top: responsiveScreenHeight(3.3),
+    left: responsiveScreenWidth(12),
   },
 });

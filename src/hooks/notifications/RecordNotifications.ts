@@ -1,6 +1,9 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification from "react-native-push-notification";
+
 import { useEffect } from 'react';
 import {useSelector} from 'react-redux';
+import { Platform } from 'react-native';
 
 const useRecordActivityNotification = () => {
   const {selectedActivity} = useSelector((state: any) => state.activity);
@@ -12,45 +15,47 @@ const useRecordActivityNotification = () => {
 
   useEffect(() => {
    if(isStart) {
-     ShowRecordNotifications('Started');
+     Platform.OS === 'android' ? AndroidNotification('Started') :ShowRecordNotifications('Started');
    }
   }, [isStart]);
 
   useEffect(() => {
     if(isStart && isPaused) {
-       ShowRecordNotifications('Paused'); 
+      Platform.OS === 'android' ? AndroidNotification('Paused') :ShowRecordNotifications('Paused');
     }else if(isStart && !isPaused) {
-       ShowRecordNotifications('Started');
+      Platform.OS === 'android' ? AndroidNotification('Started') :ShowRecordNotifications('Started');;
     }
   }, [isPaused]);
 
-
-  const getSecondDigit = () => {
-    let seconds = Math.floor((timer / 1000) % 60);
-    if (seconds < 10) {
-      return `0${seconds}`;
-    } else {
-      return seconds;
-    }
-  };
-
-  const getMinutesDigit = () => {
-    let minutes = Math.floor((timer / 60000) % 60);
-    if (minutes < 10) {
-      return `0${minutes}`;
-    } else {
-      return minutes;
-    }
-  };
-
   const ShowRecordNotifications = (state: string) => {
-    PushNotificationIOS.addNotificationRequest({
-      id: 'record_notification',
-      body: `${
-        selectedActivity.activityName
-      } - ${state}`,
-    });
+    // PushNotificationIOS.addNotificationRequest({
+    //   id: 'record_notification',
+    //   body: `${
+    //     selectedActivity.activityName
+    //   } - ${state}`,
+    // });
+    PushNotification.cancelLocalNotification('123');
+    PushNotification.localNotification({
+      id: '123',
+      ongoing:true,
+      channelId: 'record_notification',
+      title: 'Record Activity',
+      message:  `${selectedActivity.activityName} - ${state}`,
+      repeatTime: 1,
+    })
   };
+
+  const AndroidNotification = (state: string) => {
+    PushNotification.cancelLocalNotification('123');
+    PushNotification.localNotification({
+      id: '123',
+      ongoing:true,
+      channelId: 'record_notification',
+      title: 'Record Activity',
+      message:  `${selectedActivity.activityName} - ${state}`,
+      repeatTime: 1,
+    })
+  }
 
 };
 

@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Headers from '../../../components/Dashboard/common/Headers';
@@ -40,7 +40,7 @@ const Record = () => {
       </View>
       {isFinished ? (
         <View style={styles.isFinishContainer}>
-          <View style={{height: responsiveScreenHeight(69)}}></View>
+          <View style={{height: responsiveScreenHeight(63)}}></View>
           <View style={styles.isFinishContainerBody}>
             <Text style={styles.isFinishedPrimarytext}>Already finished ?</Text>
             <Text style={styles.isFinishedSubText}>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   actionContainer: {
     position: 'absolute',
     width: '100%',
-    bottom: 10,
+    bottom: Platform.OS === 'android' ? responsiveScreenHeight(5) : responsiveScreenHeight(1),
     right: 0,
     zIndex: 200,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',

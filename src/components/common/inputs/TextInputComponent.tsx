@@ -26,7 +26,7 @@ const TextInputComponent: React.FC<props> = ({ value, handleChange, label, id, s
                 textColor={'#8391A1'}
                 onChangeText={text => handleChange({ value: text, id })}
             />
-            <Text style={[styles.textGrey]}>
+            <Text style={[styles.textError]}>
                 {subText}
             </Text>
         </View>
@@ -41,9 +41,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         color: '#8391A1',
     },
-    textGrey: {
+    textError: {
         marginTop: responsiveScreenHeight(.2),
         fontSize: responsiveFontSize(1.5),
-        color: '#8391A1'
+        color: 'rgba(220,20,60,0.7)'
     },
 })
