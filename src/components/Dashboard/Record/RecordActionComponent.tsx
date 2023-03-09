@@ -34,12 +34,15 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Feather from 'react-native-vector-icons/Feather';
 import { ImageUploadService } from '../../../services/common/ImageUploadService';
 import useHandleError from '../../../hooks/common/handelError';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification, {Importance} from 'react-native-push-notification';
 
 interface props {
   setIsFinished: any;
 }
 
 const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
+  const {selectedActivity} = useSelector((state: any) => state.activity);
   const dispatch = useDispatch();
   const {destination} = useSelector((state: any) => state.mapData);
   const [gpsAvailable, setGpsAvailable] = useState(false);
@@ -78,6 +81,14 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
         dispatch(updateRecordActivityValue({key: 'isPaused', value: false}));
         dispatch(updateRecordStatus({key: 'isStart', value: true}));
         dispatch(updateActivityStartedAt(data.getTime()));
+        PushNotification.localNotification({
+          channelId: '123',
+          id: '123',
+          title: 'Papa Go',
+          message: `${
+            selectedActivity.activityName
+          } - ${getMinutesDigit()}:${getSecondDigit()}`
+        })
         // AddActivtyServiceHandler({latitude, longitude});
       },
       error => {
