@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  AppState,
 } from 'react-native';
 import {getDistance} from 'geolib';
 import MapView, {Marker, Polyline} from 'react-native-maps';
@@ -55,8 +56,9 @@ const MapViewComponent = () => {
   const {crrLocation, initialCords, destination, wayPoints} = useSelector(
     (state: any) => state.mapData,
   );
-  const {distance, speed} = useSelector((state: any) => state.recordActivity);
-  const markerRef = useRef<any>(null);
+  const {distance, speed, isActive} = useSelector(
+    (state: any) => state.recordActivity,
+  );
   const mapRef = useRef(null);
   const dispatch = useDispatch();
   const {selectedActivity} = useSelector((state: any) => state.activity);
@@ -69,6 +71,10 @@ const MapViewComponent = () => {
     let centroid: any;
     const {width, height} = Dimensions.get('window');
     const ASPECT_RATIO = width / height;
+    // to prevent setting initial cords again
+    if (wayPoints.length) {
+      return;
+    }
     Geolocation.getCurrentPosition(
       info => {
         centroid = info.coords;
@@ -92,6 +98,10 @@ const MapViewComponent = () => {
   }, []);
 
   const setNewWayPointsCord = (points: cords) => {
+    //set stored point if app gets killed
+    if (wayPoints.length && !Points.length) {
+      return (Points = [...wayPoints]);
+    }
     Points.push(points);
     dispatch(updateWayPoints([...Points]));
   };
@@ -110,7 +120,10 @@ const MapViewComponent = () => {
     if (isStart && isPaused) {
       const date = new Date();
       console.log('stopped watching user location');
-      Geolocation.clearWatch(watchId);
+      Geolocation.clearWatch(0);
+      Geolocation.clearWatch(1);
+      Geolocation.clearWatch(2);
+      Geolocation.clearWatch(3);
       dispatch(setImmediatePoints(wayPoints));
       dispatch(updateActivityFinishedAt(date.getTime()));
       dispatch(updateActivitySpeed(speed));
@@ -126,7 +139,6 @@ const MapViewComponent = () => {
   const calculateDistance = () => {
     const watchDistance = getDistance(Points[0], Points[Points.length - 1]);
     const distance = watchDistance / 1000;
-    console.log('watchDistance', watchDistance);
     dispatch(updateDistanceMeter(distance));
     return distance;
   };
@@ -137,10 +149,15 @@ const MapViewComponent = () => {
       ({coords}) => {
         const {latitude, longitude, speed} = coords;
         console.log('speed', speed);
-        
+
         const cords = {latitude, longitude};
         dispatch(updateDestinationCords({...cords}));
-        dispatch(updateRecordActivityValue({key: 'speed', value: speed ? (speed * 3.6) : speed}))
+        dispatch(
+          updateRecordActivityValue({
+            key: 'speed',
+            value: speed ? speed * 3.6 : speed,
+          }),
+        );
         setNewWayPointsCord(cords);
         calculateDistance();
       },
@@ -156,6 +173,7 @@ const MapViewComponent = () => {
         distanceFilter: 1,
       },
     );
+    
     setWatchId(Id);
   };
 
@@ -165,31 +183,13 @@ const MapViewComponent = () => {
       ...destination,
       latitudeDelta: 0.0009,
       longitudeDelta: 0.0021,
-    })
+    });
   };
-  
 
   useEffect(() => {
     fitMapView();
   }, [wayPoints]);
-
-  // useEffect(() => {
-  //   const watchDistance = distance * 1000;
-  //   console.log('watchDistance', watchDistance);
-  //   if(watchDistance % 100 === 0) {
-  //     console.log('map adjust fn. runned');
-  //      //@ts-ignore
-  //     mapRef.current.fitToCoordinates(wayPoints, {
-  //       edgePadding: {
-  //         top: 20,
-  //         right: 20,
-  //         bottom: 60,
-  //         left: 20,
-  //       },
-  //       animated: true,
-  //     });
-  //   }
-  // }, [distance]);
+  
 
   return (
     <>
@@ -245,7 +245,6 @@ const MapViewComponent = () => {
       )}
     </>
   );
-
 };
 
 export default MapViewComponent;
@@ -257,110 +256,109 @@ const styles = StyleSheet.create({
   },
 });
 
+// if (Platform.OS === 'android') {
+//   return (
+//     <>
+//       {crrLocation ? (
+//         initialCords ? (
+//           <MapView ref={(ref) => {mapRef = ref}} showsBuildings={false} style={StyleSheet.absoluteFill}>
+//             {/*  Show Marker for the initial starting point */}
+//             {initialCords ? (
+//               <Marker image={startPointImage} coordinate={initialCords} />
+//             ) : null}
 
-  // if (Platform.OS === 'android') {
-  //   return (
-  //     <>
-  //       {crrLocation ? (
-  //         initialCords ? (
-  //           <MapView ref={(ref) => {mapRef = ref}} showsBuildings={false} style={StyleSheet.absoluteFill}>
-  //             {/*  Show Marker for the initial starting point */}
-  //             {initialCords ? (
-  //               <Marker image={startPointImage} coordinate={initialCords} />
-  //             ) : null}
+//             {/* Show Marker for the final end point  */}
+//             {destination ? (
+//               <Marker
+//                 image={finishPointImage}
+//                 coordinate={destination}
+//               />
+//             ) : null}
+//             {wayPoints.length > 0 ? (
+//               <Polyline
+//                 strokeWidth={3}
+//                 strokeColor={colorPrimary}
+//                 coordinates={wayPoints}
+//               />
+//             ) : null}
 
-  //             {/* Show Marker for the final end point  */}
-  //             {destination ? (
-  //               <Marker
-  //                 image={finishPointImage}
-  //                 coordinate={destination}
-  //               />
-  //             ) : null}
-  //             {wayPoints.length > 0 ? (
-  //               <Polyline
-  //                 strokeWidth={3}
-  //                 strokeColor={colorPrimary}
-  //                 coordinates={wayPoints}
-  //               />
-  //             ) : null}
+//           </MapView>
+//         ) : (
+//           <MapView
+//             ref={(ref) => {
+//               if(ref){
+//                 Object.keys(ref).map(keyName => console.log(keyName))
+//               }
+//             }}
+//             showsBuildings={false}
+//             style={styles.map}
+//             provider="google"
+//             region={crrLocation}
+//             showsUserLocation={true}
+//           >
+//           </MapView>
+//         )
+//       ) : (
+//         <MapView
+//           style={StyleSheet.absoluteFill}
+//           initialRegion={{
+//             latitude: 37.78825,
+//             longitude: -122.4324,
+//             latitudeDelta: 0.0922,
+//             longitudeDelta: 0.0421,
+//           }}
+//         />
+//       )}
+//     </>
+//   );
+// } else {
+//   return (
+//     <>
+//       {crrLocation ? (
+//         initialCords ? (
+//           <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
+//             {/*  Show Marker for the initial starting point */}
+//             {initialCords ? (
+//               <Marker image={startPointImage} coordinate={initialCords} />
+//             ) : null}
 
-  //           </MapView>
-  //         ) : (
-  //           <MapView
-  //             ref={(ref) => {
-  //               if(ref){
-  //                 Object.keys(ref).map(keyName => console.log(keyName))
-  //               }
-  //             }}
-  //             showsBuildings={false}
-  //             style={styles.map}
-  //             provider="google"
-  //             region={crrLocation}
-  //             showsUserLocation={true}
-  //           >
-  //           </MapView>
-  //         )
-  //       ) : (
-  //         <MapView
-  //           style={StyleSheet.absoluteFill}
-  //           initialRegion={{
-  //             latitude: 37.78825,
-  //             longitude: -122.4324,
-  //             latitudeDelta: 0.0922,
-  //             longitudeDelta: 0.0421,
-  //           }}
-  //         />
-  //       )}
-  //     </>
-  //   );
-  // } else {
-  //   return (
-  //     <>
-  //       {crrLocation ? (
-  //         initialCords ? (
-  //           <MapView showsBuildings={false} style={StyleSheet.absoluteFill}>
-  //             {/*  Show Marker for the initial starting point */}
-  //             {initialCords ? (
-  //               <Marker image={startPointImage} coordinate={initialCords} />
-  //             ) : null}
+//             {/* Show Marker for the final end point  */}
+//             {destination ? (
+//               <Marker
+//                 image={finishPointImage}
+//                 coordinate={destination}
+//               />
+//             ) : null}
+//             {wayPoints.length > 0 ? (
+//               <Polyline
+//                 strokeWidth={3}
+//                 strokeColor={colorPrimary}
+//                 coordinates={wayPoints}
+//               />
+//             ) : null}
 
-  //             {/* Show Marker for the final end point  */}
-  //             {destination ? (
-  //               <Marker
-  //                 image={finishPointImage}
-  //                 coordinate={destination}
-  //               />
-  //             ) : null}
-  //             {wayPoints.length > 0 ? (
-  //               <Polyline
-  //                 strokeWidth={3}
-  //                 strokeColor={colorPrimary}
-  //                 coordinates={wayPoints}
-  //               />
-  //             ) : null}
-
-  //           </MapView>
-  //         ) : (
-  //           <MapView
-  //             showsBuildings={false}
-  //             style={StyleSheet.absoluteFill}
-  //             initialRegion={crrLocation}
-  //             showsUserLocation={true}
-  //           >
-  //             {/* <Marker coordinate={crrLocation} /> */}
-  //           </MapView>
-  //         )
-  //       ) : (
-  //         <MapView
-  //           style={StyleSheet.absoluteFill}
-  //           initialRegion={{
-  //             latitude: 37.78825,
-  //             longitude: -122.4324,
-  //             latitudeDelta: 0.0922,
-  //             longitudeDelta: 0.0421,
-  //           }}
-  //         />
-  //       )}
-  //     </>
-  //   );
-  // }
+//           </MapView>
+//         ) : (
+//           <MapView
+//             showsBuildings={false}
+//             style={StyleSheet.absoluteFill}
+//             initialRegion={crrLocation}
+//             showsUserLocation={true}
+//           >
+//             {/* <Marker coordinate={crrLocation} /> */}
+//           </MapView>
+//         )
+//       ) : (
+//         <MapView
+//           style={StyleSheet.absoluteFill}
+//           initialRegion={{
+//             latitude: 37.78825,
+//             longitude: -122.4324,
+//             latitudeDelta: 0.0922,
+//             longitudeDelta: 0.0421,
+//           }}
+//         />
+//       )}
+//     </>
+//   );
+// }

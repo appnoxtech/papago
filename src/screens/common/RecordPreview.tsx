@@ -26,7 +26,6 @@ import {
 } from '../../services/Dashboard/record.service';
 import {
   addActivity,
-  recordActivityData,
 } from '../../interfaces/Dashboard/record.interface';
 import {resetMapData} from '../../redux/reducers/map.reducer';
 import {resetRecordStatus} from '../../redux/reducers/record.reducer';
@@ -97,15 +96,15 @@ const RecordPreview = () => {
 
   const AddActivtyServiceHandler = async (data: addActivity) => {
     try {
-      const res = await AddActivityService(data);
-      const activityId = res.data.data;
+      // const res = await AddActivityService(data);
+      // const activityId = res.data.data;
       dispatch(resetMapData());
       dispatch(resetRecordStatus());
       dispatch(resetRecordActivityValue());
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Dashboard' as never}, {name: 'ViewActivity' as never, params: {id: activityId}},],
-      });
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{name: 'Dashboard' as never}, {name: 'ViewActivity' as never, params: {id: activityId}},],
+      // });
     } catch (error: any) {
       Alert.alert('Error', error.response.data.errors[0].message);
     }

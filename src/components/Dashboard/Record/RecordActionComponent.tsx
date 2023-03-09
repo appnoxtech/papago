@@ -43,7 +43,7 @@ interface props {
 const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   const dispatch = useDispatch();
   const {destination} = useSelector((state: any) => state.mapData);
-  const [gpsAvailable, setGpsAvailable] = useState(false);
+  const [gpsAvailable, setGpsAvailable] = useState(true);
   const handleError = useHandleError();
   const {timer, isPaused, isActive, distance, speed} = useSelector(
     (state: any) => state.recordActivity,
@@ -54,18 +54,19 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     let interval = null;
 
     if (isActive && isPaused === false) {
+      BackgroundTimer.stopBackgroundTimer();
       BackgroundTimer.runBackgroundTimer(() => { 
-        //code that will be called every 3 seconds 
+        //code that will be called every 1 seconds 
         dispatch(updateRecordActivityTimer());
       }, 1000);
     } else {
       //@ts-ignore
       BackgroundTimer.stopBackgroundTimer();
     }
-    return () => {
-      //@ts-ignore
-      BackgroundTimer.stopBackgroundTimer();
-    };
+    // return () => {
+    //   //@ts-ignore
+    //   BackgroundTimer.stopBackgroundTimer();
+    // };
   }, [isActive, isPaused]);
 
   const startBtnPress = (accuracy: boolean) => {
@@ -121,15 +122,6 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
       return minutes;
     }
   };
-
-  useEffect(() => {
-    Geolocation.getCurrentPosition(
-      info => {
-        setGpsAvailable(true);
-      },
-      error => setGpsAvailable(false),
-    );
-  });
 
   const _openAppSetting = useCallback(async () => {
     Platform.OS === 'ios'
@@ -233,6 +225,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
       {text: 'Retry', onPress: () => startBtnPress(false)},
     ])
   }
+  
 
   return (
     <View style={styles.container}>

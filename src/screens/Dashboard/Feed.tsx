@@ -34,13 +34,7 @@ const Feed = () => {
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
      <Headers title="Feed" />
-      
-      <ScrollView
-        style={styles.scollContainer}
-        contentContainerStyle={styles.contentContainer}>
-        <WelcomeSection />
-        <ViewPlannedActivity />
-      </ScrollView>
+      <ViewPlannedActivity />
     </SafeAreaView>
   );
 };
