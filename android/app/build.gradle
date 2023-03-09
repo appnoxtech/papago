@@ -156,6 +156,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation project(':react-native-linear-gradient')
+    implementation project(':react-native-background-timer')
     implementation project(':react-native-share')
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'

@@ -16,6 +16,7 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+import BackgroundTimer from 'react-native-background-timer';
 import AndroidOpenSettings from 'react-native-android-open-settings'
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import {Styles} from '../../../../assets/styles/GlobalStyles';
@@ -53,16 +54,17 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     let interval = null;
 
     if (isActive && isPaused === false) {
-      interval = setInterval(() => {
+      BackgroundTimer.runBackgroundTimer(() => { 
+        //code that will be called every 3 seconds 
         dispatch(updateRecordActivityTimer());
       }, 1000);
     } else {
       //@ts-ignore
-      clearInterval(interval);
+      BackgroundTimer.stopBackgroundTimer();
     }
     return () => {
       //@ts-ignore
-      clearInterval(interval);
+      BackgroundTimer.stopBackgroundTimer();
     };
   }, [isActive, isPaused]);
 
