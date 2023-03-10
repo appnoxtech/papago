@@ -1,5 +1,5 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   responsiveFontSize,
@@ -7,22 +7,33 @@ import {
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import HeaderWithBackBtn from '../../../components/common/Headers/HeaderWithBackBtn';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Text} from 'react-native-paper';
 import {Switch} from 'react-native-paper';
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import {useNavigation} from '@react-navigation/native';
+import { toggleAutoPauseSetting, toggleKeepScreenAwake } from '../../../redux/reducers/record.reducer';
 
 const Setting = () => {
   const {activity} = useSelector((state: any) => state.activity);
-  const [autoPause, setAutoPause] = useState(false);
-  const [isScreenAwake, setIsScreenAwake] = useState(false);
-  const navigation = useNavigation();
-
+  const {keepScreenAwake, autoPause} = useSelector(
+    (state: any) => state.recordStatus,
+  );
+  const dispatch = useDispatch();
+  
   const handleActivityPress = () => {
-    navigation.navigate('SelectActivity' as never);
+    
   };
+
+  const handleAutoPauseSetting = (state: boolean) => {
+    dispatch(toggleAutoPauseSetting(state));
+  }
+
+  const handleToggleScreenAwake = (state: boolean) => {
+    console.log('state', state);
+    dispatch(toggleKeepScreenAwake(state));
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,7 +61,7 @@ const Setting = () => {
               <Switch
                 color={colorPrimary}
                 value={autoPause}
-                onValueChange={setAutoPause}
+                onValueChange={(value) => handleAutoPauseSetting(value)}
               />
             </View>
           </View>
@@ -66,8 +77,8 @@ const Setting = () => {
             <View>
               <Switch
                 color={colorPrimary}
-                value={isScreenAwake}
-                onValueChange={setIsScreenAwake}
+                value={keepScreenAwake}
+                onValueChange={(state) => handleToggleScreenAwake(state)}
               />
             </View>
           </View>

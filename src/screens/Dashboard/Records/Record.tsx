@@ -1,6 +1,10 @@
 import {StyleSheet, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {
+  activateKeepAwake,
+  deactivateKeepAwake,
+} from '@sayem314/react-native-keep-awake';
 import Headers from '../../../components/Dashboard/common/Headers';
 import MapViewComponent from '../../../components/Dashboard/Record/MapView';
 import RecordActionComponent from '../../../components/Dashboard/Record/RecordActionComponent';
@@ -11,22 +15,120 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
-import { useDispatch } from 'react-redux';
-import { resetRecordActivityValue, updateRecordActivityValue } from '../../../redux/reducers/recordActivityReducer';
+import NetInfo from "@react-native-community/netinfo";
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import { updateRecordActivityValue } from '../../../redux/reducers/recordActivityReducer';
 import { updateRecordStatus } from '../../../redux/reducers/record.reducer';
-import { useNavigation } from '@react-navigation/native';
+import month from '../../../utlis/month';
+import { updateLocalActivityList } from '../../../redux/reducers/user';
+const date = new Date();
 
 const Record = () => {
   const [isFinished, setIsFinished] = useState(false);
   const dispatch = useDispatch();
+  const {selectedActivity} = useSelector((state: any) => state.activity);
   const navigation = useNavigation();
-
+  const {keepScreenAwake, autoPause} = useSelector(
+    (state: any) => state.recordStatus,
+  );
+  const recordStatus = useSelector((state: any) => state.recordStatus);
+  const {isPaused, timer, activity, distance} = useSelector(
+    (state: any) => state.recordActivity,
+  );
+  const {wayPoints} = useSelector((state: any) => state.mapData);
   const handleFinishActivityBtnClick = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'RecordPreview' as never}]
+    NetInfo.fetch().then(state => { 
+      console.log('state.isConnected', state.isConnected);
+      if(state.isConnected) {
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'RecordPreview' as never}],
+        });
+      }else {
+        const data = {
+          finishedAt: activity.finishedAt,
+          startedAt: activity.startedAt,
+          activityName: `Morning ${month[date.getMonth()]} ${date.getDate()}th`,
+          distance: distance,
+          duration: timer,
+          activityTypeId: selectedActivity._id,
+          immediatePoints: [...activity.immediatePoints],
+          speed: activity.speed,
+          images: activity.images,
+          isPublic: activity.isPublic
+        };
+        dispatch(updateLocalActivityList(data));
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Error' as never}],
+        });
+      }
     });
+    
+  };
+
+
+  // handle keepScreen Awake Toggle
+  useEffect(() => {
+    if (keepScreenAwake) {
+      activateKeepAwake();
+    } else {
+      deactivateKeepAwake();
+    }
+  }, [keepScreenAwake]);
+
+  const autoPauseActionHandler = (oldWayPointLength: any, locationChangeListener: any) => {
+    const newWayPointLength = getLatestWayPoints();
+    const isPaused = getPausedState();
+
+    // if autoPause is on but activity is not started
+    if(!recordStatus.isStart) {
+      clearInterval(locationChangeListener);
+      return;
+    }
+
+    // if autoPause is on but activity is paused
+    if(isPaused) {
+      clearInterval(locationChangeListener);
+      return;
+    }
+    
+    // activity will be pause if wayPoint array length not change in an 5 sec Interval
+    if(oldWayPointLength === newWayPointLength) { 
+      dispatch(updateRecordActivityValue({key: 'isPaused', value: true}));
+      dispatch(updateRecordStatus({key: 'isPaused', value: true}));
+      clearInterval(locationChangeListener);
+    }else {
+      oldWayPointLength = newWayPointLength;
+    }
   }
+
+  // handle autoPause toggle
+  useEffect(() => {
+    let locationChangeListener: any;
+    let oldWayPointLength = 1;
+    if (autoPause) {
+      if(locationChangeListener) {
+        clearInterval(locationChangeListener);
+      }
+      locationChangeListener = setInterval(() => {
+        autoPauseActionHandler(oldWayPointLength, locationChangeListener)
+       }, 5000);
+    }else {
+       if(locationChangeListener) {
+         clearInterval(locationChangeListener);
+       }
+    }
+  }, [autoPause, recordStatus.isStart, recordStatus.isPaused]);
+
+  // console.log('oldWayPointLength', oldWayPointLength);
+
+  const getLatestWayPoints = () => wayPoints.length;
+  const getPausedState =  () => recordStatus.isStart && recordStatus.isPaused;
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <Headers title="Record" />

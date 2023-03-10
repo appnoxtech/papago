@@ -2,6 +2,8 @@ const initialState = {
   isStart: false,
   isPaused: false,
   isEnd: false,
+  keepScreenAwake: false,
+  autoPause: false,
 };
 
 interface actionPayload {
@@ -18,7 +20,17 @@ interface resetRecordStatus {
   type: 'RESET_RECORD_STATUS';
 }
 
-type action = updateRecordStatus | resetRecordStatus;
+interface toggleKeepScreenAwake {
+  type: 'TOGGLE_KEEP_SCREEN_AWAKE_SETTING',
+  payload: boolean
+}
+
+interface toggleAutoPauseSetting {
+  type: 'TOGGLE_AUTO_PAUSE_SETTING',
+  payload: boolean
+}
+
+type action = updateRecordStatus | resetRecordStatus | toggleKeepScreenAwake | toggleAutoPauseSetting;
 
 export const RecordStatusReducer = (state = initialState, action: action) => {
   switch (action.type) {
@@ -33,6 +45,20 @@ export const RecordStatusReducer = (state = initialState, action: action) => {
       return {
         ...initialState,
       };
+    }
+
+    case 'TOGGLE_AUTO_PAUSE_SETTING': {
+      return {
+        ...state, 
+        autoPause: action.payload
+      }
+    }
+
+    case 'TOGGLE_KEEP_SCREEN_AWAKE_SETTING' : {
+      return {
+        ...state, 
+        keepScreenAwake: action.payload
+      }
     }
 
     default:
@@ -52,3 +78,17 @@ export const resetRecordStatus = () => {
     type: 'RESET_RECORD_STATUS',
   };
 };
+
+export const toggleAutoPauseSetting = (state: boolean): toggleAutoPauseSetting => {
+  return {
+    type: 'TOGGLE_AUTO_PAUSE_SETTING',
+    payload: state
+  }
+}
+
+export const toggleKeepScreenAwake = (state: boolean): toggleKeepScreenAwake => {
+  return {
+    type: 'TOGGLE_KEEP_SCREEN_AWAKE_SETTING',
+    payload: state
+  }
+}

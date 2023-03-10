@@ -145,15 +145,21 @@ const MapViewComponent = () => {
         calculateDistance();
       },
       error => {
-        Alert.alert('Location Error', error.message);
+        // Alert.alert('Location Error', error.message);
+        console.log('Error ==>', error);
+        
         if (error.POSITION_UNAVAILABLE) {
           Alert.alert('Notification', 'Seems like GPS is OFF.');
+        }
+        if(error.code === 3) {
+          console.log('Location does not change');
         }
       },
       {
         interval: 10,
         enableHighAccuracy: true,
         distanceFilter: 1,
+        timeout: 3000,
       },
     );
     setWatchId(Id);
