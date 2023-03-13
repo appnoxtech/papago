@@ -29,14 +29,7 @@ const Feed = () => {
   useEffect(() => {
     getUserDetails();
     getUserActivityFeedList();
-    
-    test()
   }, []);
-
-  const test = () => PushNotification.localNotification({
-    channelId: 'record_notification',
-    message:  `hello`
-  })
 
 
 

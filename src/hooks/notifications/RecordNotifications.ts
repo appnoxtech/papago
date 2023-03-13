@@ -28,12 +28,6 @@ const useRecordActivityNotification = () => {
   }, [isPaused]);
 
   const ShowRecordNotifications = (state: string) => {
-    // PushNotificationIOS.addNotificationRequest({
-    //   id: 'record_notification',
-    //   body: `${
-    //     selectedActivity.activityName
-    //   } - ${state}`,
-    // });
     PushNotification.cancelLocalNotification('123');
     PushNotification.localNotification({
       id: '123',
