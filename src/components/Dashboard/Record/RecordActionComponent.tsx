@@ -18,7 +18,7 @@ import {
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import AndroidOpenSettings from 'react-native-android-open-settings'
-import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
+import {colorPrimary, colorSecondary} from '../../../../assets/styles/GlobalTheme';
 import {Styles} from '../../../../assets/styles/GlobalStyles';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateRecordStatus} from '../../../redux/reducers/record.reducer';
@@ -254,28 +254,28 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
                   style={[
                     styles.btnContainer,
                     Styles.bgWhite,
-                    {borderColor: '#D0D0D0', borderWidth: 0.8},
+                    {borderColor: '#D0D0D0'},
                   ]}
                   onPress={handlePauseResume}>
-                  <Text style={styles.btnResume}>RESUME</Text>
+                  <Text style={[styles.btnText, {color: 'black'}]}>RESUME</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.btnContainer}
+                  style={[styles.btnContainer, {borderColor: colorPrimary},]}
                   onPress={handleIsFinishClick}>
-                  <Text style={styles.btnText}>Finish</Text>
+                  <Text style={[styles.btnText, {color: 'white'}]}>FINISH</Text>
                 </TouchableOpacity>
               </View>
             ) : isActive && !isPaused ? (
               <TouchableOpacity
-                style={styles.btnContainer}
+              style={[styles.btnContainer, {borderColor: colorPrimary},]}
                 onPress={handlePauseResume}>
-                <Text style={styles.btnText}>PAUSE</Text>
+                <Text style={[styles.btnText, {color: 'white'}]}>PAUSE</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={styles.btnContainer}
+                style={[styles.btnContainer, {borderColor: colorPrimary},]}
                 onPress={() => startBtnPress(true)}>
-                <Text style={styles.btnText}>START</Text>
+                <Text style={[styles.btnText, {color: 'white'}]}>START</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -378,28 +378,22 @@ const styles = StyleSheet.create({
     backgroundColor: colorPrimary,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
     borderRadius: responsiveScreenWidth(10),
     shadowColor: 'white',
     shadowOpacity: 0.8,
     shadowRadius: 2,
+    borderWidth: 0.8,
     shadowOffset: {
       height: 1,
       width: 0,
     },
   },
-  btnResume: {
+  btnText: {
     fontSize:
       Platform.OS === 'android'
         ? responsiveFontSize(1.3)
         : responsiveFontSize(1.3),
     textAlign: 'center',
-    color: 'black',
-  },
-  btnText: {
-    fontSize: responsiveFontSize(1.8),
-    textAlign: 'center',
-    color: 'white',
   },
   cameraContainer: {
     width: responsiveScreenWidth(13),
