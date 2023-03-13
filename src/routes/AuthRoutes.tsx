@@ -9,6 +9,7 @@ import SelectActivityType from '../screens/common/SelectActivity';
 import SharePreviewScreen from '../screens/common/SharePreviewScreen';
 import ViewActivityGraph from '../screens/common/ViewActivityGraph';
 import ViewUserStats from '../screens/common/ViewUserStats';
+import Error from '../screens/common/Error';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,11 @@ const AuthRoutes = () => {
       <Stack.Screen
         name="ViewUserStats"
         component={ViewUserStats}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Error"
+        component={Error}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
