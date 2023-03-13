@@ -34,7 +34,6 @@ import {
 } from '../../services/Dashboard/record.service';
 import {
   addActivity,
-  recordActivityData,
 } from '../../interfaces/Dashboard/record.interface';
 import {resetMapData} from '../../redux/reducers/map.reducer';
 import {resetRecordStatus} from '../../redux/reducers/record.reducer';

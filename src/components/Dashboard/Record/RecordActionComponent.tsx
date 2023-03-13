@@ -17,6 +17,7 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+import BackgroundTimer from 'react-native-background-timer';
 import AndroidOpenSettings from 'react-native-android-open-settings'
 import {colorPrimary, colorSecondary} from '../../../../assets/styles/GlobalTheme';
 import {Styles} from '../../../../assets/styles/GlobalStyles';
@@ -48,7 +49,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   const dispatch = useDispatch();
   const requestCameraPermission = useCameraAccess();
   const {destination} = useSelector((state: any) => state.mapData);
-  const [gpsAvailable, setGpsAvailable] = useState(false);
+  const [gpsAvailable, setGpsAvailable] = useState(true);
   const handleError = useHandleError();
   const {timer, isPaused, isActive, distance, speed} = useSelector(
     (state: any) => state.recordActivity,
@@ -59,17 +60,19 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
     let interval = null;
 
     if (isActive && isPaused === false) {
-      interval = setInterval(() => {
+      BackgroundTimer.stopBackgroundTimer();
+      BackgroundTimer.runBackgroundTimer(() => { 
+        //code that will be called every 1 seconds 
         dispatch(updateRecordActivityTimer());
       }, 1000);
     } else {
       //@ts-ignore
-      clearInterval(interval);
+      BackgroundTimer.stopBackgroundTimer();
     }
-    return () => {
-      //@ts-ignore
-      clearInterval(interval);
-    };
+    // return () => {
+    //   //@ts-ignore
+    //   BackgroundTimer.stopBackgroundTimer();
+    // };
   }, [isActive, isPaused]);
 
   const startBtnPress = (accuracy: boolean) => {
@@ -133,15 +136,6 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
       return minutes;
     }
   };
-
-  useEffect(() => {
-    Geolocation.getCurrentPosition(
-      info => {
-        setGpsAvailable(true);
-      },
-      error => setGpsAvailable(false),
-    );
-  });
 
   const _openAppSetting = useCallback(async () => {
     Platform.OS === 'ios'
@@ -227,6 +221,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
       {text: 'Retry', onPress: () => startBtnPress(false)},
     ])
   }
+  
 
   return (
     <View style={styles.container}>

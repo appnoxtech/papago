@@ -125,7 +125,6 @@ const RecordActivityReducer = (state = initialState , action: action) => {
         }
 
         case 'UPDATE_RECORD_DISTANCE_METER': {
-            console.log('distance ==>', action.payload);
             return {
                 ...state,
                 distance: action.payload

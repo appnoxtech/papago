@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View, Image, ScrollView} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, Text, View, Image, ScrollView, FlatList} from 'react-native';
+import React, {FC, useState} from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -8,6 +8,15 @@ import {
 import TripCard from './TripCard';
 import { useSelector } from 'react-redux';
 import RecordActivityCard from './RecordActivityCard';
+import WelcomeSection from './WelcomeSection';
+
+const RenderItem:FC<any> = ({acitivity}) => {
+  return (
+    <View key={acitivity._id}>
+    <RecordActivityCard acitivity={acitivity} />
+  </View>
+  )
+}
 
 const ViewPlannedActivity: React.FC<any> = () => {
   const {activityList} = useSelector((state: any) => state.user);
@@ -17,20 +26,18 @@ const ViewPlannedActivity: React.FC<any> = () => {
     <View style={styles.container}>
       {activityList.length > 0 ? (
         <View style={styles.listContainer}>
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.challengesListContainer}>
-            {
-              activityList.map((acitivity: any) => (
-                <View key={acitivity._id}>
-                  <RecordActivityCard acitivity={acitivity} />
-                </View>
-              ))
-            }
-          </ScrollView>
+          <FlatList
+             ListHeaderComponent={<WelcomeSection />}
+             showsHorizontalScrollIndicator={false}
+             contentContainerStyle={styles.challengesListContainer}
+             data={activityList}
+             renderItem={({item}) => <RenderItem acitivity={item} />}
+           />
         </View>
       ) : (
-        <View style={styles.noListView}>
+        <>
+         <WelcomeSection />
+         <View style={styles.noListView}>
           <View style={styles.textContainer}>
             <Text style={styles.heading}>Welcome to Papa Go !</Text>
             <Text style={styles.subHeading}>
@@ -45,6 +52,8 @@ const ViewPlannedActivity: React.FC<any> = () => {
             />
           </View>
         </View>
+        </>
+       
       )}
     </View>
   );

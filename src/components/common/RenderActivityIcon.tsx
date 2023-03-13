@@ -11,7 +11,6 @@ interface params {
 }
 
 const RenderActivityIcon = ({Activity, size}: params) => {
-    console.log('Activity', Activity);
     if (Activity.iconFamily === 'MaterialCommunityIcons') {
       return (
         <MaterialCommunityIcons
