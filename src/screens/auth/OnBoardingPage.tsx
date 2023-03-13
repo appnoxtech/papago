@@ -5,6 +5,7 @@ import {
   View,
   ImageBackground,
   Pressable,
+  StatusBar,
 } from 'react-native';
 import React from 'react';
 import {
@@ -23,7 +24,7 @@ const OnBoardingPage = () => {
       style={styles.flex_1}
       resizeMode="cover"
       source={require('../../../assets/images/homepage.jpeg')}>
-      <SafeAreaView style={[styles.container]}>
+      <SafeAreaView edges={['top']} style={[styles.container]}>
         <View style={styles.headerContainer}>
           <View style={styles.content}>
             <Avatar.Image
