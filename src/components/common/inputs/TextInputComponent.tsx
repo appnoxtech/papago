@@ -14,7 +14,7 @@ interface props {
 }
 
 const TextInputComponent: React.FC<props> = ({ value, handleChange, label, id, subText = '' }) => {
-
+    
     return (
         <View style={{paddingHorizontal: responsiveScreenWidth(1)}}>
             <TextInput
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         color: '#8391A1',
     },
     textError: {
-        marginTop: responsiveScreenHeight(.2),
+        marginVertical: responsiveScreenHeight(.5),
         fontSize: responsiveFontSize(1.5),
         color: 'rgba(220,20,60,0.7)'
     },

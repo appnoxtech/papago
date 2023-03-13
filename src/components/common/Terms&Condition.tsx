@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.5),
     marginLeft: responsiveScreenWidth(1),
     textDecorationLine: 'underline',
+    fontWeight: 'bold'
     // fontFamily: 'NunitoSans-Bold',
   },
 });

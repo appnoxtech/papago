@@ -38,8 +38,6 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 0.6,
     paddingVertical: responsiveScreenHeight(2),
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
   },
 })

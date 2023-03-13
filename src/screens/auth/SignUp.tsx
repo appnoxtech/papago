@@ -123,7 +123,9 @@ const SignUp = () => {
               </View>
             </View>
             <View style={style.container}>
-              <Text style={style.primaryText}>Let's get started !</Text>
+              <View style={style.primaryTextContainer}>
+               <Text style={style.primaryText}>Let's get started !</Text>
+              </View>
               <View style={[style.mt_2]}>
                 <View style={style.socialBtnContainer}>
                   <SocialAuthBtn label="Google" type="google" />
@@ -198,6 +200,9 @@ const style = StyleSheet.create({
    
   },
   mainConatiner : { paddingHorizontal: responsiveScreenWidth(2.5),},
+  primaryTextContainer: {
+    paddingHorizontal: responsiveScreenWidth(1)
+  },
   primaryText: {
     // fontFamily: 'NunitoSans-Bold',
     fontSize: responsiveFontSize(4),
@@ -215,7 +220,6 @@ const style = StyleSheet.create({
   },
   socialBtnContainer: {
     width: '50%',
-    paddingHorizontal: responsiveScreenWidth(1),
     paddingVertical: responsiveScreenHeight(1),
   },
   backBtnContainer: {

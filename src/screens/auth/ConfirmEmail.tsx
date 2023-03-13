@@ -18,9 +18,14 @@ import HeaderWithBackBtn from '../../components/common/Headers/HeaderWithBackBtn
 const initialState = {
   email: '',
 };
+
+const subTextInitialState = {
+  email: ''
+}
 const ConfirmEmail = () => {
   const [input, setInputs] = useState(initialState);
   const [isActive, setIsActive] = useState(false);
+  const [subText, setSubText] = useState(subTextInitialState);
   const navigation = useNavigation();
 
   const handleChange = ({value, id}: inputsHandlerParams) => {
@@ -30,16 +35,24 @@ const ConfirmEmail = () => {
         [id]: value,
       };
     });
+    validation(value, id);
   };
 
-  const validation = () => {
+  const validation = (value:string, id:string) => {
     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     let state: boolean;
-    if (input.email === '') {
+    if (id === 'email' && value === '') {
       state = false;
-    } else if (!regex.test(input.email)) {
+      setSubText({
+        email: 'Email is Required'
+      })
+    } else if (id === 'email' && !regex.test(value)) {
       state = false;
+      setSubText({
+        email: 'Please enter a valid email'
+      })
     } else {
+      setSubText(subTextInitialState)
       state = true;
     }
     setIsActive(state);
@@ -65,10 +78,6 @@ const ConfirmEmail = () => {
     }
   };
 
-  useEffect(() => {
-    validation();
-  }, [input]);
-
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -80,16 +89,18 @@ const ConfirmEmail = () => {
         </View>
       </View>
       <View style={styles.body}>
-        <Text style={styles.helpingText}>
-          To reset your password we need your email address. We will send you an
-          email with a link to choose a new password.
-        </Text>
+        <View style={styles.helpingTextContainer}>
+          <Text style={styles.helpingText}>
+            To reset your password we need your email address. We will send you an
+            email with a link to choose a new password.
+          </Text>
+        </View>
         <TextInputComponent
           value={input.email}
           handleChange={handleChange}
           label="Email Address"
           id="email"
-          subText=""
+          subText={subText.email}
         />
       </View>
       <View style={styles.btnContainer}>
@@ -143,4 +154,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: responsiveScreenHeight(5),
   },
+  helpingTextContainer: {
+    paddingHorizontal: responsiveScreenWidth(1)
+  }
 });

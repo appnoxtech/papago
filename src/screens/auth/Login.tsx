@@ -35,7 +35,7 @@ const initialState = {
 const subText = {
   email: '',
   password: '',
-}
+};
 const Login = () => {
   const [inputs, setInputs] = useState(initialState);
   const [subTexts, setSubTexts] = useState(subText);
@@ -52,34 +52,36 @@ const Login = () => {
         [id]: value,
       };
     });
-    validation();
+    validation(value, id);
   };
 
-  const validation = () => {
+  const validation = (value: string, id: string) => {
     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     let state: boolean;
-    if (inputs.email === '') {
+    
+    if (id === 'email' && value === '') {
       state = false;
       setSubTexts({
         ...subText,
         email: 'Required !',
       });
-    } else if (!regex.test(inputs.email)) {
+    } else if (id === 'email' && !regex.test(value)) {
       state = false;
       setSubTexts({
         ...subText,
         email: 'Invalid Email !',
       });
-    } else if (inputs.password === '') {
+    } else if (id === 'password' && value === '') {
       state = false;
       setSubTexts({
+        ...subText,
         email: '',
         password: 'Required !',
       });
-    } else if (inputs.password.length < 5) {
+    } else if (id === 'password' && value.length < 5) {
       state = false;
       setSubTexts({
-        email: '',
+        ...subText,
         password: 'Password length must be of 5 character long !',
       });
     } else {
@@ -108,6 +110,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -117,9 +120,10 @@ const Login = () => {
             <BackBtn />
           </View>
           <View style={style.container}>
-            <Text style={style.primaryText}>Welcome back!</Text>
-            <Text style={style.primaryText}>Glad to see you, Again!</Text>
-
+            <View style={style.textPrimaryContainer}>
+              <Text style={style.primaryText}>Welcome back!</Text>
+              <Text style={style.primaryText}>Glad to see you, Again!</Text>
+            </View>
             <View style={style.mt_3}>
               <TextInputComponent
                 label="Email address"
@@ -133,7 +137,7 @@ const Login = () => {
                 id="password"
                 value={inputs.password}
                 handleChange={handleChange}
-                subText={subText.password}
+                subText={subTexts.password}
               />
               <View style={style.forgetPasswordContainer}>
                 <Pressable onPress={() => NavigateTo('ConfirmEmail')}>
@@ -192,7 +196,7 @@ const style = StyleSheet.create({
     paddingHorizontal: responsiveScreenWidth(2.5),
   },
   mainContainer: {
-    flex: 1
+    flex: 1,
   },
   container: {
     flex: 1,
@@ -203,14 +207,17 @@ const style = StyleSheet.create({
     paddingVertical: responsiveScreenHeight(0.6),
     width: responsiveScreenWidth(95),
   },
+  textPrimaryContainer: {
+     paddingHorizontal: responsiveScreenWidth(1)
+  },
   primaryText: {
     // fontFamily: 'NunitoSans-Bold',
     fontSize: responsiveFontSize(4),
+    color: 'black'
   },
   header: {
     height: responsiveScreenHeight(10),
     flexDirection: 'row',
-    alignItems: 'center',
   },
   forgetText: {
     // fontFamily: 'NunitoSans-Regular',
@@ -234,7 +241,6 @@ const style = StyleSheet.create({
   },
   socialBtnContainer: {
     width: '50%',
-    paddingHorizontal: responsiveScreenWidth(1),
     paddingVertical: responsiveScreenHeight(1),
   },
   mt_2: {
@@ -251,7 +257,7 @@ const style = StyleSheet.create({
     // fontFamily: 'NunitoSans-Regular',
   },
   footerContainer: {
-    marginTop: responsiveScreenHeight(15),
+    marginTop: responsiveScreenHeight(13),
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -261,8 +267,7 @@ const style = StyleSheet.create({
     // fontFamily: 'NunitoSans-Regular',
   },
   forgetPasswordContainer: {
-    marginTop: responsiveScreenHeight(0.3),
-    width: responsiveScreenWidth(95),
+    width: responsiveScreenWidth(93.5),
     flexDirection: 'row-reverse',
   },
 });
