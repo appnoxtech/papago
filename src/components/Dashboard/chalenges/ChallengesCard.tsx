@@ -21,7 +21,7 @@ const ChallengesCard = () => {
           buttonColor={'#34b8ed'}
           style={styles.btn}
           onPress={() => console.log('Hello')}>
-          <Text style={styles.btnText}>See Challenges</Text>
+          <Text style={styles.btnText}>View Event</Text>
         </Button>
       </View>
     </ImageBackground>

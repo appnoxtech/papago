@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View, Image} from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Headers from '../../../components/Dashboard/common/Headers';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,11 +14,13 @@ import {Button} from 'react-native-paper';
 import ChallengesCard from '../../../components/Dashboard/chalenges/ChallengesCard';
 import ProgressCard from '../../../components/Dashboard/chalenges/ProgressCard';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { ToggleEventTabVisibility } from '../../../redux/reducers/planTrip.reducer';
 
 const Events = () => {
   const navigation = useNavigation();
   const handleCreateActivity = () => {
-    navigation.navigate('CreateEvent' as never);
+    navigation.navigate('PlanTrip' as never);
   }
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -34,7 +36,7 @@ const Events = () => {
           </View>
           <View style={styles.cardRightContainer}>
             <Text style={styles.cardTextHeading}>
-              Build a fun challenge for you and your friends
+              Plan a fun Event for you and your friends
             </Text>
             <Button
               mode="contained"
@@ -64,12 +66,6 @@ const Events = () => {
           </View>
           <View style={styles.progressCardContainer}>
             <ProgressCard />
-          </View>
-        </View>
-        <View style={styles.challengesInvitationContainer}>
-          <View style={styles.headingContainer}>
-            <Feather color={'black'} size={25} name="target" />
-            <Text style={styles.progressText}>JOIN A CHALLENGE</Text>
           </View>
         </View>
       </ScrollView>

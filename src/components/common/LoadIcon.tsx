@@ -3,6 +3,10 @@ import React, {FC} from 'react';
 // import {MaterialCommunityIcons, FontAwesome5} from 'react-native-vector-icons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 interface props {
   iconFamily: string;
@@ -24,6 +28,14 @@ const LoadIcon: FC<props> = ({iconFamily, iconName, style, size, color}) => {
         />
       ) : iconFamily === 'FontAwesome5' ? (
         <FontAwesome5 style={style} size={size} name={iconName} color={color} />
+      ) :iconFamily === 'FontAwesome' ? (
+        <FontAwesome style={style} size={size} name={iconName} color={color} />
+      ) :iconFamily === 'Entypo' ? (
+        <Entypo style={style} size={size} name={iconName} color={color} />
+      ) : iconFamily === 'AntDesign' ? (
+        <AntDesign style={style} size={size} name={iconName} color={color} />
+      ) :iconFamily === 'Ionicons' ? (
+        <Ionicons style={style} size={size} name={iconName} color={color} />
       ) : null}
     </View>
   );

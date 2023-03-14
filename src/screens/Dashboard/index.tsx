@@ -24,6 +24,8 @@ const Tab = createBottomTabNavigator();
 const Dashboard: React.FC<any> = () => {
   const navigation = useNavigation();
   const {tabBarVisibility} = useSelector((state: any) => state.recordActivity);
+  const {eventTabVisibility} = useSelector((state: any) => state.planTrip);
+
   const handleDynamicLink = (link: any) => {
     // Handle dynamic link inside your own application
     if (link) {
@@ -151,6 +153,9 @@ const Dashboard: React.FC<any> = () => {
           component={EventsStackScreen}
           options={{
             headerShown: false,
+            tabBarStyle: {
+              display: eventTabVisibility,
+            }
           }}
         />
         <Tab.Screen

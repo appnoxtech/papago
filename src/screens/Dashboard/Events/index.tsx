@@ -1,7 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Events from './Events';
-import CreateEvent from './CreateEvent';
+import PlanTrip from './PlanTrip';
 import SelectActivityType from '../../common/SelectActivity';
 
 
@@ -21,8 +21,8 @@ export default function EventsStackScreen() {
         options={{
           headerShown: false,
         }}
-        name="CreateEvent"
-        component={CreateEvent}
+        name="PlanTrip"
+        component={PlanTrip}
       />
       <EventStack.Screen
         options={{

@@ -13,6 +13,7 @@ import {useAuthHooks} from '../../../hooks/authHooks';
 import {useSelector} from 'react-redux';
 import {TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import BackBtn from '../../common/buttons/BackBtn';
 interface props {
   title: string;
 }
@@ -138,4 +139,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  backBtnContainer: {
+    width: responsiveScreenWidth(20),
+    height: responsiveScreenHeight(8),
+    position: 'absolute',
+    left: responsiveScreenWidth(2),
+    top: responsiveScreenHeight(0.4),
+  }
 });

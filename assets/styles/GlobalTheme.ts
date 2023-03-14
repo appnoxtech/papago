@@ -12,6 +12,7 @@ export const danger='#008F45';
 export const mainColor='#008F45';
 export const white='#ffff';
 export const dark='#000';
+export const denimBlue = '#1260CC'
 export const green='green';
 export const lightFont='NunitoSans-Regular';
 export const regularFont='NunitoSans-Regular';

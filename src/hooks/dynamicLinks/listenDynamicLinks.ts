@@ -4,6 +4,7 @@ import { getUserDataFromLocalStorage } from "../../utlis/auth";
 interface props {
     url: string
 }
+
 const useListenDynamicLinks = () => {
     const url = 'https://invertase.io/';
     const navigation = useNavigation();
