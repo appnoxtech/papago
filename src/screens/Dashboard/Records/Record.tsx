@@ -23,7 +23,7 @@ import { useNavigation } from '@react-navigation/native';
 import useRecordActivityNotification from '../../../hooks/notifications/RecordNotifications';
 import month from '../../../utlis/month';
 import { updateLocalActivityList } from '../../../redux/reducers/user';
-const date = new Date();
+
 
 const Record = () => {
   useRecordActivityNotification();
@@ -48,6 +48,7 @@ const Record = () => {
           routes: [{name: 'RecordPreview' as never}],
         });
       }else {
+        const date = new Date();
         const data = {
           finishedAt: activity.finishedAt,
           startedAt: activity.startedAt,
@@ -60,13 +61,14 @@ const Record = () => {
           images: activity.images,
           isPublic: activity.isPublic
         };
+        console.log('Data', data);
         dispatch(updateLocalActivityList(data));
         navigation.reset({
           index: 0,
           routes: [{name: 'Error' as never}],
         });
       }
-    });
+    }).catch((err: any) => console.log('Error', err));
     
   };
 
@@ -142,7 +144,7 @@ const Record = () => {
       </View>
       {isFinished ? (
         <View style={styles.isFinishContainer}>
-          <View style={{height: responsiveScreenHeight(63)}}></View>
+          <View style={{height: responsiveScreenHeight(66)}}></View>
           <View style={styles.isFinishContainerBody}>
             <Text style={styles.isFinishedPrimarytext}>Already finished ?</Text>
             <Text style={styles.isFinishedSubText}>

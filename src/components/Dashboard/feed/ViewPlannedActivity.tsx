@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Image, ScrollView, FlatList} from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, memo} from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -16,7 +16,9 @@ const RenderItem:FC<any> = ({acitivity}) => {
     <RecordActivityCard acitivity={acitivity} />
   </View>
   )
-}
+};
+
+const MemoisedRender = memo(RenderItem);
 
 const ViewPlannedActivity: React.FC<any> = () => {
   const {activityList} = useSelector((state: any) => state.user);
@@ -28,10 +30,11 @@ const ViewPlannedActivity: React.FC<any> = () => {
         <View style={styles.listContainer}>
           <FlatList
              ListHeaderComponent={<WelcomeSection />}
+             initialNumToRender={4}
              showsHorizontalScrollIndicator={false}
              contentContainerStyle={styles.challengesListContainer}
              data={activityList}
-             renderItem={({item}) => <RenderItem acitivity={item} />}
+             renderItem={({item}) => <MemoisedRender acitivity={item} />}
            />
         </View>
       ) : (
@@ -63,7 +66,7 @@ export default ViewPlannedActivity;
 
 const styles = StyleSheet.create({
   container: {
-   
+     
   },
   challengesListContainer: {
     paddingHorizontal: responsiveScreenWidth(0.5),
@@ -77,7 +80,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     backgroundColor: 'white',
-    paddingVertical: responsiveScreenHeight(3),
   },
   textContainer: {
     width: responsiveScreenWidth(90),

@@ -16,7 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import { toggleAutoPauseSetting, toggleKeepScreenAwake } from '../../../redux/reducers/record.reducer';
 
 const Setting = () => {
-  const {activity} = useSelector((state: any) => state.activity);
+  const {selectedActivity} = useSelector((state: any) => state.activity);
   const {keepScreenAwake, autoPause} = useSelector(
     (state: any) => state.recordStatus,
   );
@@ -46,7 +46,7 @@ const Setting = () => {
           <View>
             <TouchableOpacity onPress={handleActivityPress}>
               <View style={styles.activityContainer}>
-                <Text style={styles.activityName}>{activity.activityName}</Text>
+                <Text style={styles.activityName}>{selectedActivity.activityName}</Text>
                 <Entypo style={styles.icon} name="chevron-right" size={22} />
               </View>
             </TouchableOpacity>

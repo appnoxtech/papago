@@ -123,7 +123,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                 <View style={styles.activityTypeMainContainer}>
                   <View style={styles.line}></View>
                   <View style={styles.activityTypeContainer}>
-                    <Text style={styles.activityType}>
+                    <Text style={[styles.activityType, {fontSize: activityDetails.activityData.activityName.length > 9 ? responsiveFontSize(1.95) : responsiveFontSize(2.5)}]}>
                       {activityDetails.activityData.activityName}
                     </Text>
                   </View>
@@ -289,15 +289,17 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(1),
   },
   activityTypeContainer: {
+    width: responsiveScreenWidth(30),
     position: 'absolute',
     top: responsiveScreenHeight(-0.4),
-    left: '20%',
+    left: '12.5%',
     paddingHorizontal: responsiveScreenWidth(2),
     paddingVertical: responsiveScreenHeight(1),
     backgroundColor: 'white',
   },
   activityType: {
     fontSize: responsiveFontSize(2.5),
+    textAlign: 'center',
   },
   iconContainer: {
     paddingVertical: responsiveScreenHeight(2),

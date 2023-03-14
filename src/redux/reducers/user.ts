@@ -52,10 +52,12 @@ const UserReducer = (state = initialState, action: action) => {
       }
     }
 
-    case 'UPDATE_LOCAL_ACTIVITY_LIST': {
+    case 'UPDATE_LOCAL_ACTIVITY_LIST': {  
+      console.log('state.localActivityList', state.localActivityList);
+      
       return {
         ...state,
-        localActivityList: [...state.localActivityList, action.payload]
+        localActivityList: state.localActivityList ? [...state.localActivityList, action.payload] : [action.payload]
       }
     }
 
