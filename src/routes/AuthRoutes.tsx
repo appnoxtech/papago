@@ -10,6 +10,7 @@ import SharePreviewScreen from '../screens/common/SharePreviewScreen';
 import ViewActivityGraph from '../screens/common/ViewActivityGraph';
 import ViewUserStats from '../screens/common/ViewUserStats';
 import Error from '../screens/common/Error';
+import SearchLocationPage from '../screens/common/SearchLocationPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -59,6 +60,11 @@ const AuthRoutes = () => {
       <Stack.Screen
         name="Error"
         component={Error}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SearchLocationPage"
+        component={SearchLocationPage}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

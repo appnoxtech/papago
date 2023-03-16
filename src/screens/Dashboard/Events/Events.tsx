@@ -1,31 +1,64 @@
 import {ScrollView, StyleSheet, Text, View, Image} from 'react-native';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Headers from '../../../components/Dashboard/common/Headers';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
+import AnimatedLottieView from 'lottie-react-native';
 import {
   responsiveFontSize,
   responsiveScreenFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
+  useResponsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import {Button} from 'react-native-paper';
 import ChallengesCard from '../../../components/Dashboard/chalenges/ChallengesCard';
 import ProgressCard from '../../../components/Dashboard/chalenges/ProgressCard';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { ToggleEventTabVisibility } from '../../../redux/reducers/planTrip.reducer';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {ToggleEventTabVisibility} from '../../../redux/reducers/planTrip.reducer';
+import { colorPrimary } from '../../../../assets/styles/GlobalTheme';
 
 const Events = () => {
   const navigation = useNavigation();
   const handleCreateActivity = () => {
     navigation.navigate('PlanTrip' as never);
-  }
+  };
   return (
     <SafeAreaView style={styles.mainContainer}>
       <Headers title="Events" />
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.animationContainer}>
+        <AnimatedLottieView
+          style={styles.animation}
+          source={require('../../../../assets/animations/RoadTrip.json')}
+          autoPlay
+          loop
+        />
+      </View>
+      <View style={styles.bannerContainer}>
+        <Text style={styles.banner}>Plan Trips with your Friends</Text>
+        <View style={styles.subBannerContainer}>
+          <Text style={styles.subBanner}>
+            Crete a fun Trips with your friends set goals and multiple stops.
+          </Text>
+        </View>
+      </View>
+      <View style={styles.btnContainer}>
+         <Button
+           mode='contained'
+           buttonColor={colorPrimary}
+           style={styles.primaryBtn}
+           onPress={handleCreateActivity}
+         >
+            <Text style={styles.primaryBtnText}>
+               Let's Go
+            </Text>
+         </Button>
+      </View>
+
+      {/* <ScrollView contentContainerStyle={styles.container}>
+       
         <View style={styles.card}>
           <View style={styles.cardLeftContainer}>
             <Image
@@ -68,7 +101,7 @@ const Events = () => {
             <ProgressCard />
           </View>
         </View>
-      </ScrollView>
+      </ScrollView> */}
     </SafeAreaView>
   );
 };
@@ -149,4 +182,46 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: responsiveScreenHeight(0.5),
   },
+  animationContainer: {
+    height: responsiveScreenHeight(30),
+    marginVertical: responsiveScreenHeight(5),
+  },
+  animation: {
+    width: '100%',
+    height: '100%',
+  },
+  bannerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
+  },
+  banner: {
+    textAlign: 'center',
+    fontSize: responsiveFontSize(4),
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  subBannerContainer: {
+    marginTop: responsiveScreenHeight(1),
+    width: responsiveScreenWidth(59),
+  },
+  subBanner: {
+    textAlign: 'center',
+    fontSize: responsiveFontSize(1.7),
+    color: 'black',
+    opacity: 0.5,
+  },
+  btnContainer: {
+    marginTop: responsiveScreenHeight(5),
+    paddingHorizontal: responsiveScreenWidth(2),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  primaryBtn: {
+    width: responsiveScreenWidth(90),
+    paddingVertical: responsiveScreenHeight(0.5),
+  },
+  primaryBtnText: {
+    fontSize: responsiveScreenFontSize(2),
+  }
 });

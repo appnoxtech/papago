@@ -1,6 +1,11 @@
-const initiaState = {
+import { PlanTripInterface, planTripCords } from "../../interfaces/reducers/PlanTripInterface"
+
+const initiaState: PlanTripInterface = {
    selectedActivity: null,
+   startingCords: {cords: null, name: ''},
+   endingCords: {cords: null, name: ''},
    eventTabVisibility: 'flex',
+   stops: []
 }
 
 interface ChangeSelectedActivity {
@@ -13,9 +18,50 @@ interface ToggleEventTabVisibility {
     payload: 'flex' | 'none',
 }
 
-type action = ChangeSelectedActivity | ToggleEventTabVisibility;
+interface UpdateStops {
+    type: 'UPDATE_TRIP_STOP_POINTS',
+    payload: addStops | removeStops | updateStop
+}
 
-const PlanTripReducer = (state = initiaState, action: action) => {
+interface UpdateCords {
+    type: 'UPDATE_TRIPS_CORDS',
+    payload: tripCords
+}
+
+interface ResetPlanTrip {
+    type: 'RESET_PLAN_TRIP'
+}
+
+interface addStops {
+    action: 'Add',
+    data: planTripCords
+}
+
+interface removeStops {
+    action: 'Remove',
+    data: number
+}
+
+interface updateStop {
+    action: 'Update',
+    data: {
+        index: number,
+        value: planTripCords,
+    }
+}
+
+interface tripCords {
+    key: 'startingCords' | 'endingCords',
+    planTripCords: planTripCords
+}
+
+
+
+
+
+type action = ChangeSelectedActivity | ToggleEventTabVisibility | UpdateStops | UpdateCords | ResetPlanTrip;
+
+const PlanTripReducer = (state = initiaState, action: action): PlanTrip => {
    switch (action.type) {
 
     case 'UPDATE_SELECTED_ACTIVITY': {
@@ -29,6 +75,41 @@ const PlanTripReducer = (state = initiaState, action: action) => {
         return {
             ...state,
             eventTabVisibility: action.payload
+        }
+    }
+
+    case 'UPDATE_TRIP_STOP_POINTS': {
+        if(action.payload.action === 'Add') {
+            return {
+                ...state,
+                stops: state?.stops ?  [...state.stops, action.payload.data] : [{...action.payload.data}]
+            }
+        }else if(action.payload.action === 'Remove') {
+            const newStopsList = state.stops.filter((item, index) => index !== action.payload.data);
+            return {
+                ...state,
+                stops: [...newStopsList],
+            }
+        } else {
+            const list = state.stops;
+            list[action.payload.data.index] = action.payload.data.value;
+            return {
+                ...state,
+                stops: [...list]
+            }
+        }
+    }
+
+    case 'UPDATE_TRIPS_CORDS' : {
+        return {
+            ...state,
+            [action.payload.key]: {...action.payload.planTripCords}
+        }
+    }
+
+    case 'RESET_PLAN_TRIP': {
+        return {
+            ...initiaState,
         }
     }
    
@@ -53,5 +134,25 @@ export const ToggleEventTabVisibility = (display: 'flex' | 'none'): ToggleEventT
        type: 'UPDATE_TAB_BAR_VISIBILITY',
        payload: display
     }
- }
+}
+
+export const UpdateTripStopPoints = (activity: addStops | removeStops | updateStop): UpdateStops => {
+    return {
+        type: 'UPDATE_TRIP_STOP_POINTS',
+        payload: activity
+    }
+}
+
+export const UpdateTripsCords = (data: tripCords): UpdateCords => {
+    return {
+        type: 'UPDATE_TRIPS_CORDS',
+        payload: data
+    }
+}
+
+export const ResetPlanTrip = (): ResetPlanTrip => {
+    return {
+        type: 'RESET_PLAN_TRIP'
+    }
+}
 
