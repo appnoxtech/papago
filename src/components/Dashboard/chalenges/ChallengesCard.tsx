@@ -1,5 +1,5 @@
 import {ImageBackground, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { FC } from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -7,7 +7,10 @@ import {
 } from 'react-native-responsive-dimensions';
 import {Button} from 'react-native-paper';
 
-const ChallengesCard = () => {
+interface props {
+  title?: string,
+}
+const ChallengesCard: FC<props> = ({title = 'Ride 100 km in 1 month'}) => {
   return (
     <ImageBackground
       style={styles.container}
@@ -15,7 +18,7 @@ const ChallengesCard = () => {
       resizeMode="cover"
       source={require('../../../../assets/images/Dashboard/mountain.jpeg')}>
       <View style={styles.body}>
-        <Text style={styles.cardText}>Ride 100 km in 1 month</Text>
+        <Text style={styles.cardText}>{title}</Text>
         <Button
           mode="contained"
           buttonColor={'#34b8ed'}
@@ -32,11 +35,11 @@ export default ChallengesCard;
 
 const styles = StyleSheet.create({
   container: {
-    width: responsiveScreenWidth(85),
-    height: responsiveScreenHeight(18),
+    width: responsiveScreenWidth(90),
+    height: responsiveScreenHeight(20),
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: responsiveScreenWidth(1),
+    marginVertical: responsiveScreenHeight(1.5),
   },
   cardText: {
     fontSize: responsiveFontSize(3),

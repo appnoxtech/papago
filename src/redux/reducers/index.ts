@@ -5,6 +5,7 @@ import {RecordStatusReducer} from './record.reducer';
 import RecordActivityReducer from './recordActivityReducer';
 import MapReducer from './map.reducer';
 import PlanTripReducer from './planTrip.reducer';
+import EventsReducer from './events.reducer';
 
 const appReducer = combineReducers({
   user: UserReducer,
@@ -12,7 +13,8 @@ const appReducer = combineReducers({
   recordStatus: RecordStatusReducer,
   recordActivity: RecordActivityReducer,
   mapData: MapReducer,
-  planTrip: PlanTripReducer
+  planTrip: PlanTripReducer,
+  Events: EventsReducer
 });
 
 export const rootReducers = (state, action) => {

@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View, Image} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, Image, Alert} from 'react-native';
 import React, {useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Headers from '../../../components/Dashboard/common/Headers';
@@ -16,92 +16,113 @@ import {Button} from 'react-native-paper';
 import ChallengesCard from '../../../components/Dashboard/chalenges/ChallengesCard';
 import ProgressCard from '../../../components/Dashboard/chalenges/ProgressCard';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ToggleEventTabVisibility} from '../../../redux/reducers/planTrip.reducer';
-import { colorPrimary } from '../../../../assets/styles/GlobalTheme';
+import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
+import { GetEventListService } from '../../../services/Dashboard/events.service';
+import { UpdateEventList } from '../../../redux/reducers/events.reducer';
 
 const Events = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {eventList} = useSelector((state: any) => state.Events);
   const handleCreateActivity = () => {
     navigation.navigate('PlanTrip' as never);
   };
-  return (
-    <SafeAreaView style={styles.mainContainer}>
-      <Headers title="Events" />
-      <View style={styles.animationContainer}>
-        <AnimatedLottieView
-          style={styles.animation}
-          source={require('../../../../assets/animations/RoadTrip.json')}
-          autoPlay
-          loop
-        />
-      </View>
-      <View style={styles.bannerContainer}>
-        <Text style={styles.banner}>Plan Trips with your Friends</Text>
-        <View style={styles.subBannerContainer}>
-          <Text style={styles.subBanner}>
-            Crete a fun Trips with your friends set goals and multiple stops.
-          </Text>
-        </View>
-      </View>
-      <View style={styles.btnContainer}>
-         <Button
-           mode='contained'
-           buttonColor={colorPrimary}
-           style={styles.primaryBtn}
-           onPress={handleCreateActivity}
-         >
-            <Text style={styles.primaryBtnText}>
-               Let's Go
-            </Text>
-         </Button>
-      </View>
+  const GetEventList = async () => {
+     try {
+       const res = await GetEventListService();
+       const list = res.data.data;
+       if(list.length){
+         dispatch(UpdateEventList(list));
+       }
+     } catch (error) {
+       Alert.alert('Error', 'Unable to fetch EventList');
+     }
+  }
 
-      {/* <ScrollView contentContainerStyle={styles.container}>
-       
-        <View style={styles.card}>
-          <View style={styles.cardLeftContainer}>
-            <Image
-              resizeMode="contain"
-              style={styles.image}
-              source={require('../../../../assets/images/Dashboard/card1.png')}
+  useEffect(() => {
+    GetEventList();
+  }, []);
+
+  console.log('eventList', eventList);
+  
+  return (
+    <SafeAreaView edges={['top']} style={styles.mainContainer}>
+      <Headers title="Events" />
+      {eventList.length ? (
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.card}>
+            <View style={styles.cardLeftContainer}>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={require('../../../../assets/images/Dashboard/card1.png')}
+              />
+            </View>
+            <View style={styles.cardRightContainer}>
+              <Text style={styles.cardTextHeading}>
+                Plan a fun Event for you and your friends
+              </Text>
+              <Button
+                mode="contained"
+                buttonColor={'#34b8ed'}
+                style={styles.btn}
+                onPress={handleCreateActivity}>
+                Let's Go
+              </Button>
+            </View>
+          </View>
+          <View style={styles.listContainer}>
+            <Text style={styles.textPrimary}>Your's Events</Text>
+            <ScrollView
+              contentContainerStyle={styles.challengesListContainer}
+            >
+              {
+                eventList.map((event: any) => <ChallengesCard />)
+              }
+            </ScrollView>
+          </View>
+          {/* <View style={styles.progressContainer}>
+            <View style={styles.headingContainer}>
+              <Ionicons color={'black'} size={25} name="bar-chart-sharp" />
+              <Text style={styles.progressText}>See your progress</Text>
+            </View>
+            <View style={styles.progressCardContainer}>
+              <ProgressCard />
+            </View>
+          </View> */}
+        </ScrollView>
+      ) : (
+        <>
+          <View style={styles.animationContainer}>
+            <AnimatedLottieView
+              style={styles.animation}
+              source={require('../../../../assets/animations/RoadTrip.json')}
+              autoPlay
+              loop
             />
           </View>
-          <View style={styles.cardRightContainer}>
-            <Text style={styles.cardTextHeading}>
-              Plan a fun Event for you and your friends
-            </Text>
+          <View style={styles.bannerContainer}>
+            <Text style={styles.banner}>Plan Trips with your Friends</Text>
+            <View style={styles.subBannerContainer}>
+              <Text style={styles.subBanner}>
+                Crete a fun Trips with your friends set goals and multiple
+                stops.
+              </Text>
+            </View>
+          </View>
+          <View style={styles.btnContainer}>
             <Button
               mode="contained"
-              buttonColor={'#34b8ed'}
-              style={styles.btn}
+              buttonColor={colorPrimary}
+              style={styles.primaryBtn}
               onPress={handleCreateActivity}>
-              Let's Go
+              <Text style={styles.primaryBtnText}>Let's Go</Text>
             </Button>
           </View>
-        </View>
-        <View style={styles.listContainer}>
-          <Text style={styles.textPrimary}>Challenge a friend</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.challengesListContainer}>
-            <ChallengesCard />
-            <ChallengesCard />
-            <ChallengesCard />
-            <ChallengesCard />
-          </ScrollView>
-        </View>
-        <View style={styles.progressContainer}>
-          <View style={styles.headingContainer}>
-            <Ionicons color={'black'} size={25} name="bar-chart-sharp" />
-            <Text style={styles.progressText}>See your progress</Text>
-          </View>
-          <View style={styles.progressCardContainer}>
-            <ProgressCard />
-          </View>
-        </View>
-      </ScrollView> */}
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -171,6 +192,8 @@ const styles = StyleSheet.create({
   },
   challengesListContainer: {
     paddingHorizontal: responsiveScreenWidth(0.5),
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   cardRightContainer: {
     flex: 1,
@@ -193,7 +216,7 @@ const styles = StyleSheet.create({
   bannerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   banner: {
     textAlign: 'center',
@@ -215,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: responsiveScreenHeight(5),
     paddingHorizontal: responsiveScreenWidth(2),
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   primaryBtn: {
     width: responsiveScreenWidth(90),
@@ -223,5 +246,5 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: {
     fontSize: responsiveScreenFontSize(2),
-  }
+  },
 });

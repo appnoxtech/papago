@@ -15,26 +15,19 @@ import {useDispatch, useSelector} from 'react-redux';
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import startPointImage from '../../../../assets/images/Dashboard/Oval.png';
 import finishPointImage from '../../../../assets/images/Dashboard/greenMarker.png';
-import {AddActivityService} from '../../../services/Dashboard/record.service';
+
+
 import {
-  resetRecordStatus,
-  updateRecordStatus,
-} from '../../../redux/reducers/record.reducer';
-import {
-  resetRecordActivityValue,
   setImmediatePoints,
   updateActivityFinishedAt,
-  updateActivityId,
   updateActivitySpeed,
   updateDistanceMeter,
   updateRecordActivityValue,
-  updateSpeedMeter,
   updateTabBarDisplay,
 } from '../../../redux/reducers/recordActivityReducer';
 import {
   updateCurrentLocation,
   updateDestinationCords,
-  updateInitialCords,
   updateWayPoints,
 } from '../../../redux/reducers/map.reducer';
 

@@ -1,24 +1,50 @@
 import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Headers from '../../../components/Dashboard/common/Headers';
-import MapView from 'react-native-maps';
-import {Styles} from '../../../../assets/styles/GlobalStyles';
-import PlanTripActionContainer from '../../../components/Dashboard/chalenges/PlanTripActionContainer';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import ReactNativeModal from 'react-native-modal';
 import {useDispatch, useSelector} from 'react-redux';
-import {ResetPlanTrip, ToggleEventTabVisibility} from '../../../redux/reducers/planTrip.reducer';
+import {Button} from 'react-native-paper';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+import {
+  ResetPlanTrip,
+  ToggleEventTabVisibility,
+} from '../../../redux/reducers/planTrip.reducer';
 import PlainTripsStopsActionContainer from '../../../components/Dashboard/chalenges/PlainTripsStopsActionContainer';
-import ReactNativeModal from 'react-native-modal';
-import { Button } from 'react-native-paper';
-import { colorPrimary } from '../../../../assets/styles/GlobalTheme';
-import { AddEventService } from '../../../services/Dashboard/events.service';
-import { planTripCords, PlanTripInterface } from '../../../interfaces/reducers/PlanTripInterface';
-
+import PlanTripActionContainer from '../../../components/Dashboard/chalenges/PlanTripActionContainer';
+import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
+import {AddEventService} from '../../../services/Dashboard/events.service';
+import {
+  planTripCords,
+  PlanTripInterface,
+} from '../../../interfaces/reducers/PlanTripInterface';
+import startPointImage from '../../../../assets/images/Dashboard/Oval.png';
+import finishPointImage from '../../../../assets/images/Dashboard/greenMarker.png';
+import stopPointImage from '../../../../assets/images/Dashboard/stop.png';
+const mapStyle = [
+  {
+    featureType: 'poi.business',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'poi.business',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+];
 const PlanTrip = () => {
   const dispatch = useDispatch();
   const [showStopsContainer, setShowStopsContainer] = useState(false);
@@ -39,51 +65,68 @@ const PlanTrip = () => {
       const data = {
         from: {
           ...startingCords.cords,
-          name: startingCords.name
+          name: startingCords.name,
         },
         to: {
           ...endingCords.cords,
-          name: endingCords.name
+          name: endingCords.name,
         },
         immediatePoints: stops.map((item: planTripCords) => {
           return {
             ...item.cords,
-            name: item.name
-          }
+            name: item.name,
+          };
         }),
         activityTypeId: selectedActivity ? selectedActivity._id : '',
-        distance: 400
+        distance: 400,
       };
       const res = await AddEventService(data);
       Alert.alert('Notification', 'Event Created Successfully !');
       dispatch(ResetPlanTrip());
     } catch (error) {
-      Alert.alert('Error', 'Error While updating Event')
+      Alert.alert('Error', 'Error While updating Event');
     }
-  }
+  };
 
   return (
     <SafeAreaView
       edges={['top']}
       style={[StyleSheet.absoluteFill, styles.container]}>
       {showStopsContainer ? (
-        <PlainTripsStopsActionContainer closeStopsContainer={closeStopsContainer} />
-      ) :  (
+        <PlainTripsStopsActionContainer
+          closeStopsContainer={closeStopsContainer}
+        />
+      ) : (
         <PlanTripActionContainer openStopsContainer={openStopsContainer} />
       )}
-      <MapView style={styles.map} />
-      <ReactNativeModal style={{margin: 0}}  isVisible={false}>
-         <View style={{flex:1}}></View>
-         <View style={styles.modal}>
-            <Button 
-               mode='contained'
-               buttonColor={colorPrimary}
-               style={styles.btn}
-               onPress={handleActivityStart}
-            >
-                <Text style={styles.btnText}>Start</Text>
-            </Button>
-         </View>
+      <MapView 
+       customMapStyle={mapStyle} style={styles.map}>
+        {
+          //@ts-ignore
+          <Marker image={startPointImage} coordinate={startingCords.cords} />
+        }
+        {stops.map((stop, index: number) => {
+          return (
+            //@ts-ignore
+            <Marker image={stopPointImage} coordinate={stop.cords} />
+          );
+        })}
+        {
+          //@ts-ignore
+          <Marker image={finishPointImage} coordinate={endingCords.cords} />
+        }
+      </MapView>
+      <ReactNativeModal style={{margin: 0}} isVisible={false}>
+        <View style={{flex: 1}}></View>
+        <View style={styles.modal}>
+          <Button
+            mode="contained"
+            buttonColor={colorPrimary}
+            style={styles.btn}
+            onPress={handleActivityStart}>
+            <Text style={styles.btnText}>Start</Text>
+          </Button>
+        </View>
       </ReactNativeModal>
     </SafeAreaView>
   );
@@ -112,16 +155,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: responsiveScreenWidth(3),
     paddingVertical: responsiveScreenHeight(3),
     margin: 0,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   btnText: {
     fontSize: responsiveFontSize(2),
     color: 'white',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   btn: {
     width: responsiveScreenWidth(30),
     paddingVertical: responsiveScreenHeight(1),
-    borderRadius: responsiveScreenWidth(5)
-  }
+    borderRadius: responsiveScreenWidth(5),
+  },
 });

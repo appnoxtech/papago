@@ -12,4 +12,14 @@ export const AddEventService = async (data: addEventParams) => {
         'x-auth-token': user.accessToken,
       },
     });
-  };
+};
+
+export const GetEventListService = async() => {
+  const url = `${URL}event/get-all-trip`;
+  const user = await getUserDataFromLocalStorage();
+  return axios.get(url, {
+    headers: {
+      'x-auth-token': user.accessToken,
+    },
+  });
+}
