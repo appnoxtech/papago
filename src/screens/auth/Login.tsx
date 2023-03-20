@@ -161,8 +161,8 @@ const Login = () => {
                   />
                 )}
               </View>
-
-              <Text style={style.hintText}>Or sign In with email</Text>
+              
+              <Text style={style.hintText}>Or Sign in with</Text>
               <View style={[style.mt_2]}>
                 <View style={style.socialBtnContainer}>
                   <SocialLoginBtn label="Google" type="google" />
@@ -257,7 +257,7 @@ const style = StyleSheet.create({
     // fontFamily: 'NunitoSans-Regular',
   },
   footerContainer: {
-    marginTop: responsiveScreenHeight(13),
+    marginTop: responsiveScreenHeight(11),
     flexDirection: 'row',
     justifyContent: 'center',
   },

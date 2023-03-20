@@ -151,7 +151,7 @@ const SignUp = () => {
                   subText={subTexts.password}
                 />
                 <TermsCondition />
-                <View style={{marginTop: responsiveScreenHeight(0.5)}}>
+                <View style={{marginTop: responsiveScreenHeight(2)}}>
                   {loading ? (
                     <Button
                       mode="contained"

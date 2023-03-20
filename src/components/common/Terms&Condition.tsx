@@ -29,7 +29,7 @@ export default TermsCondition;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: responsiveScreenWidth(2),
-    marginTop: responsiveScreenHeight(3),
+    marginTop: responsiveScreenHeight(1),
   },
   textStyle: {
     fontSize: responsiveFontSize(1.5),
