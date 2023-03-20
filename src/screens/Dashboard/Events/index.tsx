@@ -17,13 +17,13 @@ export default function EventsStackScreen() {
         name="Event"
         component={Events}
       />
-      <EventStack.Screen
+      {/* <EventStack.Screen
         options={{
           headerShown: false,
         }}
         name="PlanTrip"
         component={PlanTrip}
-      />
+      /> */}
       <EventStack.Screen
         options={{
           headerShown: false,

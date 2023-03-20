@@ -1,7 +1,8 @@
 import { addEventParams } from "../../interfaces/reducers/PlanTripInterface";
 
 const initialState = {
-    eventList: []
+    eventList: [],
+    selectedEvent: null
 }
 
 interface UpdateEvents {
@@ -9,7 +10,12 @@ interface UpdateEvents {
     payload: Array<addEventParams>,
 }
 
-type action = UpdateEvents;
+interface UpdateSelectedEvent {
+    type: 'UPDATE_SELECTED_EVENT',
+    payload: addEventParams
+}
+
+type action = UpdateEvents | UpdateSelectedEvent;
 
 const EventsReducer = (state = initialState, action: action) => {
     switch (action.type) {
@@ -17,6 +23,13 @@ const EventsReducer = (state = initialState, action: action) => {
             return {
                 ...state,
                 eventList: [...action.payload]
+            }
+        }
+
+        case 'UPDATE_SELECTED_EVENT': {
+            return {
+                ...state,
+                selectedEvent: {...action.payload}
             }
         }
     
@@ -33,5 +46,12 @@ export const UpdateEventList = (EventList: Array<addEventParams>): UpdateEvents 
         type: 'UPDATE_EVENT_LIST',
         payload: EventList,
      }
+}
+
+export const UpdateSelectedEvent = (selectedEvent: addEventParams): UpdateSelectedEvent => {
+   return {
+     type: 'UPDATE_SELECTED_EVENT',
+     payload: selectedEvent
+   }
 }
 

@@ -11,6 +11,9 @@ import ViewActivityGraph from '../screens/common/ViewActivityGraph';
 import ViewUserStats from '../screens/common/ViewUserStats';
 import Error from '../screens/common/Error';
 import SearchLocationPage from '../screens/common/SearchLocationPage';
+import PlanTrip from '../screens/Dashboard/Events/PlanTrip';
+import EventDetails from '../screens/Dashboard/Events/EventDetails';
+import EventSetting from '../screens/Dashboard/Events/EventSetting';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +69,21 @@ const AuthRoutes = () => {
         name="SearchLocationPage"
         component={SearchLocationPage}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+       name="PlanTrip"
+       component={PlanTrip}
+       options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="EventDetails"
+        component={EventDetails}
+        options={{headerShown: false}}
+     />
+      <Stack.Screen
+       name="EventSetting"
+       component={EventSetting}
+       options={{headerShown: false}}
       />
     </Stack.Navigator>
   );

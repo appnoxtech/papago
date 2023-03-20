@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   title: {
-    fontSize: responsiveFontSize(2.8),
+    fontSize: responsiveFontSize(2.5),
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',

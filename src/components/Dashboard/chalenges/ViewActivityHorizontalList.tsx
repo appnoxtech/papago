@@ -31,6 +31,7 @@ const MemoisedRender = memo(RenderItem);
 const ViewActivityHorizontalList = () => {
   const {activityList} = useSelector((state: any) => state.activity);
   const {selectedActivity} = useSelector((state: any) => state.planTrip);
+
   const data = useMemo(() => {
     let list: any = [];
     activityList.map((item: any) => {
@@ -40,6 +41,7 @@ const ViewActivityHorizontalList = () => {
   }, []);
   
   
+  console.log('selectedActivity', selectedActivity);
   
   return (
     <FlatList

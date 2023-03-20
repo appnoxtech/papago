@@ -21,25 +21,17 @@ import {ToggleEventTabVisibility} from '../../../redux/reducers/planTrip.reducer
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import { GetEventListService } from '../../../services/Dashboard/events.service';
 import { UpdateEventList } from '../../../redux/reducers/events.reducer';
+import { addEventParams } from '../../../interfaces/reducers/PlanTripInterface';
+import useGetEventListHook from '../../../hooks/Events/GetEventListHook';
 
 const Events = () => {
   const navigation = useNavigation();
+  const GetEventList = useGetEventListHook();
   const dispatch = useDispatch();
   const {eventList} = useSelector((state: any) => state.Events);
   const handleCreateActivity = () => {
     navigation.navigate('PlanTrip' as never);
   };
-  const GetEventList = async () => {
-     try {
-       const res = await GetEventListService();
-       const list = res.data.data;
-       if(list.length){
-         dispatch(UpdateEventList(list));
-       }
-     } catch (error) {
-       Alert.alert('Error', 'Unable to fetch EventList');
-     }
-  }
 
   useEffect(() => {
     GetEventList();
@@ -79,7 +71,11 @@ const Events = () => {
               contentContainerStyle={styles.challengesListContainer}
             >
               {
-                eventList.map((event: any) => <ChallengesCard />)
+                eventList.map((event: addEventParams) => (
+                  <React.Fragment key={event._id}>
+                   <ChallengesCard event={event} />
+                  </React.Fragment>
+                ))
               }
             </ScrollView>
           </View>
@@ -236,6 +232,7 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     marginTop: responsiveScreenHeight(5),
+    marginBottom: responsiveScreenHeight(1),
     paddingHorizontal: responsiveScreenWidth(2),
     justifyContent: 'center',
     alignItems: 'center',

@@ -5,7 +5,8 @@ const initiaState: PlanTripInterface = {
    startingCords: {cords: null, name: ''},
    endingCords: {cords: null, name: ''},
    eventTabVisibility: 'flex',
-   stops: []
+   stops: [],
+   distance: 0,
 }
 
 interface ChangeSelectedActivity {
@@ -55,13 +56,18 @@ interface tripCords {
     planTripCords: planTripCords
 }
 
+interface updateDistance {
+    type: 'UPDATE_DISTANCE',
+    payload: number
+}
 
 
 
 
-type action = ChangeSelectedActivity | ToggleEventTabVisibility | UpdateStops | UpdateCords | ResetPlanTrip;
 
-const PlanTripReducer = (state = initiaState, action: action): PlanTrip => {
+type action = ChangeSelectedActivity | ToggleEventTabVisibility | UpdateStops | UpdateCords | ResetPlanTrip | updateDistance;
+
+const PlanTripReducer = (state = initiaState, action: action): PlanTripInterface => {
    switch (action.type) {
 
     case 'UPDATE_SELECTED_ACTIVITY': {
@@ -107,12 +113,19 @@ const PlanTripReducer = (state = initiaState, action: action): PlanTrip => {
         }
     }
 
+    case 'UPDATE_DISTANCE': {
+        return {
+            ...state,
+            distance: action.payload,
+        }
+    }
+
     case 'RESET_PLAN_TRIP': {
         return {
             ...initiaState,
         }
     }
-   
+
     default: {
         return state
     }
@@ -153,6 +166,13 @@ export const UpdateTripsCords = (data: tripCords): UpdateCords => {
 export const ResetPlanTrip = (): ResetPlanTrip => {
     return {
         type: 'RESET_PLAN_TRIP'
+    }
+}
+
+export const UpdateTripDistance = (distance: number): updateDistance => {
+    return {
+        type: 'UPDATE_DISTANCE',
+        payload: distance
     }
 }
 

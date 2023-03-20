@@ -6,11 +6,21 @@ import {
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import {Button} from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { addEventParams } from '../../../interfaces/reducers/PlanTripInterface';
+import { useDispatch } from 'react-redux';
+import { UpdateSelectedEvent } from '../../../redux/reducers/events.reducer';
 
 interface props {
-  title?: string,
+  event: addEventParams
 }
-const ChallengesCard: FC<props> = ({title = 'Ride 100 km in 1 month'}) => {
+const ChallengesCard: FC<props> = ({event}) => {
+  const dispatch = useDispatch();
+  const Navigation = useNavigation();
+  const handelViewEvent = () => {
+    dispatch(UpdateSelectedEvent(event));
+    Navigation.navigate('EventDetails' as never)
+  }
   return (
     <ImageBackground
       style={styles.container}
@@ -18,12 +28,12 @@ const ChallengesCard: FC<props> = ({title = 'Ride 100 km in 1 month'}) => {
       resizeMode="cover"
       source={require('../../../../assets/images/Dashboard/mountain.jpeg')}>
       <View style={styles.body}>
-        <Text style={styles.cardText}>{title}</Text>
+        <Text style={styles.cardText}>{event.eventTitle}</Text>
         <Button
           mode="contained"
           buttonColor={'#34b8ed'}
           style={styles.btn}
-          onPress={() => console.log('Hello')}>
+          onPress={handelViewEvent}>
           <Text style={styles.btnText}>View Event</Text>
         </Button>
       </View>

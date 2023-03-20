@@ -1,5 +1,5 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {Alert, Dimensions, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import ReactNativeModal from 'react-native-modal';
@@ -13,6 +13,7 @@ import {
 import {
   ResetPlanTrip,
   ToggleEventTabVisibility,
+  UpdateTripDistance,
 } from '../../../redux/reducers/planTrip.reducer';
 import PlainTripsStopsActionContainer from '../../../components/Dashboard/chalenges/PlainTripsStopsActionContainer';
 import PlanTripActionContainer from '../../../components/Dashboard/chalenges/PlanTripActionContainer';
@@ -25,10 +26,39 @@ import {
 import startPointImage from '../../../../assets/images/Dashboard/Oval.png';
 import finishPointImage from '../../../../assets/images/Dashboard/greenMarker.png';
 import stopPointImage from '../../../../assets/images/Dashboard/stop.png';
+import MapViewDirections, {
+  MapViewDirectionsOrigin,
+  MapViewDirectionsWaypoints,
+} from 'react-native-maps-directions';
+import { useNavigation } from '@react-navigation/core';
 const mapStyle = [
   {
-    featureType: 'poi.business',
-    elementType: 'labels.text.fill',
+    featureType: 'administrative.land_parcel',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'administrative.neighborhood',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'poi',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text',
     stylers: [
       {
         visibility: 'off',
@@ -37,7 +67,66 @@ const mapStyle = [
   },
   {
     featureType: 'poi.business',
-    elementType: 'labels.text.stroke',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road',
+    elementType: 'labels',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road',
+    elementType: 'labels.icon',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road.arterial',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'labels',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'road.local',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'transit',
+    stylers: [
+      {
+        visibility: 'off',
+      },
+    ],
+  },
+  {
+    featureType: 'water',
+    elementType: 'labels.text',
     stylers: [
       {
         visibility: 'off',
@@ -46,19 +135,31 @@ const mapStyle = [
   },
 ];
 const PlanTrip = () => {
+  const mapRef = useRef(null);
   const dispatch = useDispatch();
+  const Navigation = useNavigation();
   const [showStopsContainer, setShowStopsContainer] = useState(false);
   const openStopsContainer = () => setShowStopsContainer(true);
   const closeStopsContainer = () => setShowStopsContainer(false);
-  const {startingCords, selectedActivity, endingCords, stops} = useSelector(
+  const {startingCords, selectedActivity, endingCords, stops, distance} = useSelector(
     (state: any): PlanTripInterface => state.planTrip,
   );
+  const [isVisible, setIsVisible] = useState(
+    startingCords.cords && endingCords.cords
+  );
+
   useEffect(() => {
     dispatch(ToggleEventTabVisibility('none'));
     return () => {
       dispatch(ToggleEventTabVisibility('flex'));
     };
   }, []);
+
+  useEffect(() => {
+    setIsVisible(
+      startingCords.cords && endingCords.cords
+    );
+  }, [startingCords.cords, endingCords.cords]);
 
   const handleActivityStart = async () => {
     try {
@@ -77,16 +178,24 @@ const PlanTrip = () => {
             name: item.name,
           };
         }),
-        activityTypeId: selectedActivity ? selectedActivity._id : '',
-        distance: 400,
+        activityTypeId: selectedActivity ? selectedActivity : '',
+        distance: distance,
+        eventTitle: `Let's reach the goal`,
+        eventDescription: `Let's reach the finish line together! We've got this!`
       };
+      console.log('Data', data);
+      
       const res = await AddEventService(data);
       Alert.alert('Notification', 'Event Created Successfully !');
       dispatch(ResetPlanTrip());
-    } catch (error) {
+      Navigation.goBack();
+    } catch (error: any) {
+      console.log("errpr", error.response.data.errors[0]);
+      
       Alert.alert('Error', 'Error While updating Event');
     }
   };
+  const { width, height } = Dimensions.get('window');
 
   return (
     <SafeAreaView
@@ -99,35 +208,97 @@ const PlanTrip = () => {
       ) : (
         <PlanTripActionContainer openStopsContainer={openStopsContainer} />
       )}
-      <MapView 
-       customMapStyle={mapStyle} style={styles.map}>
+      <MapView
+        ref={mapRef}
+        initialRegion={{
+          latitude: 28.6448,
+          longitude: 77.216721,
+          latitudeDelta: 0.5,
+          longitudeDelta: 0.5,
+        }}
+        customMapStyle={mapStyle}
+        style={styles.map}>
         {
-          //@ts-ignore
-          <Marker image={startPointImage} coordinate={startingCords.cords} />
+          <Marker
+            image={startPointImage}
+            coordinate={{
+              latitude: startingCords.cords
+                ? (startingCords.cords.latitude as number)
+                : 0,
+              longitude: startingCords.cords
+                ? (startingCords.cords.longitude as number)
+                : 0,
+            }}
+          />
         }
         {stops.map((stop, index: number) => {
           return (
-            //@ts-ignore
-            <Marker image={stopPointImage} coordinate={stop.cords} />
+            <React.Fragment key={index}>
+              <Marker
+                image={stopPointImage}
+                coordinate={{
+                  latitude: stop.cords ? (stop.cords.latitude as number) : 0,
+                  longitude: stop.cords ? (stop.cords.longitude as number) : 0,
+                }}
+              />
+            </React.Fragment>
           );
         })}
         {
           //@ts-ignore
-          <Marker image={finishPointImage} coordinate={endingCords.cords} />
+          <Marker
+            image={finishPointImage}
+            coordinate={{
+              latitude: endingCords.cords
+                ? (endingCords.cords.latitude as number)
+                : 0,
+              longitude: endingCords.cords
+                ? (endingCords.cords.longitude as number)
+                : 0,
+            }}
+          />
         }
+
+        <MapViewDirections
+          origin={startingCords.cords as MapViewDirectionsOrigin}
+          destination={endingCords.cords as MapViewDirectionsOrigin}
+          apikey={'AIzaSyCqfGg2nqTg5samCk8B1Y2Rhjf32_5yKgQ'}
+          strokeWidth={3}
+          strokeColor={colorPrimary}
+          waypoints={
+            stops.map(stop => {
+              return {
+                latitude: stop.cords?.latitude,
+                longitude: stop.cords?.longitude,
+              };
+            }) as Array<MapViewDirectionsWaypoints>
+          }
+          onReady={(result) => {
+            //converting Km into m.
+            const distance = result.distance * 1000;
+            dispatch(UpdateTripDistance(distance));
+             mapRef?.current?.fitToCoordinates(result.coordinates, {
+              edgePadding: {
+                right: (width / 20),
+                bottom: (height / 20),
+                left: (width / 20),
+                top: (height / 20),
+              }
+            });
+          }}
+        />
       </MapView>
-      <ReactNativeModal style={{margin: 0}} isVisible={false}>
-        <View style={{flex: 1}}></View>
-        <View style={styles.modal}>
-          <Button
-            mode="contained"
-            buttonColor={colorPrimary}
-            style={styles.btn}
-            onPress={handleActivityStart}>
-            <Text style={styles.btnText}>Start</Text>
-          </Button>
-        </View>
-      </ReactNativeModal>
+      {
+         isVisible ? <View style={styles.modal}>
+         <Button
+           mode="contained"
+           buttonColor={colorPrimary}
+           style={styles.btn}
+           onPress={handleActivityStart}>
+           <Text style={styles.btnText}>Start</Text>
+         </Button>
+       </View>  : null
+      }
     </SafeAreaView>
   );
 };
@@ -151,11 +322,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: responsiveScreenWidth(2),
   },
   modal: {
-    height: responsiveScreenHeight(20),
+    height: responsiveScreenHeight(15),
     paddingHorizontal: responsiveScreenWidth(3),
     paddingVertical: responsiveScreenHeight(3),
     margin: 0,
     backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   btnText: {
     fontSize: responsiveFontSize(2),
@@ -163,7 +336,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   btn: {
-    width: responsiveScreenWidth(30),
+    width: responsiveScreenWidth(80),
     paddingVertical: responsiveScreenHeight(1),
     borderRadius: responsiveScreenWidth(5),
   },
