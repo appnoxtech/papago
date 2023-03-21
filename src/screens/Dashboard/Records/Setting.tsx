@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import { toggleAutoPauseSetting, toggleKeepScreenAwake } from '../../../redux/reducers/record.reducer';
 
 const Setting = () => {
+  const Navigation = useNavigation();
   const {selectedActivity} = useSelector((state: any) => state.activity);
   const {keepScreenAwake, autoPause} = useSelector(
     (state: any) => state.recordStatus,
@@ -23,7 +24,7 @@ const Setting = () => {
   const dispatch = useDispatch();
   
   const handleActivityPress = () => {
-    
+    Navigation.navigate('SelectActivity' as never)
   };
 
   const handleAutoPauseSetting = (state: boolean) => {

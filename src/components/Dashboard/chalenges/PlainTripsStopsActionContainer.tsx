@@ -24,7 +24,7 @@ interface props {
 }
 
 const PlainTripsStopsActionContainer: FC<props> = ({closeStopsContainer}) => {
-  const {startingCords, endingCords} = useSelector(
+  const {startingCords, endingCords, distance} = useSelector(
         (state: any): PlanTripInterface => state.planTrip,
    );
 
@@ -72,7 +72,7 @@ const PlainTripsStopsActionContainer: FC<props> = ({closeStopsContainer}) => {
       <View style={styles.footer}>
         <View style={styles.leftContainer}>
           <Text style={styles.leftContainerText}>
-            Ride duration: 34 min (17 Km)
+           {` Total Distance: ${(distance / 1000).toFixed(2)} Km`} 
           </Text>
         </View>
         <View style={styles.rightContainer}>

@@ -153,9 +153,9 @@ const Dashboard: React.FC<any> = () => {
           component={EventsStackScreen}
           options={{
             headerShown: false,
-            tabBarStyle: {
-              display: eventTabVisibility,
-            }
+            // tabBarStyle: {
+            //   display: eventTabVisibility,
+            // }
           }}
         />
         <Tab.Screen

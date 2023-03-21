@@ -31,6 +31,7 @@ import MapViewDirections, {
   MapViewDirectionsWaypoints,
 } from 'react-native-maps-directions';
 import { useNavigation } from '@react-navigation/core';
+import useGetEventListHook from '../../../hooks/Events/GetEventListHook';
 const mapStyle = [
   {
     featureType: 'administrative.land_parcel',
@@ -135,6 +136,7 @@ const mapStyle = [
   },
 ];
 const PlanTrip = () => {
+  const GetEventList = useGetEventListHook();
   const mapRef = useRef(null);
   const dispatch = useDispatch();
   const Navigation = useNavigation();
@@ -188,6 +190,7 @@ const PlanTrip = () => {
       const res = await AddEventService(data);
       Alert.alert('Notification', 'Event Created Successfully !');
       dispatch(ResetPlanTrip());
+      GetEventList();
       Navigation.goBack();
     } catch (error: any) {
       console.log("errpr", error.response.data.errors[0]);

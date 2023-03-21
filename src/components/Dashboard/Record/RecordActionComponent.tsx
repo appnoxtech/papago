@@ -28,6 +28,7 @@ import {
   updateActvityImage,
   updateRecordActivityTimer,
   updateRecordActivityValue,
+  updateTabBarDisplay,
 } from '../../../redux/reducers/recordActivityReducer';
 import Geolocation from '@react-native-community/geolocation';
 import {Button} from 'react-native-paper';
@@ -116,6 +117,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
   };
 
   const handleIsFinishClick = () => {
+    dispatch(updateTabBarDisplay('none')) 
     setIsFinished(true);
   };
 
@@ -411,6 +413,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     position: 'absolute',
     top: responsiveScreenHeight(3.3),
-    left: responsiveScreenWidth(12),
+    left: responsiveScreenWidth(10),
   },
 });

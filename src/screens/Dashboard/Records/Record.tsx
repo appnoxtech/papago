@@ -17,7 +17,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import NetInfo from "@react-native-community/netinfo";
 import {useDispatch, useSelector} from 'react-redux';
-import { updateRecordActivityValue } from '../../../redux/reducers/recordActivityReducer';
+import { updateRecordActivityValue, updateTabBarDisplay } from '../../../redux/reducers/recordActivityReducer';
 import { updateRecordStatus } from '../../../redux/reducers/record.reducer';
 import { useNavigation } from '@react-navigation/native';
 import useRecordActivityNotification from '../../../hooks/notifications/RecordNotifications';
@@ -47,6 +47,7 @@ const Record = () => {
           index: 0,
           routes: [{name: 'RecordPreview' as never}],
         });
+        dispatch(updateTabBarDisplay('flex'));
       }else {
         const date = new Date();
         const data = {
@@ -67,6 +68,7 @@ const Record = () => {
           index: 0,
           routes: [{name: 'Error' as never}],
         });
+        dispatch(updateTabBarDisplay('flex'));
       }
     }).catch((err: any) => console.log('Error', err));
     
@@ -144,7 +146,7 @@ const Record = () => {
       </View>
       {isFinished ? (
         <View style={styles.isFinishContainer}>
-          <View style={{height: responsiveScreenHeight(66)}}></View>
+          <View style={{height: responsiveScreenHeight(69)}}></View>
           <View style={styles.isFinishContainerBody}>
             <Text style={styles.isFinishedPrimarytext}>Already finished ?</Text>
             <Text style={styles.isFinishedSubText}>
@@ -161,7 +163,10 @@ const Record = () => {
               mode="contained"
               buttonColor="white"
               style={styles.cancelBtn}
-              onPress={() => setIsFinished(false)}>
+              onPress={() => {
+                dispatch(updateTabBarDisplay('flex'));
+                setIsFinished(false)
+              }}>
               <Text style={styles.cancelBtnText}>Cancel</Text>
             </Button>
           </View>
