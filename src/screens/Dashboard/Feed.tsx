@@ -30,13 +30,11 @@ const Feed = () => {
     getUserDetails();
     getUserActivityFeedList();
   }, []);
-
-
-
+  
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
      <Headers title="Feed" />
-      <ViewPlannedActivity />
+     <ViewPlannedActivity />
     </SafeAreaView>
   );
 };

@@ -72,16 +72,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
-    width: responsiveScreenWidth(80)
+    width: responsiveScreenWidth(70)
   },
   rightBtn: {
     position: 'absolute',
     top: responsiveScreenHeight(1.1),
     right: responsiveScreenHeight(1),
-    width: responsiveScreenWidth(10),
+    width: responsiveScreenWidth(20),
   },
   rightBtnText: {
     fontSize: responsiveFontSize(2.3),
     color: colorPrimary,
+    textAlign: 'right'
   }
 });

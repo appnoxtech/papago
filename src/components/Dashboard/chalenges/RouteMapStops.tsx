@@ -33,10 +33,7 @@ const RouteMapStops = () => {
 
   const onChangeHandler = (planTripCords: planTripCords) => {
     setPlanTripCords({...planTripCords})
-  }
-
-  console.log('stops', stops);
-  
+  }  
 
   return (
     <>

@@ -137,14 +137,14 @@ const SignUp = () => {
               <Text style={style.hintText}>Or sign up with email</Text>
               <View>
                 <TextInputComponent
-                  label="Email address"
+                  label="Email"
                   id="email"
                   value={inputs.email}
                   handleChange={handleChange}
                   subText={subTexts.email}
                 />
                 <TextInputComponent
-                  label="Your Password"
+                  label="Password"
                   id="password"
                   value={inputs.password}
                   handleChange={handleChange}

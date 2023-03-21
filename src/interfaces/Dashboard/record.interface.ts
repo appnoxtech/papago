@@ -66,7 +66,24 @@ export interface activityDetails {
   userId: string;
   likeCount: number;
   isLiked: boolean;
-  images?: any,
+  images?: any;
+  messageCount?: number;
+}
+
+export interface getAllActivity {
+  _id: string;
+  activityData: data;
+  activityName: string;
+  createdAt: number;
+  distance: number;
+  finishedAt: number;
+  isLiked: boolean;
+  likeCount: number;
+  messageCount?: number;
+  name: string;
+  startedAt: number;
+  userId: string;
+  userName: string;
 }
 
 export interface image {

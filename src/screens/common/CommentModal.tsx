@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Modal from 'react-native-modal';
 import {actvityCommentDetails} from '../../interfaces/Dashboard/record.interface';
 import CommentCard from '../../components/common/cards/CommentCard';
@@ -30,12 +30,14 @@ interface props {
   isModalVisible: boolean;
   setModalVisible: any;
   activityId: string;
+  onClose?: any
 }
 
 const CommentModal: React.FC<props> = ({
   isModalVisible,
   setModalVisible,
   activityId,
+  onClose = () => {},
 }) => {
   const textInputRef = useRef<TextInput>(null);
   const GetFeedListById = useGetFeedListByIdHandler();
@@ -64,9 +66,9 @@ const CommentModal: React.FC<props> = ({
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     handleGetActivityLikeAndCommentDetails();
-  }, []);
+  }, [isModalVisible]);
 
   return (
     <View style={styles.mainContainer}>
@@ -81,7 +83,10 @@ const CommentModal: React.FC<props> = ({
           <SafeAreaView style={{flex: 1}}>
             <View style={styles.headerContainer}>
               <Entypo
-                onPress={() => setModalVisible(false)}
+                onPress={() => {
+                  setModalVisible(false);
+                  onClose();
+                }}
                 name="circle-with-cross"
                 size={28}
                 color="grey"

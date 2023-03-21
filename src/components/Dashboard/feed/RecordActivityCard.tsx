@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  DeviceEventEmitter,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -53,7 +54,7 @@ const RenderDistance: React.FC<any> = ({distance}) => {
   }
 };
 
-const RecordActivityCard: React.FC<any> = ({acitivity}) => {
+const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
   const navigation = useNavigation();
   const handleError = useHandleError();
   const inputRef = useRef(null);
@@ -71,6 +72,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity}) => {
   const GenrateDynamicLinks = useGenerateDynamicLinks();
 
   const handleCardPress = () => {
+    AttachListner();
     navigation.navigate('ViewActivity' as never, {id: acitivity._id} as never);
   };
 
@@ -151,6 +153,12 @@ const RecordActivityCard: React.FC<any> = ({acitivity}) => {
       Alert.alert('Error', error.response.data.errors[0].message);
     }
   };
+
+  const AttachListner = () => {
+    DeviceEventEmitter.addListener(`${acitivity._id}`, (data) => {
+      setActivityDetails(data);
+    });
+  }
 
   return (
     <View style={styles.container} key={acitivity._id}>
@@ -252,14 +260,8 @@ const RecordActivityCard: React.FC<any> = ({acitivity}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
         activityId={acitivity._id}
+        onClose={handleGetActivityLikeAndCommentDetails}   
       />
-      {/* {isModalVisible ? (
-        <CommentModal
-          isModalVisible={isModalVisible}
-          setModalVisible={setIsModalVisible}
-          activityId={acitivity._id}
-        />
-      ) : null} */}
     </View>
   );
 };
@@ -406,6 +408,6 @@ const styles = StyleSheet.create({
   message: {
     marginTop: responsiveScreenHeight(0.5),
     fontSize: responsiveFontSize(1.7),
-    fontWeight: 400,
+    fontWeight: '400',
   },
 });

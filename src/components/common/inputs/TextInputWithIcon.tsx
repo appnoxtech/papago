@@ -64,7 +64,6 @@ const TextInputWithIcon: FC<props> = ({
   
   useEffect(() => {
     DeviceEventEmitter.addListener(`${id}`, (eventData) => {
-      console.log('*** eventData ***', eventData);
       onChangeHandler(eventData);
     });
   }, []);

@@ -1,6 +1,16 @@
 import { user } from "../../interfaces/auth/authInterface";
+import { getAllActivity } from "../../interfaces/Dashboard/record.interface";
 
-const initialState = {
+interface user {
+  isLogin: boolean,
+  activityList: Array<getAllActivity> | [];
+  userDetails: any,
+  localActivityList: Array<getAllActivity> | [];
+}
+
+interface item {_id: string, isLiked: boolean, likeCount: number, messageCount: number};
+
+const initialState:user  = {
   isLogin: true,
   activityList: [],
   userDetails: {},
@@ -17,6 +27,11 @@ interface updateActivityList {
   payload: any
 }
 
+interface updateActivityListItem {
+  type: 'UPDATE_ACTIVITY_LIST_ITEM',
+  payload: item
+}
+
 interface updateUserDetails {
   type: 'UPDATE_USER_DETAILS',
   payload: user
@@ -27,7 +42,7 @@ interface updateLocalActivityList {
   payload: any
 }
 
-type action = updateActivityList | UpdateAction | updateUserDetails | updateLocalActivityList;
+type action = updateActivityList | UpdateAction | updateUserDetails | updateLocalActivityList | updateActivityListItem;
 
 const UserReducer = (state = initialState, action: action) => {
   switch (action.type) {
@@ -52,13 +67,21 @@ const UserReducer = (state = initialState, action: action) => {
       }
     }
 
-    case 'UPDATE_LOCAL_ACTIVITY_LIST': {  
-      console.log('state.localActivityList', state.localActivityList);
-      
+    case 'UPDATE_LOCAL_ACTIVITY_LIST': {    
       return {
         ...state,
         localActivityList: state.localActivityList ? [...state.localActivityList, action.payload] : [action.payload]
       }
+    }
+
+    case 'UPDATE_ACTIVITY_LIST_ITEM': {
+      const list = [...state.activityList];
+      const index = list.findIndex((item) => item._id === action.payload._id)
+      list[index] = {...list[index], ...action.payload};
+       return {
+         ...state,
+         activityList: [...list],
+       }
     }
 
     default:
@@ -93,5 +116,12 @@ export const updateLocalActivityList = (data: any) => {
   return {
     type: 'UPDATE_LOCAL_ACTIVITY_LIST',
     payload: data
+  }
+}
+
+export const updateActivityListItem = (data: item): updateActivityListItem => {
+  return {
+    type: 'UPDATE_ACTIVITY_LIST_ITEM',
+    payload: data,
   }
 }

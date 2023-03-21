@@ -129,6 +129,7 @@ const Dashboard: React.FC<any> = () => {
           component={Feed}
           options={{
             headerShown: false,
+            tabBarHideOnKeyboard: true
           }}
         />
         <Tab.Screen

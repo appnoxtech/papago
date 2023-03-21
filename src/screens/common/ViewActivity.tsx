@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -20,17 +19,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Button} from 'react-native-paper';
 import {colorPrimary} from '../../../assets/styles/GlobalTheme';
-import SocialShareBtn from '../../components/common/buttons/SocialShareBtn';
 import ActivityMapPreview from '../../components/Dashboard/common/ActivityMapPreview';
-import {GetActivityByIdService} from '../../services/Dashboard/record.service';
+import {GetActivityByIdService, LikeRecordActivityService} from '../../services/Dashboard/record.service';
 import {
-  activity,
   activityDetails,
-  cords,
-  data,
 } from '../../interfaces/Dashboard/record.interface';
 import {
   getDayFromTimestamp,
@@ -41,6 +36,10 @@ import {
 import useGenerateDynamicLinks from '../../hooks/dynamicLinks/createDynamicLinks';
 import {useNavigation} from '@react-navigation/native';
 import SocialBtnList from '../../components/common/SocialBtnList';
+import useHandleError from '../../hooks/common/handelError';
+import CommentModal from './CommentModal';
+import { updateActivityListItem } from '../../redux/reducers/user';
+import { DeviceEventEmitter } from 'react-native';
 
 const RenderDistance: React.FC<any> = ({distance}) => {
   if (distance < 1) {
@@ -51,7 +50,12 @@ const RenderDistance: React.FC<any> = ({distance}) => {
 };
 
 const ViewActivity: React.FC<any> = ({route}) => {
+  const dispatch = useDispatch();
+  const [isLiked, setIsLiked] = useState<0 | 1>(0);
+  const [comment, setComment] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const {id} = route.params;
+  const handelError = useHandleError();
   const navigation = useNavigation();
   const GenerateDynamicLinks = useGenerateDynamicLinks();
   const [url, setUrl] = useState('');
@@ -76,6 +80,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
       const res = await GetActivityByIdService(id);
       const {data} = res.data;
       setActivityDetails(data);
+      DeviceEventEmitter.emit(`${id}`, data);
     } catch (error: any) {
       Alert.alert('Error', error.response.data.errors[0].message);
     }
@@ -95,6 +100,33 @@ const ViewActivity: React.FC<any> = ({route}) => {
     );
   };
 
+  const handleLikeActivityService = async () => {
+    try {
+      const data = {
+        activityId: activityDetails?._id as string,
+        like: activityDetails?.isLiked ? 0 : (1 as 0 | 1),
+      };
+      console.log('data', data);
+      await LikeRecordActivityService(data);
+      setIsLiked(isLiked === 0 ? 1 : 0);
+      Alert.alert('Notification', isLiked === 0 ? 'Liked' : 'Unliked');
+      GetActivityByIdHandler();
+    } catch (error: any) {
+      handelError(error);
+    }
+  };
+
+  const handleCommentActivityService = async () => {
+    setIsModalVisible(true)
+  };
+
+
+  useEffect(() => {
+    return () => {
+      DeviceEventEmitter.removeAllListeners(`${id}`);
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithBackBtn title="My activity" />
@@ -105,46 +137,6 @@ const ViewActivity: React.FC<any> = ({route}) => {
           <View style={styles.mainContainer}>
             <View style={styles.mapVideoContainer}>
               <FontAwesome size={40} name="play-circle" color="white" />
-              <View style={styles.acitivityCard}>
-                <View>
-                  <Text style={styles.activityText}>
-                    On {getMonthNameByIndex(activityDetails.startedAt)}{' '}
-                    {getDayFromTimestamp(activityDetails.startedAt)},{' '}
-                    {getYearFromTimeStamp(activityDetails.startedAt)} by
-                  </Text>
-                  <Text style={styles.userName}>{userDetails.name}</Text>
-                </View>
-                <View style={styles.line}></View>
-                <View>
-                  <Text style={styles.activityName}>
-                    {activityDetails.activityName}
-                  </Text>
-                </View>
-                <View style={styles.activityTypeMainContainer}>
-                  <View style={styles.line}></View>
-                  <View style={styles.activityTypeContainer}>
-                    <Text style={[styles.activityType, {fontSize: activityDetails.activityData.activityName.length > 9 ? responsiveFontSize(1.95) : responsiveFontSize(2.5)}]}>
-                      {activityDetails.activityData.activityName}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.iconContainer}>
-                  <View style={styles.likeContainer}>
-                    <Octicons
-                      name={activityDetails.likeCount ? 'heart-fill' : 'heart'}
-                      size={20}
-                      color={activityDetails.likeCount ? 'red' : 'black'}
-                    />
-                    <Text style={styles.iconCount}>
-                      {activityDetails.likeCount}
-                    </Text>
-                  </View>
-                  <View style={styles.commentContainer}>
-                    <Octicons name="comment" size={20} color="black" />
-                    <Text style={styles.iconCount}>0</Text>
-                  </View>
-                </View>
-              </View>
             </View>
             <View style={styles.body}>
               <View style={styles.shareContainer}>
@@ -212,6 +204,52 @@ const ViewActivity: React.FC<any> = ({route}) => {
               </View>
             </View>
           </View>
+          <View style={styles.acitivityCard}>
+                <View>
+                  <Text style={styles.activityText}>
+                    On {getMonthNameByIndex(activityDetails.startedAt)}{' '}
+                    {getDayFromTimestamp(activityDetails.startedAt)},{' '}
+                    {getYearFromTimeStamp(activityDetails.startedAt)} by
+                  </Text>
+                  <Text style={styles.userName}>{userDetails.name}</Text>
+                </View>
+                <View style={styles.line}></View>
+                <View>
+                  <Text style={styles.activityName}>
+                    {activityDetails.activityName}
+                  </Text>
+                </View>
+                <View style={styles.activityTypeMainContainer}>
+                  <View style={styles.line}></View>
+                  <View style={styles.activityTypeContainer}>
+                    <Text style={[styles.activityType, {fontSize: activityDetails.activityData.activityName.length > 9 ? responsiveFontSize(1.95) : responsiveFontSize(2.5)}]}>
+                      {activityDetails.activityData.activityName}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.iconContainer}>
+                  <TouchableOpacity onPress={handleLikeActivityService} style={styles.likeContainer}>
+                    <Octicons
+                      name={activityDetails.isLiked ? 'heart-fill' : 'heart'}
+                      size={20}
+                      color={activityDetails.isLiked ? 'red' : 'black'}
+                    />
+                    <Text style={styles.iconCount}>
+                      {activityDetails.likeCount}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleCommentActivityService} style={styles.commentContainer}>
+                    <Octicons name="comment" size={20} color="black" />
+                    <Text style={styles.iconCount}>{activityDetails.messageCount}</Text>
+                  </TouchableOpacity>
+                </View>
+          </View>
+          <CommentModal
+            isModalVisible={isModalVisible}
+            setModalVisible={setIsModalVisible}
+            activityId={activityDetails._id}
+            onClose={GetActivityByIdHandler}
+          />
         </ScrollView>
       ) : (
         <Text>Loading ....</Text>
@@ -226,6 +264,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    position: 'relative'
   },
   scrollContainer: {
     flex: 1,
@@ -238,12 +277,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#dddddd',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
   body: {},
   acitivityCard: {
     position: 'absolute',
-    bottom: responsiveScreenHeight(-24),
+    top: responsiveScreenHeight(20),
     left: responsiveScreenWidth(18),
     backgroundColor: 'white',
     paddingHorizontal: responsiveScreenWidth(2),

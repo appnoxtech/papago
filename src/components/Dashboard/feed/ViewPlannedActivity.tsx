@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Image, ScrollView, FlatList} from 'react-native';
-import React, {FC, memo} from 'react';
+import React, {FC, memo, useState} from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -10,10 +10,10 @@ import { useSelector } from 'react-redux';
 import RecordActivityCard from './RecordActivityCard';
 import WelcomeSection from './WelcomeSection';
 
-const RenderItem:FC<any> = ({acitivity}) => {
+const RenderItem:FC<any> = ({acitivity, setIsRefresh}) => {
   return (
     <View key={acitivity._id}>
-    <RecordActivityCard acitivity={acitivity} />
+    <RecordActivityCard setIsRefresh={setIsRefresh} acitivity={acitivity} />
   </View>
   )
 };
@@ -22,7 +22,9 @@ const MemoisedRender = memo(RenderItem);
 
 const ViewPlannedActivity: React.FC<any> = () => {
   const {activityList} = useSelector((state: any) => state.user);
+  const [isRefresh, setIsRefresh] = useState(false);
   // console.log('activityList ==>', activityList);
+  console.log('activityList', activityList[0]);
   
   return (
     <View style={styles.container}>
@@ -34,7 +36,8 @@ const ViewPlannedActivity: React.FC<any> = () => {
              showsHorizontalScrollIndicator={false}
              contentContainerStyle={styles.challengesListContainer}
              data={activityList}
-             renderItem={({item}) => <MemoisedRender acitivity={item} />}
+             extraData={isRefresh}
+             renderItem={({item}) => <MemoisedRender setIsRefresh={setIsRefresh} acitivity={item} />}
            />
         </View>
       ) : (
