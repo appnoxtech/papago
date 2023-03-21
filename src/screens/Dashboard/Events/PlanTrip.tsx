@@ -1,5 +1,6 @@
 import {Alert, Dimensions, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
+import {GOOGLE_MAP_APIKEY} from '@env';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import ReactNativeModal from 'react-native-modal';
@@ -265,7 +266,7 @@ const PlanTrip = () => {
         <MapViewDirections
           origin={startingCords.cords as MapViewDirectionsOrigin}
           destination={endingCords.cords as MapViewDirectionsOrigin}
-          apikey={'AIzaSyCqfGg2nqTg5samCk8B1Y2Rhjf32_5yKgQ'}
+          apikey={GOOGLE_MAP_APIKEY}
           strokeWidth={3}
           strokeColor={colorPrimary}
           waypoints={

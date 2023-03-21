@@ -53,7 +53,7 @@ const SearchLocationPage: FC<any> = ({route}) => {
           },
         }}
         query={{
-          key: 'AIzaSyCqfGg2nqTg5samCk8B1Y2Rhjf32_5yKgQ',
+          key: GOOGLE_MAP_APIKEY,
           language: 'en',
         }}
       />
