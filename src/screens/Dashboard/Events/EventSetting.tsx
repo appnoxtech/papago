@@ -30,6 +30,7 @@ const EventSetting: FC<any> = () => {
         
         const res = await UpdateEventTripService(data);
         dispatch(UpdateSelectedEvent(data));
+        GetEventList();
         Navigation.goBack();
     } catch (error) {
         Alert.alert('Error', 'Get Error while updating the Event')
