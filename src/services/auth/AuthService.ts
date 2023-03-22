@@ -26,7 +26,11 @@ export const LoginServices = async (data: loginData) => {
 };
 
 export const SignUpService = async (data: signupData) => {
+  console.log('Data', data);
+  
   const url = `${URL}access/oauth/sign-up`;
+  console.log('url', url);
+  
   return axios.post(url, data, {
     headers: {
       'Content-Type': 'application/json',

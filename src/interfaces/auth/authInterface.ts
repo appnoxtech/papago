@@ -15,6 +15,8 @@ export interface loginData {
 export interface signupData {
   email: string;
   password: string;
+  name: string,
+  username: string
 }
 export interface resetPassword {
   email: string;

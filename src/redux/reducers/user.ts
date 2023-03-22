@@ -1,4 +1,3 @@
-import { user } from "../../interfaces/auth/authInterface";
 import { getAllActivity } from "../../interfaces/Dashboard/record.interface";
 
 interface user {

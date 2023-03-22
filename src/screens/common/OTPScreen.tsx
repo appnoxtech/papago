@@ -65,6 +65,8 @@ const OTP: React.FC<params> = ({route}) => {
         otp: parseInt(otp, 10),
         type,
       };
+      console.log('OTP Data',data );
+      
       const res = await confirmOTPService(data);
       setOtp(initialState);
       console.log(res.data);
@@ -387,7 +389,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   otpInput: {
-    fontFamily: mediumFont,
+    // fontFamily: mediumFont,
     fontSize: responsiveFontSize(2.5),
   },
   otpInputHiglight: {},
@@ -400,9 +402,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  message: {fontFamily: mediumFont, fontSize: responsiveFontSize(2)},
+  message: {
+    // fontFamily: mediumFont,
+    fontSize: responsiveFontSize(2)},
   linkMessage: {
-    fontFamily: mediumFont,
+    // fontFamily: mediumFont,
     fontSize: responsiveFontSize(2),
     color: colorPrimary,
   },

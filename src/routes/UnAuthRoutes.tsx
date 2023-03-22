@@ -7,6 +7,8 @@ import ConfirmEmail from '../screens/auth/ConfirmEmail';
 import OTP from '../screens/common/OTPScreen';
 import TermsAndConditions from '../services/common/TermsAndConditions';
 import ConfirmPassword from '../screens/auth/ConfirmPassword';
+import ConfirmUserName from '../screens/auth/ConfirmUserName';
+import ConfirmName from '../screens/auth/ConfirmName';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +50,16 @@ const UnAuthRoutes = () => {
         name="ConfirmPassword"
         component={ConfirmPassword}
         options={{headerShown: false, animation: 'slide_from_bottom'}}
+      />
+      <Stack.Screen
+        name="ConfirmUsername"
+        component={ConfirmUserName}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ConfirmName"
+        component={ConfirmName}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );

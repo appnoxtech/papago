@@ -26,6 +26,8 @@ import {Styles} from '../../../assets/styles/GlobalStyles';
 import {SignUpService} from '../../services/auth/AuthService';
 import {useNavigation} from '@react-navigation/native';
 import {Button} from 'react-native-paper';
+import {useDispatch, useSelector} from 'react-redux';
+import {UpdateAuthDetails} from '../../redux/reducers/auth';
 
 const initialState = {
   email: '',
@@ -34,54 +36,53 @@ const initialState = {
 
 const subTextInitialState = {
   email: '',
-  password: ''
+  password: '',
+};
+
+interface input {
+  id: 'email' | 'password';
+  value: string;
 }
 
 const SignUp = () => {
-  const [inputs, setInputs] = useState(initialState);
+  const dispatch = useDispatch();
+  const {email, password} = useSelector((state: any) => state.authDetails);
   const [subTexts, setSubTexts] = useState(subTextInitialState);
-  const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const navigation = useNavigation();
 
-  const handleChange = ({value, id}: inputsHandlerParams) => {
-    setInputs(oldState => {
-      return {
-        ...oldState,
-        [id]: value,
-      };
-    });
+  const handleChange = ({value, id}: input) => {
+    dispatch(UpdateAuthDetails({key: id, value}));
     validation();
   };
 
   const validation = () => {
     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     let state: boolean;
-    if (inputs.email === '') {
+    if (email === '') {
       state = false;
       setSubTexts({
         ...subTexts,
-        email: 'Email is Required !'
-      })
-      
-    } else if (!regex.test(inputs.email)) {
-      state = false;
-      setSubTexts({
-        ...subTexts,
-        email: 'Invalid Email !'
+        email: 'Email is Required !',
       });
-    } else if (inputs.password === '') {
+    } else if (!regex.test(email)) {
+      state = false;
+      setSubTexts({
+        ...subTexts,
+        email: 'Invalid Email !',
+      });
+    } else if (password === '') {
       state = false;
       setSubTexts({
         ...subTexts,
         email: '',
-        password: 'Password is Required !'
+        password: 'Password is Required !',
       });
-    } else if (inputs.password.length < 5) {
+    } else if (password.length < 5) {
       state = false;
       setSubTexts({
         ...subTexts,
-        password: 'Password must contain 5 character !'
+        password: 'Password must contain 5 character !',
       });
     } else {
       state = true;
@@ -90,21 +91,8 @@ const SignUp = () => {
     setIsActive(state);
   };
 
-  const handleClick = async () => {
-    try {
-      setLoading(true);
-      await SignUpService(inputs);
-      setInputs(initialState);
-      setIsActive(false);
-      setLoading(false);
-      navigation.navigate(
-        'OTP' as never,
-        {email: inputs.email, type: 'VERIFY', flow: 'Signup'} as never,
-      );
-    } catch (error: any) {
-      Alert.alert('Notification', error.response.data.errors[0].message);
-      setLoading(false);
-    }
+  const handleClick = () => {
+    navigation.navigate('ConfirmUsername' as never);
   };
 
   return (
@@ -124,7 +112,7 @@ const SignUp = () => {
             </View>
             <View style={style.container}>
               <View style={style.primaryTextContainer}>
-               <Text style={style.primaryText}>Let's get started !</Text>
+                <Text style={style.primaryText}>Let's get started !</Text>
               </View>
               <View style={[style.mt_2]}>
                 <View style={style.socialBtnContainer}>
@@ -139,34 +127,24 @@ const SignUp = () => {
                 <TextInputComponent
                   label="Email"
                   id="email"
-                  value={inputs.email}
+                  value={email}
                   handleChange={handleChange}
                   subText={subTexts.email}
                 />
                 <TextInputComponent
                   label="Password"
                   id="password"
-                  value={inputs.password}
+                  value={password}
                   handleChange={handleChange}
                   subText={subTexts.password}
                 />
                 <TermsCondition />
                 <View style={{marginTop: responsiveScreenHeight(2)}}>
-                  {loading ? (
-                    <Button
-                      mode="contained"
-                      buttonColor={'#34b8ed'}
-                      style={style.btn}
-                      loading={true}>
-                      Loading
-                    </Button>
-                  ) : (
-                    <BtnPrimary
-                      label="Next"
-                      isActive={isActive}
-                      handlePress={handleClick}
-                    />
-                  )}
+                  <BtnPrimary
+                    label="Next"
+                    isActive={isActive}
+                    handlePress={handleClick}
+                  />
                 </View>
               </View>
             </View>
@@ -196,12 +174,10 @@ const style = StyleSheet.create({
     paddingVertical: responsiveScreenHeight(0.6),
     width: responsiveScreenWidth(95),
   },
-  container: {
-   
-  },
-  mainConatiner : { paddingHorizontal: responsiveScreenWidth(2.5),},
+  container: {},
+  mainConatiner: {paddingHorizontal: responsiveScreenWidth(2.5)},
   primaryTextContainer: {
-    paddingHorizontal: responsiveScreenWidth(1)
+    paddingHorizontal: responsiveScreenWidth(1),
   },
   primaryText: {
     // fontFamily: 'NunitoSans-Bold',
