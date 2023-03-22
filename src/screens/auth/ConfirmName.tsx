@@ -4,7 +4,7 @@ import ConfirmDetails from './ConfirmDetails';
 import { SignUpService } from '../../services/auth/AuthService';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { UpdateAuthDetails } from '../../redux/reducers/auth';
+import { ResetAuthDetails, UpdateAuthDetails } from '../../redux/reducers/auth';
 
 const initialState = {
   name: '',
@@ -16,7 +16,7 @@ const errorInitialState = {
 
 const ConfirmName = () => {
   const dispatch = useDispatch();
-  const {email, password, username, name} = useSelector((state: any) => state.authDetails);
+  const {email, password, userName, name} = useSelector((state: any) => state.authDetails);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const Navigation = useNavigation();
@@ -25,7 +25,6 @@ const ConfirmName = () => {
   };
 
   const clickHandler = () => {
-    console.log('name', name);
      if(name){
         setError(false);
         handleClick();
@@ -37,8 +36,9 @@ const ConfirmName = () => {
   const handleClick = async () => {
     try {
       setLoading(true);
-      await SignUpService({email, password, username, name});
+      await SignUpService({email, password, userName, name});
       setLoading(false);
+      dispatch(ResetAuthDetails());
       Navigation.navigate(
         'OTP' as never,
         {email: email, type: 'VERIFY', flow: 'Signup'} as never,

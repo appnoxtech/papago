@@ -1,7 +1,7 @@
 const initialState = {
     email: '',
     password: '',
-    username: '',
+    userName: '',
     name: ''
 }
 
@@ -15,7 +15,7 @@ interface ResetAuthDetails {
 }
 
 type data = {
-    key: 'email' | 'password' | 'username' | 'name',
+    key: 'email' | 'password' | 'userName' | 'name',
     value: string
 }
 
