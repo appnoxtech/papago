@@ -45,3 +45,13 @@ export const DeleteEventTripByIDService = async(eventId: string) => {
     },
   });
 }
+
+export const SendEventTripInvitation = async (data: any) => {
+  const url = `${URL}event/send-invitation`;
+  const user = await getUserDataFromLocalStorage();
+  return axios.post(url, data, {
+    headers: {
+      'x-auth-token': user.accessToken,
+    },
+  });
+}

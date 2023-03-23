@@ -70,6 +70,13 @@ const CommentModal: React.FC<props> = ({
     handleGetActivityLikeAndCommentDetails();
   }, [isModalVisible]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      textInputRef.current?.blur();
+      textInputRef.current?.focus();
+    }, 100);
+  }, [isModalVisible]);
+
   return (
     <View style={styles.mainContainer}>
       <Modal
@@ -109,6 +116,7 @@ const CommentModal: React.FC<props> = ({
                   <TextInput
                     //@ts-ignore
                     ref={textInputRef}
+                    autoFocus={true}
                     value={comment}
                     onChangeText={text => setComment(text)}
                     style={styles.commentInput}

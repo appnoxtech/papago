@@ -13,6 +13,7 @@ import SearchLocationPage from '../screens/common/SearchLocationPage';
 import PlanTrip from '../screens/Dashboard/Events/PlanTrip';
 import EventDetails from '../screens/Dashboard/Events/EventDetails';
 import EventSetting from '../screens/Dashboard/Events/EventSetting';
+import InviteFriends from '../screens/common/InviteFriends';
 
 const Stack = createNativeStackNavigator();
 
@@ -82,6 +83,11 @@ const AuthRoutes = () => {
       <Stack.Screen
        name="EventSetting"
        component={EventSetting}
+       options={{headerShown: false}}
+      />
+      <Stack.Screen
+       name="InviteFriend"
+       component={InviteFriends}
        options={{headerShown: false}}
       />
     </Stack.Navigator>

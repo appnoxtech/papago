@@ -302,7 +302,7 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
             style={styles.btn}
             onPress={_openAppSetting}
           >
-            <Text style={styles.btnText}>Open Setting</Text>
+            <Text style={styles.settingBtnText}>Open Setting</Text>
           </Button>
         </View>
       )}
@@ -415,4 +415,7 @@ const styles = StyleSheet.create({
     top: responsiveScreenHeight(3.3),
     left: responsiveScreenWidth(10),
   },
+  settingBtnText: {
+    fontSize: responsiveFontSize(2)
+  }
 });
