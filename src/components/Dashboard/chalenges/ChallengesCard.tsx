@@ -45,11 +45,12 @@ export default ChallengesCard;
 
 const styles = StyleSheet.create({
   container: {
-    width: responsiveScreenWidth(90),
+    width: responsiveScreenWidth(85),
     height: responsiveScreenHeight(20),
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: responsiveScreenHeight(1.5),
+    marginHorizontal: responsiveScreenWidth(2)
   },
   cardText: {
     fontSize: responsiveFontSize(3),

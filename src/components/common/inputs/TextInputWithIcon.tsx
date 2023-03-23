@@ -4,7 +4,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  DeviceEventEmitter
+  DeviceEventEmitter,
 } from 'react-native';
 import {Menu} from 'react-native-paper';
 import React, {FC, useEffect} from 'react';
@@ -15,10 +15,10 @@ import {
 } from 'react-native-responsive-dimensions';
 import LoadIcon from '../LoadIcon';
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
-import { useDispatch } from 'react-redux';
-import { UpdateTripStopPoints } from '../../../redux/reducers/planTrip.reducer';
-import { useNavigation } from '@react-navigation/native';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {useDispatch} from 'react-redux';
+import {UpdateTripStopPoints} from '../../../redux/reducers/planTrip.reducer';
+import {useNavigation} from '@react-navigation/native';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 interface props {
   iconFamily: Array<string>;
@@ -28,14 +28,14 @@ interface props {
   iconStyle?: any;
   id?: string;
   placeholder: string;
-  onChangeHandler?: any,
-  rightIconClickHandler?: any,
+  onChangeHandler?: any;
+  rightIconClickHandler?: any;
   type?: string;
   index?: number;
   stopAdded?: boolean;
   value?: string;
   isError?: boolean;
-  isEditable?: boolean
+  isEditable?: boolean;
 }
 const TextInputWithIcon: FC<props> = ({
   iconFamily,
@@ -60,21 +60,21 @@ const TextInputWithIcon: FC<props> = ({
   const closeMenu = () => setVisible(false);
   const handleInputFocus = () => {
     Navigation.navigate('SearchLocationPage' as never, {id} as never);
-  }
-  
+  };
+
   useEffect(() => {
-    DeviceEventEmitter.addListener(`${id}`, (eventData) => {
+    DeviceEventEmitter.addListener(`${id}`, eventData => {
       onChangeHandler(eventData);
     });
   }, []);
 
-  return ( 
+  return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
         {type === 'stops' ? (
           <View style={styles.customIconContainer}>
             <Text style={styles.customIconText}>
-              { index ? String.fromCharCode(index + 64) : null}
+              {index ? String.fromCharCode(index + 64) : null}
             </Text>
           </View>
         ) : (
@@ -94,9 +94,9 @@ const TextInputWithIcon: FC<props> = ({
           placeholder={placeholder}
           id={id}
           onFocus={handleInputFocus}
-          style={[styles.textInput, {borderColor: isError ? 'red' : '#bbbbbb' }]}
+          style={[styles.textInput, {borderColor: isError ? 'red' : '#bbbbbb'}]}
           value={value}
-          onChangeText={(text) => onChangeHandler(id, text)}
+          onChangeText={text => onChangeHandler(id, text)}
         />
       </View>
       {iconFamily.length > 1 ? (
@@ -128,13 +128,15 @@ const TextInputWithIcon: FC<props> = ({
               />
             </Menu>
           ) : (
-            <LoadIcon
-              iconFamily={iconFamily[1]}
-              iconName={iconName[1]}
-              color={iconColor[1]}
-              size={iconSize[1]}
-              style={iconStyle}
-            />
+            <TouchableOpacity onPress={rightIconClickHandler}>
+              <LoadIcon
+                iconFamily={iconFamily[1]}
+                iconName={iconName[1]}
+                color={iconColor[1]}
+                size={iconSize[1]}
+                style={iconStyle}
+              />
+            </TouchableOpacity>
           )}
         </View>
       ) : null}
@@ -143,22 +145,22 @@ const TextInputWithIcon: FC<props> = ({
           {stopAdded ? (
             <TouchableOpacity onPress={() => rightIconClickHandler(index)}>
               <LoadIcon
-              iconFamily={'Entypo'}
-              iconName={'circle-with-cross'}
-              color={'red'}
-              size={26}
-              style={{}}
-            />
+                iconFamily={'Entypo'}
+                iconName={'circle-with-cross'}
+                color={'red'}
+                size={26}
+                style={{}}
+              />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={() => rightIconClickHandler()}>
-               <LoadIcon
-              iconFamily={'FontAwesome'}
-              iconName={'plus-circle'}
-              color={'green'}
-              size={26}
-              style={{}}
-            />
+              <LoadIcon
+                iconFamily={'FontAwesome'}
+                iconName={'plus-circle'}
+                color={'green'}
+                size={26}
+                style={{}}
+              />
             </TouchableOpacity>
           )}
         </View>

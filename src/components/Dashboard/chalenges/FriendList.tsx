@@ -1,6 +1,7 @@
 import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {FC, useEffect} from 'react';
-import {Avatar, Button, SegmentedButtons} from 'react-native-paper';
+import React, {FC} from 'react';
+import {Avatar, Button} from 'react-native-paper';
+import {useSelector} from 'react-redux';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -10,8 +11,6 @@ import {
   colorPrimary,
   colorSecondary,
 } from '../../../../assets/styles/GlobalTheme';
-import useGetFriendListHook from '../../../hooks/common/GetFriendListHook';
-import {useSelector} from 'react-redux';
 import {friend} from '../../../interfaces/Dashboard/friend.interface';
 import {SendEventTripInvitation} from '../../../services/Dashboard/events.service';
 import useHandleError from '../../../hooks/common/handelError';
@@ -20,12 +19,15 @@ interface props {
   item: friend;
   pressHandler(id: string): void;
 }
+
 const FriendCard: FC<props> = ({item, pressHandler}) => {
   const {selectedEvent} = useSelector((state: any) => state.Events);
-  const isFound = selectedEvent?.sharedWith.findIndex(
+  const isFound = selectedEvent?.sharedWith?.findIndex(
     (user: {isAccepted: boolean; sharedWithId: string}) =>
       user.sharedWithId === item._id,
   );
+  console.log('isFound', isFound);
+  
   return (
     <View style={styles.friendCard}>
       <View style={styles.profileContainer}>
@@ -33,7 +35,7 @@ const FriendCard: FC<props> = ({item, pressHandler}) => {
         <Text style={styles.userName}>{item.userName}</Text>
       </View>
       <View style={styles.btnContainer}>
-        {isFound === -1 ? (
+        {isFound === -1 || isFound === undefined ? (
           <Button
             onPress={() => pressHandler(item._id)}
             mode="contained"

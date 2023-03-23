@@ -1,7 +1,7 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {FC, useState} from 'react';
 import {
-    responsiveFontSize,
+  responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
@@ -13,11 +13,11 @@ import ViewActivityHorizontalList from './ViewActivityHorizontalList';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-    PlanTripInterface,
+  PlanTripInterface,
   planTripCords,
 } from '../../../interfaces/reducers/PlanTripInterface';
 import {UpdateTripsCords} from '../../../redux/reducers/planTrip.reducer';
-import { Menu } from 'react-native-paper';
+import {Menu} from 'react-native-paper';
 
 const errorInitialState = {
   startCords: false,
@@ -64,13 +64,22 @@ const PlanTripActionContainer: FC<props> = ({openStopsContainer}) => {
     }
   };
 
-  const handleCordsSwap = () => {};
+  const handleCordsSwap = () => {
+    console.log('clicl');
+
+    dispatch(
+      UpdateTripsCords({key: 'endingCords', planTripCords: startingCords}),
+    );
+    dispatch(
+      UpdateTripsCords({key: 'startingCords', planTripCords: endingCords}),
+    );
+  };
 
   const onChangeHandler = ({id, planTripCords}: params) => {
     dispatch(UpdateTripsCords({key: id, planTripCords}));
   };
 
-  const getName = (name: string) => name.split(",")[0];
+  const getName = (name: string) => name.split(',')[0];
 
   return (
     <View style={styles.container}>
@@ -88,66 +97,73 @@ const PlanTripActionContainer: FC<props> = ({openStopsContainer}) => {
         </TouchableOpacity>
         <View style={styles.actionContainer}>
           {stops?.length ? (
-            <TouchableOpacity onPress={openStopsContainer} style={styles.tripsCordsSummaryContainer}>
-                <View style={styles.tripsCordsSummary}>
-                    <View style={styles.tripCordContainer}>
-                        <LoadIcon
-                            iconFamily={'FontAwesome'}
-                            iconName={'dot-circle-o'}
-                            color={colorPrimary}
-                            size={20}
-                            style={styles.icon}
-                        />
-                        <Text style={styles.tripCordText}>{getName(startingCords.name)}</Text>
-                    </View>
-                    <View style={styles.tripCordContainer}>
-                        <LoadIcon
-                            iconFamily={'FontAwesome'}
-                            iconName={'circle-thin'}
-                            color={'#565555'}
-                            size={20}
-                            style={styles.icon}
-                        />
-                        <Text style={styles.tripCordText}>{`${stops.length} Stops`}</Text>  
-                    </View>
-                    <View style={styles.tripCordContainer}>
-                       <LoadIcon
-                            iconFamily={'Entypo'}
-                            iconName={'location'}
-                            color={'red'}
-                            size={20}
-                            style={styles.icon}
-                        />
-                        <Text style={styles.tripCordText}>{getName(endingCords.name)}</Text>
-                    </View>
+            <TouchableOpacity
+              onPress={openStopsContainer}
+              style={styles.tripsCordsSummaryContainer}>
+              <View style={styles.tripsCordsSummary}>
+                <View style={styles.tripCordContainer}>
+                  <LoadIcon
+                    iconFamily={'FontAwesome'}
+                    iconName={'dot-circle-o'}
+                    color={colorPrimary}
+                    size={20}
+                    style={styles.icon}
+                  />
+                  <Text style={styles.tripCordText}>
+                    {getName(startingCords.name)}
+                  </Text>
                 </View>
-                <View style={styles.btnContainer}>
-                    <Menu
-              contentStyle={styles.menu}
-              visible={visible}
-              onDismiss={closeMenu}
-              anchor={
-                <TouchableOpacity onPress={openMenu}>
-                                         <LoadIcon 
-                            iconFamily={'MaterialCommunityIcons'}
-                            iconName={'dots-vertical'}
-                            color={'black'}
-                            size={25}
-                            style={{}}
-                        />
-                </TouchableOpacity>
-              }>
-              <Menu.Item
-                style={styles.menuItem}
-                titleStyle={styles.menuTitle}
-                onPress={() => {
-                  openStopsContainer();
-                  closeMenu();
-                }}
-                title="Edit Stops"
-              />
-            </Menu>
+                <View style={styles.tripCordContainer}>
+                  <LoadIcon
+                    iconFamily={'FontAwesome'}
+                    iconName={'circle-thin'}
+                    color={'#565555'}
+                    size={20}
+                    style={styles.icon}
+                  />
+                  <Text
+                    style={styles.tripCordText}>{`${stops.length} Stops`}</Text>
                 </View>
+                <View style={styles.tripCordContainer}>
+                  <LoadIcon
+                    iconFamily={'Entypo'}
+                    iconName={'location'}
+                    color={'red'}
+                    size={20}
+                    style={styles.icon}
+                  />
+                  <Text style={styles.tripCordText}>
+                    {getName(endingCords.name)}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.btnContainer}>
+                <Menu
+                  contentStyle={styles.menu}
+                  visible={visible}
+                  onDismiss={closeMenu}
+                  anchor={
+                    <TouchableOpacity onPress={openMenu}>
+                      <LoadIcon
+                        iconFamily={'MaterialCommunityIcons'}
+                        iconName={'dots-vertical'}
+                        color={'black'}
+                        size={25}
+                        style={{}}
+                      />
+                    </TouchableOpacity>
+                  }>
+                  <Menu.Item
+                    style={styles.menuItem}
+                    titleStyle={styles.menuTitle}
+                    onPress={() => {
+                      openStopsContainer();
+                      closeMenu();
+                    }}
+                    title="Edit Stops"
+                  />
+                </Menu>
+              </View>
             </TouchableOpacity>
           ) : (
             <>
@@ -225,21 +241,21 @@ const styles = StyleSheet.create({
   btnContainer: {
     width: responsiveScreenWidth(15),
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   tripCordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: responsiveScreenHeight(0.5)
+    marginVertical: responsiveScreenHeight(0.5),
   },
   tripCordText: {
-     fontSize: responsiveFontSize(2.2),
-     fontWeight: '500',
-     color: '#565555',
-     paddingLeft: responsiveScreenWidth(2)
+    fontSize: responsiveFontSize(2.2),
+    fontWeight: '500',
+    color: '#565555',
+    paddingLeft: responsiveScreenWidth(2),
   },
   icon: {
-    marginHorizontal: responsiveScreenWidth(2)
+    marginHorizontal: responsiveScreenWidth(2),
   },
   menu: {
     padding: 0,

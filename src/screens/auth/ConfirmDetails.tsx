@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import BackBtn from '../../components/common/buttons/BackBtn';
 import {
@@ -55,31 +55,49 @@ const ConfirmDetails: FC<props> = ({
   inputLabel,
   isLoading = false,
 }) => {
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      _keyboardDidShow,
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      _keyboardDidHide,
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const _keyboardDidShow = () => {
+    setIsKeyboardVisible(true);
+  };
+
+  const _keyboardDidHide = () => {
+    setIsKeyboardVisible(false);
+  };
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1}}>
-      <TouchableWithoutFeedback
-        onPress={Keyboard.dismiss}
-        style={styles.container}>
+    <>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{flex: 1}}>
         <SafeAreaView style={styles.container}>
-          <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.mainContainer}>
-              <View>
-                <View style={styles.imgContainer}>
-                  <Image
-                    source={require('../../../assets/images/common/routes.jpg')}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
-                  <View style={styles.backBtnContainer}>
-                    <BackBtn />
-                  </View>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <>
+              <View style={styles.imgContainer}>
+                <Image
+                  source={require('../../../assets/images/common/routes.jpg')}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+                <View style={styles.backBtnContainer}>
+                  <BackBtn />
                 </View>
               </View>
-              <KeyboardAvoidingView
-                keyboardVerticalOffset={100}
-                style={styles.body}>
+              <View style={styles.body}>
                 <View style={styles.primaryTextContainer}>
                   <Text style={styles.textPrimary}>Who's joining?</Text>
                   <Text style={styles.subText}>{subLabel}</Text>
@@ -98,31 +116,32 @@ const ConfirmDetails: FC<props> = ({
                 <View style={styles.helpingTextContainer}>
                   <Text style={styles.helpingText}>{helpingText}</Text>
                 </View>
-              </KeyboardAvoidingView>
-              <View style={styles.footer}>
-                {isLoading ? (
-                  <Button
-                    mode="contained"
-                    buttonColor={'#34b8ed'}
-                    style={styles.btn}
-                    loading={true}>
-                    Loading
-                  </Button>
-                ) : (
-                  <Button
-                    mode="contained"
-                    buttonColor={colorPrimary}
-                    style={styles.btn}
-                    onPress={clickHandler}>
-                    <Text style={styles.btnText}>{btnText}</Text>
-                  </Button>
-                )}
               </View>
-            </View>
-          </ScrollView>
+              
+            </>
+          </TouchableWithoutFeedback>
         </SafeAreaView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+      <View style={styles.footer}>
+        {isLoading ? (
+          <Button
+            mode="contained"
+            buttonColor={'#34b8ed'}
+            style={styles.btn}
+            loading={true}>
+            Loading
+          </Button>
+        ) : (
+          <Button
+            mode="contained"
+            buttonColor={colorPrimary}
+            style={styles.btn}
+            onPress={clickHandler}>
+            <Text style={styles.btnText}>{btnText}</Text>
+          </Button>
+        )}
+      </View>
+    </>
   );
 };
 
@@ -189,7 +208,8 @@ const styles = StyleSheet.create({
   footer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: responsiveScreenHeight(2),
+    paddingVertical: responsiveScreenHeight(3),
+    backgroundColor: 'white'
   },
   btn: {
     width: responsiveScreenWidth(90),

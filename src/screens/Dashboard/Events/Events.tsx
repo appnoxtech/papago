@@ -68,6 +68,8 @@ const Events = () => {
           <View style={styles.listContainer}>
             <Text style={styles.textPrimary}>Your's Events</Text>
             <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.challengesListContainer}
             >
               {
