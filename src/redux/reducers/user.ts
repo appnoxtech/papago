@@ -1,8 +1,10 @@
+import { friend } from "../../interfaces/Dashboard/friend.interface";
 import { getAllActivity } from "../../interfaces/Dashboard/record.interface";
 
 interface user {
   isLogin: boolean,
   activityList: Array<getAllActivity> | [];
+  friendList: Array<friend>;
   userDetails: any,
   localActivityList: Array<getAllActivity> | [];
 }
@@ -14,6 +16,7 @@ const initialState:user  = {
   activityList: [],
   userDetails: {},
   localActivityList: [],
+  friendList: []
 };
 
 interface UpdateAction {
@@ -41,7 +44,12 @@ interface updateLocalActivityList {
   payload: any
 }
 
-type action = updateActivityList | UpdateAction | updateUserDetails | updateLocalActivityList | updateActivityListItem;
+interface updateFriendList {
+  type: 'UPDATE_FRIEND_LIST',
+  payload: Array<friend>
+}
+
+type action = updateActivityList | UpdateAction | updateUserDetails | updateLocalActivityList | updateActivityListItem | updateFriendList;
 
 const UserReducer = (state = initialState, action: action) => {
   switch (action.type) {
@@ -83,6 +91,13 @@ const UserReducer = (state = initialState, action: action) => {
        }
     }
 
+    case 'UPDATE_FRIEND_LIST': {
+      return {
+        ...state,
+        friendList: [...action.payload]
+      }
+    }
+
     default:
       return state;
   }
@@ -122,5 +137,12 @@ export const updateActivityListItem = (data: item): updateActivityListItem => {
   return {
     type: 'UPDATE_ACTIVITY_LIST_ITEM',
     payload: data,
+  }
+}
+
+export const updateFriendList = (friendList: Array<friend>): updateFriendList => {
+  return {
+    type: 'UPDATE_FRIEND_LIST',
+    payload: friendList
   }
 }

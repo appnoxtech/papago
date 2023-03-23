@@ -237,13 +237,16 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
       ) : null}
       <View style={styles.footer}>
         <Avatar.Text size={28} label="SC" />
-        <TextInput
-          ref={inputRef}
-          value={comment}
-          onChangeText={text => setComment(text)}
-          style={styles.commentInput}
-          placeholder="Add a Comment"
-        />
+        <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+          <TextInput
+            ref={inputRef}
+            editable={false}
+            value={comment}
+            onChangeText={text => setComment(text)}
+            style={styles.commentInput}
+            placeholder="Add a Comment"
+          />
+        </TouchableOpacity>
         <Button
           onPress={handleCommentActivityService}
           disabled={comment.length ? false : true}>

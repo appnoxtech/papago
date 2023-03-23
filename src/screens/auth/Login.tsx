@@ -26,6 +26,7 @@ import SocialLoginBtn from '../../components/common/buttons/SocialAuthBtn';
 import {LoginServices} from '../../services/auth/AuthService';
 import {Button} from 'react-native-paper';
 import {useAuthHooks} from '../../hooks/authHooks';
+import { useNavigation } from '@react-navigation/native';
 
 const initialState = {
   email: '',
@@ -37,6 +38,7 @@ const subText = {
   password: '',
 };
 const Login = () => {
+  const Navigation = useNavigation();
   const [inputs, setInputs] = useState(initialState);
   const [subTexts, setSubTexts] = useState(subText);
   const [isActive, setIsActive] = useState(false);
@@ -96,15 +98,25 @@ const Login = () => {
       setLoading(true);
       const res = await LoginServices(inputs);
       const data = res.data.data;
-      const userInfo = {
-        accessToken: data.token,
-        userName: data.userName,
-        name: data.name,
-      };
-      handleUserLogin(userInfo);
-      Alert.alert('Successfully Login !');
-      setLoading(false);
-      dispatch(updateUserData(true));
+      // redirect user to OTP page if the isEmailVerified is false
+      if(data.isEmailVerified) {
+        const userInfo = {
+          accessToken: data.token,
+          userName: data.userName,
+          name: data.name,
+        };
+        handleUserLogin(userInfo);
+        Alert.alert('Successfully Login !');
+        setLoading(false);
+        dispatch(updateUserData(true));
+      }else {
+        Navigation.navigate(
+          'OTP' as never,
+          {email: inputs.email, type: 'VERIFY', flow: 'Signup'} as never,
+        );
+        setLoading(false);
+      }
+      
     } catch (error: any) {
       Alert.alert(error.response.data.errors[0].message);
       setLoading(false);

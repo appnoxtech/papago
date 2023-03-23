@@ -13,15 +13,15 @@ const initialState = {
 const ConfirmUserName = () => {
   const Navigation = useNavigation();
   const dispatch = useDispatch();
-  const {username} = useSelector((state: any) => state.authDetails);
+  const {userName} = useSelector((state: any) => state.authDetails);
   const [error, setError] = useState(false);
 
   const changeHandler = ({value}: {value: string}) => {
-    dispatch(UpdateAuthDetails({key: 'username', value}))
+    dispatch(UpdateAuthDetails({key: 'userName', value}))
   }
 
   const clickHandler = () => {
-     if(username){
+     if(userName){
         Navigation.navigate('ConfirmName' as never);
         setError(false);
      }else {
@@ -31,11 +31,11 @@ const ConfirmUserName = () => {
 
   return (
     <ConfirmDetails
-       data={username}
-       subLabel={'Create your username'}
+       data={userName}
+       subLabel={'Create your userName'}
        error={error}
        changeHandler={changeHandler}
-       helpingText={'Please Choose a unique username for yourself.'}
+       helpingText={'Please Choose a unique userName for yourself.'}
        inputLabel={'Username'}
        clickHandler={clickHandler}
        btnText={'Next'}

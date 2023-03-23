@@ -1,13 +1,15 @@
 import {
   Image,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import BackBtn from '../../components/common/buttons/BackBtn';
 import {
@@ -53,15 +55,38 @@ const ConfirmDetails: FC<props> = ({
   inputLabel,
   isLoading = false,
 }) => {
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      _keyboardDidShow,
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      _keyboardDidHide,
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const _keyboardDidShow = () => {
+    setIsKeyboardVisible(true);
+  };
+
+  const _keyboardDidHide = () => {
+    setIsKeyboardVisible(false);
+  };
   return (
-    <TouchableWithoutFeedback
-      onPress={Keyboard.dismiss}
-      style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.mainContainer}>
-            <View>
+    <>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{flex: 1}}>
+        <SafeAreaView style={styles.container}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <>
               <View style={styles.imgContainer}>
                 <Image
                   source={require('../../../assets/images/common/routes.jpg')}
@@ -72,50 +97,51 @@ const ConfirmDetails: FC<props> = ({
                   <BackBtn />
                 </View>
               </View>
-            </View>
-            <View style={styles.body}>
-              <View style={styles.primaryTextContainer}>
-                <Text style={styles.textPrimary}>Who's joining?</Text>
-                <Text style={styles.subText}>{subLabel}</Text>
+              <View style={styles.body}>
+                <View style={styles.primaryTextContainer}>
+                  <Text style={styles.textPrimary}>Who's joining?</Text>
+                  <Text style={styles.subText}>{subLabel}</Text>
+                </View>
+                <TextInput
+                  mode="outlined"
+                  style={styles.input}
+                  label={inputLabel}
+                  activeOutlineColor={colorPrimary}
+                  outlineColor={error ? 'red' : 'grey'}
+                  value={data}
+                  theme={{roundness: 11}}
+                  textColor={'#8391A1'}
+                  onChangeText={value => changeHandler({value})}
+                />
+                <View style={styles.helpingTextContainer}>
+                  <Text style={styles.helpingText}>{helpingText}</Text>
+                </View>
               </View>
-              <TextInput
-                mode="outlined"
-                style={styles.input}
-                label={inputLabel}
-                activeOutlineColor={colorPrimary}
-                outlineColor={error ? 'red' : 'grey'}
-                value={data}
-                theme={{roundness: 11}}
-                textColor={'#8391A1'}
-                onChangeText={value => changeHandler({value})}
-              />
-              <View style={styles.helpingTextContainer}>
-                <Text style={styles.helpingText}>{helpingText}</Text>
-              </View>
-            </View>
-            <View style={styles.footer}>
-              {isLoading ? (
-                <Button
-                  mode="contained"
-                  buttonColor={'#34b8ed'}
-                  style={styles.btn}
-                  loading={true}>
-                  Loading
-                </Button>
-              ) : (
-                <Button
-                  mode="contained"
-                  buttonColor={colorPrimary}
-                  style={styles.btn}
-                  onPress={clickHandler}>
-                  <Text style={styles.btnText}>{btnText}</Text>
-                </Button>
-              )}
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+              
+            </>
+          </TouchableWithoutFeedback>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+      <View style={styles.footer}>
+        {isLoading ? (
+          <Button
+            mode="contained"
+            buttonColor={'#34b8ed'}
+            style={styles.btn}
+            loading={true}>
+            Loading
+          </Button>
+        ) : (
+          <Button
+            mode="contained"
+            buttonColor={colorPrimary}
+            style={styles.btn}
+            onPress={clickHandler}>
+            <Text style={styles.btnText}>{btnText}</Text>
+          </Button>
+        )}
+      </View>
+    </>
   );
 };
 
@@ -182,7 +208,8 @@ const styles = StyleSheet.create({
   footer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: responsiveScreenHeight(2),
+    paddingVertical: responsiveScreenHeight(3),
+    backgroundColor: 'white'
   },
   btn: {
     width: responsiveScreenWidth(90),

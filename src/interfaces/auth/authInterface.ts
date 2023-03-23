@@ -16,7 +16,7 @@ export interface signupData {
   email: string;
   password: string;
   name: string,
-  username: string
+  userName: string
 }
 export interface resetPassword {
   email: string;
