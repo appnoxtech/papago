@@ -293,9 +293,9 @@ const RecordActionComponent: React.FC<props> = ({setIsFinished}) => {
           <Text style={styles.modalPrimaryText}>
             Enable GPS to have the best tracking result.
           </Text>
-          <Text style={styles.modalSubText}>
+          {/* <Text style={styles.modalSubText}>
             Enable GPS to have the best tracking result.
-          </Text>
+          </Text> */}
           <Button
             mode="contained"
             buttonColor={'#34b8ed'}
