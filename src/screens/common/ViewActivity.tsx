@@ -232,7 +232,7 @@ const ViewActivity: React.FC<any> = ({route}) => {
                     <Octicons
                       name={activityDetails.isLiked ? 'heart-fill' : 'heart'}
                       size={20}
-                      color={activityDetails.isLiked ? 'red' : 'black'}
+                      color={activityDetails.isLiked ? colorPrimary : 'black'}
                     />
                     <Text style={styles.iconCount}>
                       {activityDetails.likeCount}

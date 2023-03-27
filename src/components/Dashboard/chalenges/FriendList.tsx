@@ -26,7 +26,6 @@ const FriendCard: FC<props> = ({item, pressHandler}) => {
     (user: {isAccepted: boolean; sharedWithId: string}) =>
       user.sharedWithId === item._id,
   );
-  console.log('isFound', isFound);
   
   return (
     <View style={styles.friendCard}>

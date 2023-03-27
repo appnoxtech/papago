@@ -25,7 +25,7 @@ const Headers = ({title}: props) => {
   const {selectedActivity} = useSelector((state: any) => state.activity);
 
   const handleIconPress = () => {
-    console.log('btn pressed');
+    
   };
 
   const handleSettingIconClick = () => {

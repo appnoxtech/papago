@@ -9,6 +9,7 @@ import TripCard from './TripCard';
 import { useSelector } from 'react-redux';
 import RecordActivityCard from './RecordActivityCard';
 import WelcomeSection from './WelcomeSection';
+import ListFooterComponent from './ListFooterComponent';
 
 const RenderItem:FC<any> = ({acitivity, setIsRefresh}) => {
   return (
@@ -23,15 +24,15 @@ const MemoisedRender = memo(RenderItem);
 const ViewPlannedActivity: React.FC<any> = () => {
   const {activityList} = useSelector((state: any) => state.user);
   const [isRefresh, setIsRefresh] = useState(false);
-  // console.log('activityList ==>', activityList);
-  console.log('activityList', activityList[0]);
   
   return (
     <View style={styles.container}>
       {activityList.length > 0 ? (
         <View style={styles.listContainer}>
           <FlatList
+             style={{paddingBottom: responsiveScreenHeight(4)}}
              ListHeaderComponent={<WelcomeSection />}
+             ListFooterComponent={<ListFooterComponent />}
              initialNumToRender={4}
              showsHorizontalScrollIndicator={false}
              contentContainerStyle={styles.challengesListContainer}
@@ -69,7 +70,7 @@ export default ViewPlannedActivity;
 
 const styles = StyleSheet.create({
   container: {
-     
+     flex: 1,
   },
   challengesListContainer: {
     paddingHorizontal: responsiveScreenWidth(0.5),
@@ -82,6 +83,7 @@ const styles = StyleSheet.create({
     marginHorizontal: responsiveScreenWidth(3),
   },
   listContainer: {
+    flex:1,
     backgroundColor: 'white',
   },
   textContainer: {

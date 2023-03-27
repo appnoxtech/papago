@@ -31,7 +31,7 @@ interface props {
   isModalVisible: boolean;
   setModalVisible: any;
   activityId: string;
-  onClose?: any
+  onClose?: any;
 }
 
 const CommentModal: React.FC<props> = ({
@@ -77,7 +77,6 @@ const CommentModal: React.FC<props> = ({
       textInputRef.current?.focus();
     }, 100);
   }, [isModalVisible]);
-  
 
   return (
     <View style={styles.mainContainer}>
@@ -113,8 +112,10 @@ const CommentModal: React.FC<props> = ({
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
               <View style={styles.footer}>
-                <Avatar.Text size={30} label="SC" />
-                <View>
+                <View style={styles.leftContainer}>
+                  <Avatar.Text size={30} label="SC" />
+                </View>
+                <View style={{flex: 1}}>
                   <TextInput
                     //@ts-ignore
                     ref={textInputRef}
@@ -126,13 +127,14 @@ const CommentModal: React.FC<props> = ({
                   />
                 </View>
                 <Button
-                  onPress={handleCommentPost}
-                  disabled={comment.length ? false : true}>
-                  <Text
-                    style={[{color: comment.length ? colorPrimary : 'grey'}]}>
-                    Post
-                  </Text>
-                </Button>
+                    style={styles.rightContainer}
+                    onPress={handleCommentPost}
+                    disabled={comment.length ? false : true}>
+                    <Text
+                      style={[{color: comment.length ? colorPrimary : 'grey'}]}>
+                      Post
+                    </Text>
+                  </Button>
               </View>
             </KeyboardAvoidingView>
           </SafeAreaView>
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   commentInput: {
-    width: responsiveScreenWidth(65),
+    width: '100%',
     borderColor: '#bbbbbb',
     borderWidth: 1,
     paddingHorizontal: responsiveScreenWidth(2),
@@ -194,5 +196,11 @@ const styles = StyleSheet.create({
     width: responsiveScreenWidth(80),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  leftContainer: {
+    width: '13%',
+  },
+  rightContainer: {
+    width: '13%',
   },
 });

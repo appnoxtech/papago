@@ -30,7 +30,10 @@ import {
   data,
 } from '../../../interfaces/Dashboard/record.interface';
 import {useNavigation} from '@react-navigation/native';
-import {getDateRefrenceByTimeStamp, parseMillisecondsIntoReadableTime} from '../../../utlis/common';
+import {
+  getDateRefrenceByTimeStamp,
+  parseMillisecondsIntoReadableTime,
+} from '../../../utlis/common';
 import Share from 'react-native-share';
 import useGenerateDynamicLinks from '../../../hooks/dynamicLinks/createDynamicLinks';
 import {
@@ -82,7 +85,10 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
   };
 
   const handleShareBtnPress = () => {
-    navigation.navigate('SharePreviewScreen' as never, {source: 'Others', activityDetails} as never);
+    navigation.navigate(
+      'SharePreviewScreen' as never,
+      {source: 'Others', activityDetails} as never,
+    );
   };
 
   const handleLikeActivityService = async () => {
@@ -91,10 +97,9 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
         activityId: acitivity._id as string,
         like: activityDetails?.isLiked ? 0 : (1 as 0 | 1),
       };
-      console.log('data', data);
       await LikeRecordActivityService(data);
       setIsLiked(isLiked === 0 ? 1 : 0);
-      Alert.alert('Notification', isLiked === 0 ? 'Liked' : 'Unliked');
+      // Alert.alert('Notification', isLiked === 0 ? 'Liked' : 'Unliked');
       GetActivityByIdHandler();
     } catch (error: any) {
       handleError(error);
@@ -107,9 +112,8 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
         activityId: acitivity._id as string,
         message: comment,
       };
-      console.log('data', data);
       await LikeRecordActivityService(data);
-      Alert.alert('Notification', 'Comment');
+      // Alert.alert('Notification', 'Comment');
       setComment('');
       handleGetActivityLikeAndCommentDetails();
     } catch (error: any) {
@@ -121,7 +125,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
     try {
       const res = await GetRecordLikeAndCommentDetails(acitivity._id);
       const {commentData, likeData} = res.data.data;
-     
+
       if (commentData.length) {
         setCommentList([...commentData]);
       }
@@ -134,8 +138,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
   };
 
   const commentClickHandler = () => {
-    //@ts-ignore
-    inputRef.current.focus();
+    setIsModalVisible(true);
   };
 
   useEffect(() => {
@@ -155,10 +158,10 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
   };
 
   const AttachListner = () => {
-    DeviceEventEmitter.addListener(`${acitivity._id}`, (data) => {
+    DeviceEventEmitter.addListener(`${acitivity._id}`, data => {
       setActivityDetails(data);
     });
-  }
+  };
 
   return (
     <View style={styles.container} key={acitivity._id}>
@@ -167,7 +170,8 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
         <View style={styles.headUserDetails}>
           <Text style={styles.headText}>{acitivity.name}</Text>
           <Text style={styles.headSubText}>
-            {getDateRefrenceByTimeStamp(acitivity.startedAt)} at {parseMillisecondsIntoReadableTime(acitivity.startedAt)}
+            {getDateRefrenceByTimeStamp(acitivity.startedAt)} at{' '}
+            {parseMillisecondsIntoReadableTime(acitivity.startedAt)}
           </Text>
         </View>
       </View>
@@ -192,7 +196,10 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
           <View style={styles.activitySummary}>
             <View style={styles.activitySummaryContainer}>
               <View style={styles.activityIconContainer}>
-                <RenderActivityIcon size={25} Activity={acitivity.activityData} />
+                <RenderActivityIcon
+                  size={25}
+                  Activity={acitivity.activityData}
+                />
               </View>
               <View style={styles.activityDistanceTextContainer}>
                 <RenderDistance distance={acitivity.distance} />
@@ -218,6 +225,23 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
           onPress={commentClickHandler}
         />
       </View>
+      {activityDetails?.likeCount ? (
+        <View style={styles.likeCountContainer}>
+          {activityDetails?.likeCount > 1 && activityDetails.isLiked ? (
+            <>
+            <Text style={[styles.likeText, {fontSize: responsiveFontSize(2), fontWeight: 'bold'}]}>You<Text style={styles.likeText}>{` and ${
+              activityDetails?.likeCount - 1
+            } others liked this.`}</Text></Text>
+            </>
+          ) : activityDetails?.likeCount === 1 && activityDetails.isLiked ? (
+            <>
+            <Text style={[styles.likeText, {fontSize: responsiveFontSize(2.2), fontWeight: '600'}]}>You<Text style={styles.likeText}>{` liked this`}</Text></Text>
+            </>
+          ) : (
+            <Text style={[styles.likeText, {fontSize: responsiveFontSize(2), fontWeight: '600'}]}>{`${activityDetails?.likeCount} person`} <Text style={styles.likeText}>{`liked this`}</Text></Text>
+          )}
+        </View>
+      ) : null}
       {commentList ? (
         <TouchableOpacity
           onPress={() => setIsModalVisible(true)}
@@ -236,16 +260,11 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
         </TouchableOpacity>
       ) : null}
       <View style={styles.footer}>
-        <Avatar.Text size={28} label="SC" />
-        <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-          <TextInput
-            ref={inputRef}
-            editable={false}
-            value={comment}
-            onChangeText={text => setComment(text)}
-            style={styles.commentInput}
-            placeholder="Add a Comment"
-          />
+        <Avatar.Text size={30} label="SC" />
+        <TouchableOpacity style={{marginLeft: responsiveScreenWidth(2)}} onPress={() => setIsModalVisible(true)}>
+          <View style={styles.commentInput}>
+            <Text style={{color: 'black', opacity: 0.6}}>Add a Comment</Text>
+          </View>
         </TouchableOpacity>
         <Button
           onPress={handleCommentActivityService}
@@ -263,7 +282,7 @@ const RecordActivityCard: React.FC<any> = ({acitivity, setIsRefresh}) => {
         isModalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
         activityId={acitivity._id}
-        onClose={handleGetActivityLikeAndCommentDetails}   
+        onClose={handleGetActivityLikeAndCommentDetails}
       />
     </View>
   );
@@ -343,9 +362,10 @@ const styles = StyleSheet.create({
   btnsContainer: {
     flexDirection: 'row',
     width: '100%',
+    height: responsiveScreenHeight(5),
   },
   footer: {
-    marginTop: responsiveScreenHeight(1),
+    marginTop: responsiveScreenHeight(0.3),
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -368,12 +388,13 @@ const styles = StyleSheet.create({
   },
   activityIconContainer: {
     padding: 1.5,
-    paddingHorizontal: 2.5,
+    paddingHorizontal: responsiveScreenWidth(1.5),
     backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomLeftRadius: 3,
     borderTopLeftRadius: 3,
+    height: responsiveScreenHeight(3.4)
   },
   activityDistanceTextContainer: {
     paddingVertical: responsiveScreenHeight(0.4),
@@ -384,6 +405,7 @@ const styles = StyleSheet.create({
     marginLeft: responsiveScreenWidth(1.3),
     borderBottomRightRadius: 3,
     borderTopRightRadius: 3,
+    height: responsiveScreenHeight(3.4)
   },
   activityDistanceText: {
     color: colorSecondary,
@@ -398,6 +420,7 @@ const styles = StyleSheet.create({
   },
   commentPreviewMainContainer: {
     width: '100%',
+    marginTop: responsiveScreenHeight(1)
   },
   commentPreviewContainer: {
     flexDirection: 'row',
@@ -406,11 +429,21 @@ const styles = StyleSheet.create({
     marginBottom: responsiveScreenHeight(1.7),
   },
   rightContainer: {
-    marginLeft: responsiveScreenWidth(2),
+    marginLeft: responsiveScreenWidth(3),
   },
   message: {
     marginTop: responsiveScreenHeight(0.5),
     fontSize: responsiveFontSize(1.7),
     fontWeight: '400',
   },
+  likeCountContainer: {
+    width: '100%',
+    paddingVertical: responsiveScreenHeight(0.6),
+    paddingHorizontal: responsiveScreenHeight(1.8)
+  },
+  likeText: {
+    fontSize: responsiveFontSize(1.8),
+    fontWeight: '400',
+    color: 'black'
+  }
 });

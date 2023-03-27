@@ -65,8 +65,6 @@ const PlanTripActionContainer: FC<props> = ({openStopsContainer}) => {
   };
 
   const handleCordsSwap = () => {
-    console.log('clicl');
-
     dispatch(
       UpdateTripsCords({key: 'endingCords', planTripCords: startingCords}),
     );

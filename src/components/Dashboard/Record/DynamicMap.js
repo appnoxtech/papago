@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   Platform,
   PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import MapView, {
@@ -83,7 +84,7 @@ class AnimatedMarkers extends React.Component {
           prevLatLng: newCoordinate,
         });
       },
-      error => console.log(error),
+      error => Alert.alert('Error', error),
       {
         enableHighAccuracy: true,
         timeout: 20000,

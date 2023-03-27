@@ -103,7 +103,6 @@ const MapViewComponent = () => {
   // once user clicks on the start recording btn
   useEffect(() => {
     if (isStart) {
-      console.log('initial Cords', initialCords);
       setNewWayPointsCord(initialCords);
       watchLocation();
       dispatch(updateTabBarDisplay('none'));
@@ -114,7 +113,6 @@ const MapViewComponent = () => {
     // stop watching the location when user clicks on the stop watch
     if (isStart && isPaused) {
       const date = new Date();
-      console.log('stopped watching user location');
       Geolocation.clearWatch(watchId);
       dispatch(updateTabBarDisplay('flex'));
       Geolocation.clearWatch(0);
@@ -126,7 +124,6 @@ const MapViewComponent = () => {
       dispatch(updateActivitySpeed(speed));
       dispatch(updateRecordActivityValue({key: 'speed', value: 0}));
     } else if (isStart && !isPaused) {
-      console.log('started watching user location');
       dispatch(updateTabBarDisplay('none'));
       Points = [...wayPoints];
       watchLocation();
@@ -160,9 +157,6 @@ const MapViewComponent = () => {
         calculateDistance();
       },
       error => {
-        // Alert.alert('Location Error', error.message);
-        console.log('Error ==>', error);
-        
         if (error.POSITION_UNAVAILABLE) {
           Alert.alert('Notification', 'Seems like GPS is OFF.');
         }

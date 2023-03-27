@@ -19,7 +19,6 @@ const FullScreenModal: FC<props> = ({
   onClose,
   children,
 }) => {
-    console.log('isModalVisible', isModalVisible);
     
   return (
     <View style={styles.mainContainer}>

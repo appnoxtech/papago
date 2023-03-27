@@ -40,9 +40,6 @@ const ViewActivityHorizontalList = () => {
     return list;
   }, []);
   
-  
-  console.log('selectedActivity', selectedActivity);
-  
   return (
     <FlatList
       style={styles.container}

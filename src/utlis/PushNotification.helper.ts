@@ -22,12 +22,10 @@ export async function GetFCMToken() {
        try {
         const fcmToken = await messaging().getToken();
         if(fcmToken) {
-            console.log('FCMTokken', fcmToken);
             await AsyncStorage.setItem('fcmToken', fcmToken);
             return fcmToken;
         }
        } catch (error) {
-         console.log('FCM Error', error);
          Alert.alert('Notification', 'Getting Errror while Fetching FCM Tokken')
        }
     }else {

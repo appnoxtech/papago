@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 const WelcomeSection = () => {
   const navigation = useNavigation();
   const handleClick = () => {
-    console.log('hello');
+    
   };
 
   const handlePressRecordActivity = () => {
@@ -42,7 +42,7 @@ const WelcomeSection = () => {
         icon={'connection'}
         style={styles.outlinedBtn}
         labelStyle={{fontSize: 22, color: colorPrimary}}
-        onPress={() => handleClick}>
+        onPress={handleClick}>
         <Text style={styles.outlinedBtnText}>Connect Tracker</Text>
       </Button>
     </View>

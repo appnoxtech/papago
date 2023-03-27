@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     paddingHorizontal: responsiveScreenWidth(2),
     paddingVertical: responsiveScreenHeight(1),
-    alignItems: 'center',
+    alignItems: 'flex-end',
     flexDirection:'row',
     borderBottomColor: '#D0D0D0',
     borderBottomWidth: 0.8,
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: responsiveScreenWidth(15),
     height: responsiveScreenHeight(6.5),
+    marginRight: responsiveScreenWidth(2),
     backgroundColor: colorPrimary,
     borderRadius: 5
   },
@@ -169,10 +170,10 @@ const styles = StyleSheet.create({
     right: 3,
   },
   textInput: {
-    fontSize: responsiveFontSize(4),
-    color: '#bbbbbb',
+    fontSize: responsiveFontSize(2.7),
+    color: 'black',
     fontWeight: 'bold',
     paddingHorizontal: responsiveScreenWidth(2),
-    width: responsiveScreenWidth(60)
+    width: responsiveScreenWidth(80)
   }
 });
