@@ -1,16 +1,22 @@
 import { PlanTripInterface, planTripCords } from "../../interfaces/reducers/PlanTripInterface"
 
 const initiaState: PlanTripInterface = {
-   selectedActivity: null,
+   selectedActivity: '63da1680617897dc3cc1de14',
    startingCords: {cords: null, name: ''},
    endingCords: {cords: null, name: ''},
    eventTabVisibility: 'flex',
    stops: [],
    distance: 0,
+   startingAt: 0,
+   endingAt: 0,
+   title: `Let's reach the goal!`,
+   description: `Let's reach the finish line together! We've git this!`,
+   isPrivate: true,
+
 }
 
 interface ChangeSelectedActivity {
-   type: 'UPDATE_SELECTED_ACTIVITY',
+   type: 'UPDATE_PLAN_TRIP_SELECTED_ACTIVITY',
    payload: string
 }
 
@@ -61,16 +67,26 @@ interface updateDistance {
     payload: number
 }
 
+interface UpdateTripDetails {
+    type: 'UPDATE_TRIP_DETAILS',
+    payload: UpdateTripData
+}
+
+type UpdateTripData = {
+    key: 'startingAt' | 'endingAt' | 'title' | 'description' | 'isPrivate';
+    value: string | number | boolean
+}
 
 
 
 
-type action = ChangeSelectedActivity | ToggleEventTabVisibility | UpdateStops | UpdateCords | ResetPlanTrip | updateDistance;
+
+type action = ChangeSelectedActivity | ToggleEventTabVisibility | UpdateStops | UpdateCords | ResetPlanTrip | updateDistance | UpdateTripDetails;
 
 const PlanTripReducer = (state = initiaState, action: action): PlanTripInterface => {
    switch (action.type) {
 
-    case 'UPDATE_SELECTED_ACTIVITY': {
+    case 'UPDATE_PLAN_TRIP_SELECTED_ACTIVITY': {
         return {
             ...state,
             selectedActivity: action.payload,
@@ -120,6 +136,15 @@ const PlanTripReducer = (state = initiaState, action: action): PlanTripInterface
         }
     }
 
+    case 'UPDATE_TRIP_DETAILS': {
+        console.log('action', action);
+        
+        return {
+            ...state,
+            [action.payload.key]: action.payload.value
+        }
+    }
+
     case 'RESET_PLAN_TRIP': {
         return {
             ...initiaState,
@@ -137,7 +162,7 @@ export default PlanTripReducer;
 
 export const ChangeSelectedActivity = (activitId: string): ChangeSelectedActivity => {
    return {
-      type: 'UPDATE_SELECTED_ACTIVITY',
+      type: 'UPDATE_PLAN_TRIP_SELECTED_ACTIVITY',
       payload: activitId
    }
 }
@@ -176,3 +201,9 @@ export const UpdateTripDistance = (distance: number): updateDistance => {
     }
 }
 
+export const UpdatePlanTripDetails = (data: UpdateTripData): UpdateTripDetails => {
+   return {
+    type: 'UPDATE_TRIP_DETAILS',
+    payload: {...data},
+   }
+}

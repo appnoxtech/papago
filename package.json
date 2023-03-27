@@ -14,6 +14,7 @@
   "dependencies": {
     "@mapcreator/api": "^3.0.1",
     "@react-native-async-storage/async-storage": "^1.17.11",
+    "@react-native-community/datetimepicker": "^7.0.0",
     "@react-native-community/geolocation": "^3.0.5",
     "@react-native-community/netinfo": "^9.3.7",
     "@react-native-community/push-notification-ios": "^1.10.1",
@@ -40,6 +41,7 @@
     "react-native-calendars": "^1.1275.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-check-app-install": "^0.0.5",
+    "react-native-date-picker": "^4.2.9",
     "react-native-fbsdk-next": "^11.1.0",
     "react-native-google-places-autocomplete": "^2.5.1",
     "react-native-image-picker": "^5.1.0",

@@ -49,6 +49,6 @@ const styles = StyleSheet.create({
   message: {
     marginTop: responsiveScreenHeight(0.5),
     fontSize: responsiveFontSize(1.7),
-    fontWeight: 400,
+    fontWeight: '400',
   },
 });

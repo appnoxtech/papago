@@ -529,7 +529,7 @@ export const timestampToLocaleDateConverterFunction = (timeStamp: number, format
     const month = d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth() + 1;
 
     if (format == 'dd/mm/yyyy') {
-        return `${date}-${month}-${d.getFullYear()}`;
+        return `${date}/${month}/${d.getFullYear()}`;
     } else if (format == 'yyyy-mm-dd') {
         return `${d.getFullYear()}-${month}-${date}`;
     } else {

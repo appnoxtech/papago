@@ -25,6 +25,7 @@ import useGetFeedListByIdHandler from '../../hooks/Feed/GetFeedListById';
 import useCommentHandlerHooks from '../../hooks/Feed/CommentServiceHandlerHook';
 import {GetRecordLikeAndCommentDetails} from '../../services/Dashboard/record.service';
 import useHandleError from '../../hooks/common/handelError';
+import FullScreenModal from '../../components/common/modals/FullScreenModal';
 
 interface props {
   isModalVisible: boolean;
@@ -76,6 +77,7 @@ const CommentModal: React.FC<props> = ({
       textInputRef.current?.focus();
     }, 100);
   }, [isModalVisible]);
+  
 
   return (
     <View style={styles.mainContainer}>

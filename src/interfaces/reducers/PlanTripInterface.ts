@@ -7,6 +7,11 @@ export interface PlanTripInterface {
     eventTabVisibility: 'flex' | 'none',
     stops: Array<planTripCords> | [],
     distance: number,
+    startingAt: number,
+    endingAt: number,
+    title: string,
+    description: string,
+    isPrivate: boolean
 }
 
 export interface planTripCords {
@@ -23,6 +28,7 @@ export interface addEventApiCords {
 export interface addEventParams {
     _id?: string,
     eventTitle?: string,
+    isAccepted?: boolean;
     eventDescription?: string,
     from: addEventApiCords,
     to: addEventApiCords,

@@ -14,6 +14,12 @@ import PlanTrip from '../screens/Dashboard/Events/PlanTrip';
 import EventDetails from '../screens/Dashboard/Events/EventDetails';
 import EventSetting from '../screens/Dashboard/Events/EventSetting';
 import InviteFriends from '../screens/common/InviteFriends';
+import PLanDetails from '../screens/Dashboard/Events/PLanDetails';
+import PlanDetails from '../screens/Dashboard/Events/PlanDetails';
+import SelectTripDate from '../screens/Dashboard/Events/SelectTripDate';
+import PublicPrivateEvent from '../screens/Dashboard/Events/PublicPrivateEvent';
+import PlanTripTitleDescription from '../screens/Dashboard/Events/PlanTripTitleDescription';
+import PlanTripSelectChallenge from '../screens/Dashboard/Events/PlanTripSelectChallenge';
 
 const Stack = createNativeStackNavigator();
 
@@ -71,24 +77,49 @@ const AuthRoutes = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-       name="PlanTrip"
-       component={PlanTrip}
-       options={{headerShown: false}}
+        name="PlanTrip"
+        component={PlanTrip}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="PlanDetails"
+        component={PlanDetails}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="EventDetails"
         component={EventDetails}
         options={{headerShown: false}}
-     />
-      <Stack.Screen
-       name="EventSetting"
-       component={EventSetting}
-       options={{headerShown: false}}
       />
       <Stack.Screen
-       name="InviteFriend"
-       component={InviteFriends}
-       options={{headerShown: false}}
+        name="EventSetting"
+        component={EventSetting}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="InviteFriend"
+        component={InviteFriends}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SelectTripDate"
+        component={SelectTripDate}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="PublicPrivateEvent"
+        component={PublicPrivateEvent}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="PlanTripTitleDescription"
+        component={PlanTripTitleDescription}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="PlanTripSelectChallenge"
+        component={PlanTripSelectChallenge}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );

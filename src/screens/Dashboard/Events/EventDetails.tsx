@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   Pressable,
   StyleSheet,
@@ -8,40 +9,62 @@ import {
 } from 'react-native';
 import React, {FC, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Headers from '../../../components/Dashboard/common/Headers';
 import EventDetailsHeader from '../../../components/Dashboard/chalenges/EventDetailsHeader';
+import {useNavigation} from '@react-navigation/native';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import LoadIcon from '../../../components/common/LoadIcon';
-import {useSelector} from 'react-redux';
-import { Avatar, Button } from 'react-native-paper';
-import { colorPrimary } from '../../../../assets/styles/GlobalTheme';
-import { useNavigation } from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {Avatar, Button} from 'react-native-paper';
+import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import useGetFriendListHook from '../../../hooks/common/GetFriendListHook';
+import { AcceptEventTripInvitationService } from '../../../services/Dashboard/events.service';
+import { UpdateSelectedEvent } from '../../../redux/reducers/events.reducer';
+import useHandleError from '../../../hooks/common/handelError';
+import useGetInvitedEventListHook from '../../../hooks/Events/GetInvitedEventListHook';
 
 const EventDetails: FC<any> = ({route}) => {
+  const dispatch = useDispatch();
+  const GetInvitedEventList = useGetInvitedEventListHook();
   const Navigation = useNavigation();
   const getFriendList = useGetFriendListHook();
-
+  const handleError = useHandleError();
   const {selectedEvent} = useSelector((state: any) => state.Events);
   const [isActive, setIsActive] = useState(true);
+
   const handelToggel = () => {
     setIsActive(!isActive);
   };
 
-  console.log('selectedEvent', selectedEvent);
-  
   const handleInviteBtnClick = () => {
-    Navigation.navigate('InviteFriend' as never)
-  }
+    Navigation.navigate('InviteFriend' as never);
+  };
 
   useEffect(() => {
     getFriendList();
   }, []);
-  
+
+  const handleAcceptInvitation = async() => {
+    try {
+      const data = {
+        tripId: selectedEvent?._id
+      }
+      await AcceptEventTripInvitationService(data);
+      await GetInvitedEventList();
+      Alert.alert('Notification', 'You have joined this Event.');
+      dispatch(UpdateSelectedEvent({
+        ...selectedEvent,
+        isAccepted: true,
+      }));
+    } catch (error) {
+      console.log('error', error);
+       handleError(error);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <EventDetailsHeader title="Event Details" />
@@ -125,25 +148,42 @@ const EventDetails: FC<any> = ({route}) => {
                 </View>
                 <Text style={styles.iconText}>Record 100 kilometer</Text>
               </View>
-              <View style={[styles.toggleSection, {marginTop: responsiveScreenHeight(0.7)}]}>
+              <View
+                style={[
+                  styles.toggleSection,
+                  {marginTop: responsiveScreenHeight(0.7)},
+                ]}>
                 <View
                   style={[styles.iconContainer, {backgroundColor: 'white'}]}>
                   <Avatar.Text size={27} label="SC" />
                 </View>
-                <Text style={[styles.iconText, ]}>{`CREATED BY ${selectedEvent.userData.name}`}</Text>
+                <Text style={[styles.iconText]}>{`CREATED BY ${
+                  selectedEvent?.userData
+                    ? selectedEvent?.userData?.name
+                    : selectedEvent?.ownerOfTrip?.name
+                }`}</Text>
               </View>
             </View>
           ) : null}
         </View>
         <View style={[styles.sections, styles.btnContainer]}>
+          {selectedEvent?.userData ? (
             <Button
-              mode='contained'
+              mode="contained"
               buttonColor={colorPrimary}
               style={styles.btn}
-              onPress={handleInviteBtnClick}
-             >
-               <Text style={styles.btnText}>Invite friends</Text>
+              onPress={handleInviteBtnClick}>
+              <Text style={styles.btnText}>Invite friends</Text>
             </Button>
+          ) : selectedEvent?.isAccepted ? null : (
+            <Button
+              mode="contained"
+              buttonColor={colorPrimary}
+              style={styles.btn}
+              onPress={handleAcceptInvitation}>
+              <Text style={styles.btnText}>Accept Invitation</Text>
+            </Button>
+          )}
         </View>
       </View>
     </SafeAreaView>
@@ -246,14 +286,14 @@ const styles = StyleSheet.create({
   btnContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: responsiveScreenHeight(2)
+    paddingVertical: responsiveScreenHeight(2),
   },
   btn: {
     width: responsiveScreenWidth(90),
-    paddingVertical: 0.3
+    paddingVertical: 0.3,
   },
   btnText: {
     fontSize: responsiveFontSize(2.3),
-    fontWeight: '700'
-  }
+    fontWeight: '700',
+  },
 });

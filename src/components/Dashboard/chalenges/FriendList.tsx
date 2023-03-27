@@ -12,7 +12,7 @@ import {
   colorSecondary,
 } from '../../../../assets/styles/GlobalTheme';
 import {friend} from '../../../interfaces/Dashboard/friend.interface';
-import {SendEventTripInvitation} from '../../../services/Dashboard/events.service';
+import {SendEventTripInvitationService} from '../../../services/Dashboard/events.service';
 import useHandleError from '../../../hooks/common/handelError';
 
 interface props {
@@ -64,7 +64,7 @@ const FriendList = () => {
         friendId: id,
         tripId: selectedEvent._id,
       };
-      await SendEventTripInvitation(data);
+      await SendEventTripInvitationService(data);
       Alert.alert('Notification', 'Invitation Sent');
     } catch (error) {
       handleError(error);

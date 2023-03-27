@@ -24,6 +24,16 @@ export const GetEventListService = async() => {
   });
 }
 
+export const GetInvitedEventListService = async() => {
+  const url = `${URL}event/get-all-trip-participated`;
+  const user = await getUserDataFromLocalStorage();
+  return axios.get(url, {
+    headers: {
+      'x-auth-token': user.accessToken,
+    },
+  });
+}
+
 export const UpdateEventTripService = async(data: addEventParams) => {
   const url = `${URL}event/update-trip`;
   const user = await getUserDataFromLocalStorage();
@@ -46,9 +56,22 @@ export const DeleteEventTripByIDService = async(eventId: string) => {
   });
 }
 
-export const SendEventTripInvitation = async (data: any) => {
+export const SendEventTripInvitationService = async (data: any) => {
   const url = `${URL}event/send-invitation`;
   const user = await getUserDataFromLocalStorage();
+  return axios.post(url, data, {
+    headers: {
+      'x-auth-token': user.accessToken,
+    },
+  });
+}
+
+export const AcceptEventTripInvitationService = async (data: any) => {
+  const url = `${URL}event/accept-invitation`;
+  const user = await getUserDataFromLocalStorage();
+  console.log('url', url);
+  console.log('data', data);
+  
   return axios.post(url, data, {
     headers: {
       'x-auth-token': user.accessToken,

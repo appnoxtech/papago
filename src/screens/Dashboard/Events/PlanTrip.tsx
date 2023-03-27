@@ -11,6 +11,11 @@ import {
   responsiveScreenHeight,
   responsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
+import MapViewDirections, {
+  MapViewDirectionsOrigin,
+  MapViewDirectionsWaypoints,
+} from 'react-native-maps-directions';
+import { useNavigation } from '@react-navigation/core';
 import {
   ResetPlanTrip,
   ToggleEventTabVisibility,
@@ -27,12 +32,8 @@ import {
 import startPointImage from '../../../../assets/images/Dashboard/Oval.png';
 import finishPointImage from '../../../../assets/images/Dashboard/greenMarker.png';
 import stopPointImage from '../../../../assets/images/Dashboard/stop.png';
-import MapViewDirections, {
-  MapViewDirectionsOrigin,
-  MapViewDirectionsWaypoints,
-} from 'react-native-maps-directions';
-import { useNavigation } from '@react-navigation/core';
 import useGetEventListHook from '../../../hooks/Events/GetEventListHook';
+
 const mapStyle = [
   {
     featureType: 'administrative.land_parcel',
@@ -199,6 +200,9 @@ const PlanTrip = () => {
       Alert.alert('Error', 'Error While updating Event');
     }
   };
+  const handleDoneClick = () => {
+    Navigation.navigate('PlanDetails' as never);
+  }
   const { width, height } = Dimensions.get('window');
 
   return (
@@ -298,8 +302,8 @@ const PlanTrip = () => {
            mode="contained"
            buttonColor={colorPrimary}
            style={styles.btn}
-           onPress={handleActivityStart}>
-           <Text style={styles.btnText}>Start</Text>
+           onPress={handleDoneClick}>
+           <Text style={styles.btnText}>Continue</Text>
          </Button>
        </View>  : null
       }

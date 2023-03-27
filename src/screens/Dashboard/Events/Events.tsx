@@ -1,48 +1,43 @@
-import {ScrollView, StyleSheet, Text, View, Image, Alert} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, Image} from 'react-native';
 import React, {useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Headers from '../../../components/Dashboard/common/Headers';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
 import AnimatedLottieView from 'lottie-react-native';
 import {
   responsiveFontSize,
   responsiveScreenFontSize,
   responsiveScreenHeight,
   responsiveScreenWidth,
-  useResponsiveScreenWidth,
 } from 'react-native-responsive-dimensions';
 import {Button} from 'react-native-paper';
 import ChallengesCard from '../../../components/Dashboard/chalenges/ChallengesCard';
-import ProgressCard from '../../../components/Dashboard/chalenges/ProgressCard';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {ToggleEventTabVisibility} from '../../../redux/reducers/planTrip.reducer';
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
-import { GetEventListService } from '../../../services/Dashboard/events.service';
-import { UpdateEventList } from '../../../redux/reducers/events.reducer';
-import { addEventParams } from '../../../interfaces/reducers/PlanTripInterface';
+import {addEventParams} from '../../../interfaces/reducers/PlanTripInterface';
 import useGetEventListHook from '../../../hooks/Events/GetEventListHook';
+import useGetInvitedEventListHook from '../../../hooks/Events/GetInvitedEventListHook';
 
 const Events = () => {
   const navigation = useNavigation();
   const GetEventList = useGetEventListHook();
-  const dispatch = useDispatch();
-  const {eventList} = useSelector((state: any) => state.Events);
+  const GetInvitedEventList = useGetInvitedEventListHook();
+  const {eventList, invitedEventList, pendingInvitationEventList} = useSelector(
+    (state: any) => state.Events,
+  );
   const handleCreateActivity = () => {
     navigation.navigate('PlanTrip' as never);
   };
 
   useEffect(() => {
     GetEventList();
+    GetInvitedEventList();
   }, []);
 
-  console.log('eventList', eventList);
-  
   return (
     <SafeAreaView edges={['top']} style={styles.mainContainer}>
       <Headers title="Events" />
-      {eventList.length ? (
+      {eventList?.length || invitedEventList?.length ||  pendingInvitationEventList?.length? (
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.card}>
             <View style={styles.cardLeftContainer}>
@@ -65,31 +60,60 @@ const Events = () => {
               </Button>
             </View>
           </View>
-          <View style={styles.listContainer}>
-            <Text style={styles.textPrimary}>Your's Events</Text>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.challengesListContainer}
-            >
-              {
-                eventList.map((event: addEventParams) => (
+
+          {/* List of Events created by user */}
+          {eventList?.length ? (
+            <View style={styles.listContainer}>
+              <Text style={styles.textPrimary}>Your's Events</Text>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.challengesListContainer}>
+                {eventList.map((event: addEventParams) => (
                   <React.Fragment key={event._id}>
-                   <ChallengesCard event={event} />
+                    <ChallengesCard event={event} />
                   </React.Fragment>
-                ))
-              }
-            </ScrollView>
-          </View>
-          {/* <View style={styles.progressContainer}>
-            <View style={styles.headingContainer}>
-              <Ionicons color={'black'} size={25} name="bar-chart-sharp" />
-              <Text style={styles.progressText}>See your progress</Text>
+                ))}
+              </ScrollView>
             </View>
-            <View style={styles.progressCardContainer}>
-              <ProgressCard />
+          ) : null}
+          {/* End */}
+
+          {/* List of Participtaed Event */}
+          {invitedEventList?.length ? (
+            <View style={styles.listContainer}>
+              <Text style={styles.textPrimary}>Participated Events</Text>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.challengesListContainer}>
+                {invitedEventList.map((event: addEventParams) => (
+                  <React.Fragment key={event._id}>
+                    <ChallengesCard event={event} />
+                  </React.Fragment>
+                ))}
+              </ScrollView>
             </View>
-          </View> */}
+          ) : null}
+          {/* End */}
+
+          {/* List of Pending Invitation Events */}
+          {pendingInvitationEventList?.length ? (
+            <View style={styles.listContainer}>
+              <Text style={styles.textPrimary}>Pending Invitation Events</Text>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.challengesListContainer}>
+                {pendingInvitationEventList.map((event: addEventParams) => (
+                  <React.Fragment key={event._id}>
+                    <ChallengesCard event={event} />
+                  </React.Fragment>
+                ))}
+              </ScrollView>
+            </View>
+          ) : null}
+          {/* End */}
         </ScrollView>
       ) : (
         <>
@@ -105,7 +129,7 @@ const Events = () => {
             <Text style={styles.banner}>Plan Trips with your Friends</Text>
             <View style={styles.subBannerContainer}>
               <Text style={styles.subBanner}>
-                Crete a fun Trips with your friends set goals and multiple
+                Create a fun Trips with your friends set goals and multiple
                 stops.
               </Text>
             </View>
@@ -191,7 +215,7 @@ const styles = StyleSheet.create({
   challengesListContainer: {
     paddingHorizontal: responsiveScreenWidth(0.5),
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cardRightContainer: {
     flex: 1,
