@@ -80,23 +80,24 @@ const ConfirmDetails: FC<props> = ({
     setIsKeyboardVisible(false);
   };
   return (
-    <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{flex: 1}}>
-        <SafeAreaView style={styles.container}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <>
-              <View style={styles.imgContainer}>
-                <Image
-                  source={require('../../../assets/images/common/routes.jpg')}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
-                <View style={styles.backBtnContainer}>
-                  <BackBtn />
-                </View>
+    <ScrollView contentContainerStyle={{flex: 1}} style={{flex: 1}}>
+      <SafeAreaView style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <>
+            <View style={styles.imgContainer}>
+              <Image
+                source={require('../../../assets/images/common/routes.jpg')}
+                style={styles.image}
+                resizeMode="cover"
+              />
+              <View style={styles.backBtnContainer}>
+                <BackBtn />
               </View>
+            </View>
+            <KeyboardAvoidingView
+             keyboardVerticalOffset={100}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{flex: 1}}>
               <View style={styles.body}>
                 <View style={styles.primaryTextContainer}>
                   <Text style={styles.textPrimary}>Who's joining?</Text>
@@ -106,7 +107,7 @@ const ConfirmDetails: FC<props> = ({
                   mode="outlined"
                   style={styles.input}
                   label={inputLabel}
-                  activeOutlineColor={colorPrimary}
+                  activeOutlineColor={error ? 'red' : colorPrimary}
                   outlineColor={error ? 'red' : 'grey'}
                   value={data}
                   theme={{roundness: 11}}
@@ -117,11 +118,10 @@ const ConfirmDetails: FC<props> = ({
                   <Text style={styles.helpingText}>{helpingText}</Text>
                 </View>
               </View>
-              
-            </>
-          </TouchableWithoutFeedback>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+          </>
+        </TouchableWithoutFeedback>
+      </SafeAreaView>
       <View style={styles.footer}>
         {isLoading ? (
           <Button
@@ -141,7 +141,7 @@ const ConfirmDetails: FC<props> = ({
           </Button>
         )}
       </View>
-    </>
+    </ScrollView>
   );
 };
 
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: responsiveScreenHeight(3),
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   btn: {
     width: responsiveScreenWidth(90),

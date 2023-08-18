@@ -145,7 +145,7 @@ const Login = () => {
                 subText={subTexts.email}
               />
               <TextInputComponent
-                label="Your Password"
+                label="Your password"
                 id="password"
                 value={inputs.password}
                 handleChange={handleChange}
@@ -188,7 +188,7 @@ const Login = () => {
                   {"Don't have an account? "}
                 </Text>
                 <Pressable onPress={() => NavigateTo('Signup')}>
-                  <Text style={style.navText}>Sign up</Text>
+                  <Text style={style.navText}>Register </Text>
                 </Pressable>
               </View>
             </View>
@@ -252,12 +252,13 @@ const style = StyleSheet.create({
     fontSize: responsiveFontSize(3),
   },
   socialBtnContainer: {
-    width: '50%',
+    width: '47%',
     paddingVertical: responsiveScreenHeight(1),
   },
   mt_2: {
     marginTop: responsiveScreenHeight(1),
     flexDirection: 'row',
+    justifyContent:'space-between',
     alignItems: 'center',
   },
   mt_3: {

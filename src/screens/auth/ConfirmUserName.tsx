@@ -9,7 +9,6 @@ const initialState = {
     userName: ''
 }
 
-
 const ConfirmUserName = () => {
   const Navigation = useNavigation();
   const dispatch = useDispatch();
@@ -17,7 +16,14 @@ const ConfirmUserName = () => {
   const [error, setError] = useState(false);
 
   const changeHandler = ({value}: {value: string}) => {
-    dispatch(UpdateAuthDetails({key: 'userName', value}))
+    if(value.length === 0) {
+      setError(true);
+      dispatch(UpdateAuthDetails({key: 'userName', value}))
+    }else {
+      setError(false)
+      dispatch(UpdateAuthDetails({key: 'userName', value}))
+    }
+    
   }
 
   const clickHandler = () => {
@@ -32,7 +38,7 @@ const ConfirmUserName = () => {
   return (
     <ConfirmDetails
        data={userName}
-       subLabel={'Create your userName'}
+       subLabel={'Create your username'}
        error={error}
        changeHandler={changeHandler}
        helpingText={'Please Choose a unique userName for yourself.'}

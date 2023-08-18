@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   responsiveFontSize,
   responsiveScreenHeight,
@@ -8,8 +8,10 @@ import {
 import {Button} from 'react-native-paper';
 import {colorPrimary} from '../../../../assets/styles/GlobalTheme';
 import {useNavigation} from '@react-navigation/native';
+import { getUserDataFromLocalStorage } from '../../../utlis/auth';
 
 const WelcomeSection = () => {
+  const [userDetails, setUserDetails] = useState(null);
   const navigation = useNavigation();
   const handleClick = () => {
     
@@ -19,9 +21,23 @@ const WelcomeSection = () => {
     navigation.navigate('Record' as never);
   };
 
+  const getUserDetails = async () => {
+    const res = await getUserDataFromLocalStorage()
+    setUserDetails({...res});
+  }
+
+  useEffect(() => {
+    getUserDetails();
+  }, [])
+
+  console.log('userDetails', userDetails);
+  
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Get started, Allen</Text>
+      <View style={styles.primaryTextContainer}>
+       <Text style={styles.heading}>{`Get started, ${userDetails?.name}`}</Text>
+      </View>
       <Text style={styles.subHeading}>
         Go outside to record an activity or import one activity from an other
         app.
@@ -91,4 +107,7 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: responsiveScreenHeight(2),
   },
+  primaryTextContainer: {
+    width: responsiveScreenWidth(80)
+  }
 });

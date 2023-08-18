@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: responsiveScreenHeight(3),
     left: responsiveScreenWidth(25),
-    marginTop: responsiveScreenWidth(15),
+    marginTop: responsiveScreenWidth(13),
     justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',

@@ -21,7 +21,14 @@ const ConfirmName = () => {
   const [error, setError] = useState(false);
   const Navigation = useNavigation();
   const changeHandler = ({value}: {value: string}) => {
-    dispatch(UpdateAuthDetails({key: 'name', value}))
+    if(value.length <= 0){
+      setError(true);
+      dispatch(UpdateAuthDetails({key: 'name', value}))
+    }else{
+      setError(false);
+      dispatch(UpdateAuthDetails({key: 'name', value}))
+    }
+    
   };
 
   const clickHandler = () => {
